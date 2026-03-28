@@ -1,0 +1,236 @@
+
+:root {
+  --darker-fg-blue: #000040;
+  --dark-fg-blue: #002060;
+  --not-so-dark-fg-blue: #004080;
+  --background-blue: #0096ff;
+  --background-clearer: #22b8ff;
+  --background-darker: #0074dd;
+  --accent-light-blue: #92ffff;
+  --accent-lighter-blue: #d2ffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Iosevka Charon", monospace;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--dark-fg-blue);
+}
+
+body {
+  background: var(--background-darker);
+}
+
+.container {
+  padding: 16px;
+  max-width: 300px;
+  margin: auto;
+}
+
+.header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  height: 40px;
+  background-color: var(--background-clearer);
+  margin-top: auto;
+  font-family: "Momo Signature", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: x-large;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: var(--not-so-dark-fg-blue);
+  text-shadow: 0 2px 4px var(--accent-lighter-blue);
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+ul {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+li {
+  background: var(--accent-lighter-blue);
+  padding: 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  touch-action: none;
+  transition: transform 0.2s ease, margin 0.2s ease;
+}
+
+/* FIX: niente font-size */
+li:active:not(.dragging){
+  background-color: var(--accent-light-blue);
+  transform: scale(1.03);
+}
+
+/* elemento trascinato */
+.dragging {
+  opacity: 0.5;
+  transform: scale(1.05);
+  z-index: 10;
+  background-color: var(--accent-light-blue);
+}
+
+/* placeholder migliorato */
+.placeholder {
+  height: 60px;
+  margin-bottom: 10px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background: transparent;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--background-clearer);
+  color: black;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2)
+}
+
+button:active {
+  opacity: 0.8;
+}
+
+#favollo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+  margin: 20 20;
+}
+
+
+
+/* Desktop enhancement */
+@media (min-width: 768px) {
+  h1 {
+    font-size: 28px;
+  }
+}
+
+/* warehouse items */
+
+.item {
+  background: var(--accent-lighter-blue);
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+}
+
+.item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.take-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--background-clearer);
+  cursor: pointer;
+  font-size: 14px;
+  max-width: 100px;
+}
+
+.take-btn:active {
+  transform: scale(0.95);
+}
+
+.people {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.person-tag {
+  background: var(--accent-light-blue);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.person-tag {
+  background: var(--accent-light-blue);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.person-name {
+  margin-right: 4px;
+}
+
+.qty-btn {
+  border: none;
+  background: var(--background-clearer);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.remove-btn {
+  border: none;
+  background: #ff6b6b;
+  color: white;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+/* buffon animation */
+
+.buffon {
+  position: fixed;
+  width: 50px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: buffon-fly 1s ease-out forwards;
+}
+
+@keyframes buffon-fly {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-120px) scale(1.2);
+  }
+}
