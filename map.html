@@ -101,17 +101,27 @@
 
 
   /*Farmacie*/
-  L.marker([41.78926414240818, 2.7765310138230435], {icon: markerPharma}).addTo(map)
-    .bindPopup ("<h3>Farmacia Jùlia Vilardell</h3>8 minuti")
+  const latFarmaJulia = 41.78926414240818;
+  const lngFarmaJulia = 2.7765310138230435;
+  const linkFarmaJulia = `https://www.google.com/maps/dir/?api=1&destination=${latFarmaJulia},${lngFarmaJulia}&travelmode=driving`
+  L.marker([latFarmaJulia, lngFarmaJulia], {icon: markerPharma}).addTo(map)
+    .bindPopup (`<h3>Farmacia Jùlia Vilardell</h3>8 minuti <br> <a href="${linkFarmaJulia}">➢  Google Maps </a>`)
     .openPopup();
 
-  L.marker([41.79227360882879, 2.781447938445466], {icon: markerPharma}).addTo(map)
-    .bindPopup ("<h3>Farmacia Morè Fàbregas</h3>11 minuti")
+  const latFarmaFabregas = 41.79227360882879;
+  const lngFarmaFabregas = 2.781447938445466
+  const linkFarmaFabregas = `https://www.google.com/maps/dir/?api=1&destination=${latFarmaFabregas},${lngFarmaFabregas}&travelmode=driving`
+  L.marker([latFarmaFabregas, lngFarmaFabregas], {icon: markerPharma}).addTo(map)
+    .bindPopup (`<h3>Farmacia Morè Fàbregas</h3>11 minuti <br> <a href="${linkFarmaFabregas}">➢  Google Maps </a>`)
     .openPopup();
   
-  L.marker([41.71205615755278, 2.8408439723396652], {icon: markerPharma}).addTo(map)
-    .bindPopup ("<h3>Farmacia 24H Lloret de Mar</h3>14 minuti")
+  const latFarma24H = 41.71205615755278;
+  const lngFarma24H = 2.8408439723396652
+  const linkFarma24H = `https://www.google.com/maps/dir/?api=1&destination=${latFarma24H},${lngFarma24H}&travelmode=driving`
+  L.marker([latFarma24H, lngFarma24H], {icon: markerPharma}).addTo(map)
+    .bindPopup (`<h3>Farmacia 24H Lloret de Mar</h3>14 minuti <br> <a href="${linkFarma24H}">➢  Google Maps </a>`)
     .openPopup();
+
 
   /*Bancomat*/
   L.marker([41.79345647670497, 2.7793693474377204], {icon: markerAtm}).addTo(map)
@@ -130,8 +140,8 @@
     .bindPopup ("<h3>Euro Automatic Cash</h3>14 minuti")
     .openPopup();
 
-  /*Spiagge*/
-
+  /*Benzinai TBD*/
+  /*Spiagge TBD*/
 
   /*Casa*/
   L.marker([41.74067, 2.77950], {icon: markerHome}).addTo(map)
