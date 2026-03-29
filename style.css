@@ -8,6 +8,8 @@
   --background-darker: #0074dd;
   --accent-light-blue: #92ffff;
   --accent-lighter-blue: #d2ffff;
+  --accent-dark-favollo: #c62b00;
+  --accent-light-favollo: #ffa389;
 }
 
 * {
@@ -279,4 +281,15 @@ h3 {
     opacity: 0;
     transform: translateY(-120px) scale(1.2);
   }
+}
+
+/*marker-icons*/
+.marker-icon{
+font-size: 28px;
+color: var(--accent-lighter-blue);
+text-shadow: 3px 3px rgba(0, 0, 0, 0.5);
+width: 50px;
+height: 28px;
+align-self: center;
+vertical-align: top;
 }
