@@ -85,13 +85,20 @@
 }).addTo(map);
 
   /*Supermercati*/
-  L.marker([41.786076677811394, 2.7387182931999092], {icon: markerSupermkt}).addTo(map)
-    .bindPopup ("<h3>Bonpreu</h3>11 minuti")
+  const latBonpreu = 41.786076677811394;
+  const lngBonpreu = 2.7387182931999092;
+  const linkBonpreu = `https://www.google.com/maps/dir/?api=1&destination=${latBonpreu},${lngBonpreu}&travelmode=driving`
+  L.marker([latBonpreu, lngBonpreu], {icon: markerSupermkt}).addTo(map)
+    .bindPopup (`<h3>Bonpreu</h3>11 minuti <br> <a href="${linkBonpreu}">➢  Google Maps </a>`)
     .openPopup();
 
-  L.marker([41.71706945522734, 2.8304102905593913], {icon: markerSupermkt}).addTo(map)
-    .bindPopup ("<h3>ALDI</h3>12 minuti")
+  const latAldi = 41.71706945522734;
+  const lngAldi = 2.8304102905593913;
+  const linkAldi = `https://www.google.com/maps/dir/?api=1&destination=${latAldi},${lngAldi}&travelmode=driving`
+  L.marker([latAldi, lngAldi], {icon: markerSupermkt}).addTo(map)
+    .bindPopup (`<h3>ALDI</h3>12 minuti <br> <a href="${linkAldi}">➢  Google Maps </a>`)
     .openPopup();
+
 
   /*Farmacie*/
   L.marker([41.78926414240818, 2.7765310138230435], {icon: markerPharma}).addTo(map)
@@ -124,7 +131,7 @@
     .openPopup();
 
   /*Spiagge*/
-  
+
 
   /*Casa*/
   L.marker([41.74067, 2.77950], {icon: markerHome}).addTo(map)
