@@ -22,7 +22,9 @@
 }
 
 body {
-  background: var(--background-darker);
+  background-image: url("assets/tropicalline-02.jpg");
+  background-repeat: repeat;
+  background-size: 50px;
 }
 
 .container {
