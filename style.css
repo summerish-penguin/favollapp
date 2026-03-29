@@ -29,7 +29,7 @@ body {
 
 .container {
   padding: 16px;
-  max-width: 350px;
+  max-width: 380px;
   margin: auto;
 }
 
@@ -41,13 +41,17 @@ body {
   height: 80px;
   background: var(--not-so-dark-fg-blue);
   margin-top: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header-title{
   font-family: "Momo Signature", cursive;
   font-weight: 400;
   font-style: normal;
   font-size: xx-large;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   color: var(--accent-lighter-blue);
   text-shadow: 0 2px 4px var(--background-clearer);
+  text-decoration: none;
 }
 
 h1 {
@@ -75,14 +79,14 @@ ul{
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
   list-style: none;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   list-style: none;
 }
 
 li {
   background: var(--accent-lighter-blue);
   padding: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   border-radius: 10px;
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -156,6 +160,7 @@ button:active {
   justify-content: space-between;
   min-height: 130px;
   margin-bottom: 0px;
+  text-decoration: none;
 }
 
 .home-tile-icon{
