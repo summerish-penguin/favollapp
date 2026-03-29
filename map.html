@@ -40,6 +40,8 @@
 <script>
   const map = L.map('map').setView([41.74067, 2.77950], 11);
 
+
+
   /*icone marker*/
   const markerHome = L.divIcon({
   className: 'marker-icon',
@@ -78,14 +80,9 @@
 });
 
 /*Actual map*/
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-
-  /*Casa*/
-  L.marker([41.74067, 2.77950], {icon: markerHome}).addTo(map)
-    .bindPopup("<h3>Casa</h3>La tana del Favollo")
-    .openPopup();
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap & Carto'
+}).addTo(map);
 
   /*Supermercati*/
   L.marker([41.786076677811394, 2.7387182931999092], {icon: markerSupermkt}).addTo(map)
@@ -127,6 +124,12 @@
     .openPopup();
 
   /*Spiagge*/
+  
+
+  /*Casa*/
+  L.marker([41.74067, 2.77950], {icon: markerHome}).addTo(map)
+    .bindPopup("<h3>Casa</h3>La tana del Favollo")
+    .openPopup();
 
   
 </script>
