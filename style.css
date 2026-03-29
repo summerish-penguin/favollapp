@@ -38,13 +38,13 @@ body {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  height: 50px;
+  height: 80px;
   background: var(--not-so-dark-fg-blue);
   margin-top: auto;
   font-family: "Momo Signature", cursive;
   font-weight: 400;
   font-style: normal;
-  font-size: x-large;
+  font-size: xx-large;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   color: var(--accent-lighter-blue);
   text-shadow: 0 2px 4px var(--background-clearer);
@@ -120,7 +120,7 @@ button:active {
 }
 
 #favollo-img {
-  height: 40px;
+  height: 65px;
   width: auto;
   display: block;
   margin: 20 20;
@@ -213,7 +213,7 @@ button:active {
 .title {
   background: var(--background-clearer);
   border-radius: 10px;
-  padding: 12px;
+  padding: 6px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
