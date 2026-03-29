@@ -285,11 +285,11 @@ h3 {
 
 /*marker-icons*/
 .marker-icon{
-font-size: 28px;
+font-size: 50px;
 color: var(--accent-lighter-blue);
 text-shadow: 3px 3px rgba(0, 0, 0, 0.5);
 width: 50px;
-height: 28px;
+height: 50px;
 align-self: center;
 vertical-align: top;
 }
