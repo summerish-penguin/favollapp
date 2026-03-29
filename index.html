@@ -3,40 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vacanze</title>
+  <title>Warehouse</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-<div class="header"> FAVOLLAPP </div>
-
-<div class="container">
-
-  <h1>Vota la meta</h1>
-
-  <input id="username" placeholder="Il tuo nome" />
-
-  <p>Ordina trascinando: </p>
-  <br>
-
-  <ul id="destinations">
-    <li>Barcellona</li>
-    <li>Malaga</li>
-    <li>Sicilia</li>
-    <li>Francia</li>
-  </ul>
-
-  <button id="submitBtn">Invia voto</button>
-
-</div>
-
-<div>
+<div class="header">
+  FavollApp &ensp;
   <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="">
 </div>
 
-<script src="script.js"></script>
+<div class="container">
+
+  <div class="title">
+    <h1>Favollo Home</h1>
+    <h3><i class="fa-solid fa-location-dot"></i>&ensp;Maçanet de la Selva, Girona</h3>
+    <h3><i class="fa-solid fa-calendar-days"></i>&ensp;13 - 20 agosto 2026</h3>
+  </div>
+
+<br>
+
+  <ul id="home-tiles">
+
+    <li class="item home-tile">
+      <div class="item-content">
+        <div>
+        <h3>La tana del favollo</h3>
+        </div>
+        <div>
+          <i class="fa-solid fa-house-chimney home-tile-icon"></i>
+        </div>
+        <div>
+        <span>La nostra casa</span>
+        </div>
+      </div>
+    </li>
+
+    <li class="item home-tile">
+      <div class="item-content">
+        <div>
+        <h3>Il bagaglio del favollo</h3>
+        </div>
+        <div>
+          <i class="fa-solid fa-suitcase-rolling home-tile-icon"></i>        </div>
+        <div>
+        <span>Chi porta cosa</span>
+        </div>
+      </div>
+    </li>
+
+    <li class="item home-tile">
+      <div class="item-content">
+        <div>
+        <h3>La mappa del favollo</h3>
+        </div>
+        <div>
+          <i class="fa-solid fa-map-location home-tile-icon"></i>        </div>
+        <div>
+        <span>Vicino a noi</span>
+        </div>
+      </div>
+    </li>
+
+
+    <li class="item home-tile">
+      <div class="item-content">
+        <div>
+        <h3>Il cast della vacanza</h3>
+        </div>
+        <div>
+          <i class="fa-solid fa-people-group home-tile-icon"></i>        </div>
+        <div>
+        <span>Né pochi né buoni</span>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+
+</div>
+
+<script src="warehouse.js"></script>
+
 </body>
 </html>

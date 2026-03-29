@@ -65,9 +65,18 @@ input {
   border: 1px solid #ccc;
 }
 
-ul {
+ul{
   list-style: none;
   margin-bottom: 20px;
+}
+
+#home-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  list-style: none;
+  margin-bottom: 20px;
+  list-style: none;
 }
 
 li {
@@ -135,9 +144,28 @@ button:active {
   }
 }
 
+/* home tiles*/
+.home-tile{
+  height: 150px;
+}
+
+.home-tile .item-content{
+  flex-direction: column;
+  align-content: space-between;display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 130px;
+  margin-bottom: 0px;
+}
+
+.home-tile-icon{
+  font-size: xx-large;
+}
+
+
 /* warehouse items */
 
-.item {
+.warehouse-item{
   background: var(--accent-lighter-blue);
   padding: 12px;
   margin-bottom: 12px;
