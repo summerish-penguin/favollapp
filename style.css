@@ -299,6 +299,7 @@ display: inline-block;
   border-radius: 12px;
   overflow: hidden;
   background: var(--accent-lighter-blue) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .category-header {
@@ -323,7 +324,7 @@ display: inline-block;
 
 .place {
   padding: 10px 14px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--background-clearer);
 }
 
 .category, .category-header, .category-content {

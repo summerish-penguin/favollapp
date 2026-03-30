@@ -67,3 +67,7 @@ fetch('./data/locations.json')
     });
 
   });
+
+  el.addEventListener('click', () => {
+  map.setView([loc.Lat, loc.Lng], 14);
+});
