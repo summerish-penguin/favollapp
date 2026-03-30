@@ -4,23 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FavollApp</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous"></script>
-<link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap" rel="stylesheet">
 
-<script src="warehouse.js"></script>
+  <!-- Icons -->
+  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
 
-<link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">   
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
 </head>
+
 <body>
 
 <div class="header">
   <a href="index.html" class="header-title">FavollApp</a>&ensp;
-  <a href="index.html"><img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt=""></a>
+  <a href="index.html">
+    <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="">
+  </a>
 </div>
 
 <div class="container">
@@ -30,128 +40,115 @@
     <h3>Luoghi vicino a noi</h3>
   </div>
 
-<br>
+  <br>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <div id="map" style="height: 400px;"></div>
 
-<div id="map" style="height: 400px;"></div>
+</div>
 
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
   const map = L.map('map').setView([41.74067, 2.77950], 11);
 
-
-
-  /*icone marker*/
-  const markerHome = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">🏠</span>`,
-  iconSize: [30, 30]
-});
-
-  const markerSupermkt = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">🛒</span>`,
-  iconSize: [30, 30]
-});
-
-  const markerBeach = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">🏖️</span>`,
-  iconSize: [30, 30]
-});
-
-  const markerGasSt = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">⛽</span>`,
-  iconSize: [30, 30]
-});
-
-  const markerPharma = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">⚕️</span>`,
-  iconSize: [30, 30]
-});
-
-  const markerAtm = L.divIcon({
-  className: 'marker-icon',
-  html: `<span class="marker-icon">🏧</span>`,
-  iconSize: [30, 30]
-});
-
-/*Actual map*/
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  /* TILE */
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap & Carto'
 }).addTo(map);
 
-  /*Supermercati*/
-  const latBonpreu = 41.786076677811394;
-  const lngBonpreu = 2.7387182931999092;
-  const linkBonpreu = `https://www.google.com/maps/dir/?api=1&destination=${latBonpreu},${lngBonpreu}&travelmode=driving`
-  L.marker([latBonpreu, lngBonpreu], {icon: markerSupermkt}).addTo(map)
-    .bindPopup (`<h3>Bonpreu</h3>11 minuti <br> <a href="${linkBonpreu}">➢  Google Maps </a>`)
-    .openPopup();
+  /* ICONE */
+  const markerHome = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">🏠</span>`,
+    iconSize: [30, 30]
+  });
 
-  const latAldi = 41.71706945522734;
-  const lngAldi = 2.8304102905593913;
-  const linkAldi = `https://www.google.com/maps/dir/?api=1&destination=${latAldi},${lngAldi}&travelmode=driving`
-  L.marker([latAldi, lngAldi], {icon: markerSupermkt}).addTo(map)
-    .bindPopup (`<h3>ALDI</h3>12 minuti <br> <a href="${linkAldi}">➢  Google Maps </a>`)
-    .openPopup();
+  const markerSupermkt = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">🛒</span>`,
+    iconSize: [30, 30]
+  });
 
+  const markerBeach = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">🏖️</span>`,
+    iconSize: [30, 30]
+  });
 
-  /*Farmacie*/
-  const latFarmaJulia = 41.78926414240818;
-  const lngFarmaJulia = 2.7765310138230435;
-  const linkFarmaJulia = `https://www.google.com/maps/dir/?api=1&destination=${latFarmaJulia},${lngFarmaJulia}&travelmode=driving`
-  L.marker([latFarmaJulia, lngFarmaJulia], {icon: markerPharma}).addTo(map)
-    .bindPopup (`<h3>Farmacia Jùlia Vilardell</h3>8 minuti <br> <a href="${linkFarmaJulia}">➢  Google Maps </a>`)
-    .openPopup();
+  const markerGasSt = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">⛽</span>`,
+    iconSize: [30, 30]
+  });
 
-  const latFarmaFabregas = 41.79227360882879;
-  const lngFarmaFabregas = 2.781447938445466
-  const linkFarmaFabregas = `https://www.google.com/maps/dir/?api=1&destination=${latFarmaFabregas},${lngFarmaFabregas}&travelmode=driving`
-  L.marker([latFarmaFabregas, lngFarmaFabregas], {icon: markerPharma}).addTo(map)
-    .bindPopup (`<h3>Farmacia Morè Fàbregas</h3>11 minuti <br> <a href="${linkFarmaFabregas}">➢  Google Maps </a>`)
-    .openPopup();
-  
-  const latFarma24H = 41.71205615755278;
-  const lngFarma24H = 2.8408439723396652
-  const linkFarma24H = `https://www.google.com/maps/dir/?api=1&destination=${latFarma24H},${lngFarma24H}&travelmode=driving`
-  L.marker([latFarma24H, lngFarma24H], {icon: markerPharma}).addTo(map)
-    .bindPopup (`<h3>Farmacia 24H Lloret de Mar</h3>14 minuti <br> <a href="${linkFarma24H}">➢  Google Maps </a>`)
-    .openPopup();
+  const markerPharma = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">⚕️</span>`,
+    iconSize: [30, 30]
+  });
 
+  const markerAtm = L.divIcon({
+    className: '',
+    html: `<span class="marker-icon">🏧</span>`,
+    iconSize: [30, 30]
+  });
 
-  /*Bancomat*/
-  L.marker([41.79345647670497, 2.7793693474377204], {icon: markerAtm}).addTo(map)
-    .bindPopup ("<h3>Sabadell Bank</h3>9 minuti")
-    .openPopup();
+  const markerMap = {
+    home: markerHome,
+    supermarket: markerSupermkt,
+    beach: markerBeach,
+    gas: markerGasSt,
+    pharmacy: markerPharma,
+    atm: markerAtm
+  };
 
-  L.marker([41.79343948690455, 2.7817912611668643], {icon: markerAtm}).addTo(map)
-    .bindPopup ("<h3>Caixa Bank</h3>9 minuti")
-    .openPopup();
+  /* FETCH DATI */
+  fetch('./data/locations.json')
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Errore nel caricamento JSON");
+      }
+      return res.json();
+    })
+    .then(data => {
 
-  L.marker([41.70782033264506, 2.8388852260650985], {icon: markerAtm}).addTo(map)
-    .bindPopup ("<h3>Sabadell Bank</h3>17 minuti")
-    .openPopup();
+      data.forEach(location => {
 
-  L.marker([41.70663666110741, 2.835305435876083], {icon: markerAtm}).addTo(map)
-    .bindPopup ("<h3>Euro Automatic Cash</h3>14 minuti")
-    .openPopup();
+        const lat = location.Lat;
+        const lng = location.Lng;
 
-  /*Benzinai TBD*/
-  /*Spiagge TBD*/
+        const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
 
-  /*Casa*/
-  L.marker([41.74067, 2.77950], {icon: markerHome}).addTo(map)
-    .bindPopup("<h3>Casa</h3>La tana del Favollo")
-    .openPopup();
+        const icon = markerMap[location.LocCategory] || markerHome;
 
-  
+        const mins = location.MinsAway 
+          ? `${location.MinsAway} minuti`
+          : '';
+
+        const marker = L.marker([lat, lng], { icon })
+          .addTo(map)
+          .bindPopup(`
+            <div>
+              <h3>${location.LocationName}</h3>
+              ${mins ? mins + '<br>' : ''}
+              <a href="${link}" target="_blank">➢ Google Maps</a>
+            </div>
+          `);
+
+        // apre popup solo per casa
+        if (location.LocCategory === 'home') {
+          marker.openPopup();
+        }
+
+      });
+
+    })
+    .catch(err => {
+      console.error("Errore:", err);
+    });
+
+});
 </script>
-
-
 
 </body>
 </html>
