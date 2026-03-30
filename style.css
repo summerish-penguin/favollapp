@@ -293,3 +293,39 @@ height: 50px;
 display: inline-block;
 
 }
+
+.category {
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--accent-lighter-blue) !important;
+}
+
+.category-header {
+  padding: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  background: var(--accent-lighter-blue)
+}
+
+.category-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: var(--accent-lighter-blue) !important;
+}
+
+.category.open .category-content {
+  max-height: 500px; /* abbastanza grande */
+}
+
+.place {
+  padding: 10px 14px;
+  border-top: 1px solid #eee;
+}
+
+.category, .category-header, .category-content {
+  background-color: var(--accent-lighter-blue);
+}
