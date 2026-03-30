@@ -7,4 +7,9 @@
 {"LocationId":7,"LocationName":"Ciaxa Bank","Lat":41.79343948690455335,"Lng":2.78179126116686426,"LocCategory":"atm","MinsAway":9},
 {"LocationId":8,"LocationName":"Sabadell Bank","Lat":41.70782033264506339,"Lng":2.838885226065098522,"LocCategory":"atm","MinsAway":17},
 {"LocationId":9,"LocationName":"Euro Automatic Cash","Lat":41.70663666110741019,"Lng":2.835305435876083192,"LocCategory":"atm","MinsAway":14},
-{"LocationId":10,"LocationName":"Casa","Lat":41.74067000000000149,"Lng":2.779500000000000081,"LocCategory":"home","MinsAway":null}]
+{"LocationId":10,"LocationName":"Casa","Lat":41.74067000000000149,"Lng":2.779500000000000081,"LocCategory":"home","MinsAway":null},
+{"LocationId":11,"LocationName":"Platja de Lloret","Lat":41.70089999999999719,"Lng":2.858499999999999819,"LocCategory":"beach","MinsAway":23},
+{"LocationId":12,"LocationName":"Platja de Fenals","Lat":41.6916000000000011,"Lng":2.828899999999999971,"LocCategory":"beach","MinsAway":21},
+{"LocationId":13,"LocationName":"Cala Boadella","Lat":41.69082000000000221,"Lng":2.824069999999999859,"LocCategory":"beach","MinsAway":22},
+{"LocationId":15,"LocationName":"Platja de Santa Cristina","Lat":41.68871000000000037,"Lng":2.814869999999999984,"LocCategory":"beach","MinsAway":21},
+{"LocationId":16,"LocationName":"Cala Canyelles","Lat":41.70434809768862294,"Lng":2.882479619919412261,"LocCategory":"beach","MinsAway":25}]
