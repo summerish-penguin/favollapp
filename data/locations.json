@@ -12,4 +12,7 @@
 {"LocationId":12,"LocationName":"Platja de Fenals","Lat":41.6916000000000011,"Lng":2.828899999999999971,"LocCategory":"beach","MinsAway":21},
 {"LocationId":13,"LocationName":"Cala Boadella","Lat":41.69082000000000221,"Lng":2.824069999999999859,"LocCategory":"beach","MinsAway":22},
 {"LocationId":15,"LocationName":"Platja de Santa Cristina","Lat":41.68871000000000037,"Lng":2.814869999999999984,"LocCategory":"beach","MinsAway":21},
-{"LocationId":16,"LocationName":"Cala Canyelles","Lat":41.70434809768862294,"Lng":2.882479619919412261,"LocCategory":"beach","MinsAway":25}]
+{"LocationId":16,"LocationName":"Cala Canyelles","Lat":41.70434809768862294,"Lng":2.882479619919412261,"LocCategory":"beach","MinsAway":25},
+{"LocationId":17,"LocationName":"Low cost fuel","Lat":41.75818759968007753,"Lng":2.757654186625806858,"LocCategory":"gas","MinsAway":9},
+{"LocationId":18,"LocationName":"Esser","Lat":41.7150201582031599,"Lng":2.830307120854223423,"LocCategory":"gas","MinsAway":14},
+{"LocationId":19,"LocationName":"Galp","Lat":41.71873608164545999,"Lng":2.829620475411426472,"LocCategory":"gas","MinsAway":15}]
