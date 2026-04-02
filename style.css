@@ -1,204 +1,340 @@
+/* ==========================================================================
+   STYLE.CSS – FavollApp
+   ========================================================================== */
 
+
+/* ------------------------------------------------------------------
+   VARIABILI COLORE
+------------------------------------------------------------------ */
 :root {
-  --darker-fg-blue: #000040;
-  --dark-fg-blue: #002060;
-  --not-so-dark-fg-blue: #004080;
-  --background-blue: #0096ff;
-  --background-clearer: #22b8ff;
-  --background-darker: #0074dd;
-  --accent-light-blue: #92ffff;
-  --accent-lighter-blue: #d2ffff;
-  --accent-dark-favollo: #c62b00;
-  --accent-light-favollo: #ffa389;
+  /* Superfici */
+  --surface-body:          #e8f4fd;   /* sfondo pagina: azzurro molto tenue */
+  --surface-card:          #ffffff;   /* card e items */
+  --surface-card-hover:    #f8fbff;   /* card al hover */
+
+  /* Brand */
+  --brand-dark:            #0a1e3d;   /* header, testi primari, bottoni scuri */
+  --brand-mid:             #1a5fa8;   /* accenti, link, focus ring */
+  --brand-pale:            #dbeeff;   /* badge, tag, sfondi leggeri */
+
+  /* Testo */
+  --text-primary:          #0a1e3d;
+  --text-secondary:        #4b6080;
+  --text-muted:            #8fa3bb;
+
+  /* Bordi */
+  --border-subtle:         rgba(10, 30, 61, 0.08);
+  --border-medium:         rgba(10, 30, 61, 0.15);
+
+  /* Feedback */
+  --danger:                #e53e3e;
+  --danger-bg:             #fff5f5;
+
+  /* Raggi bordi */
+  --radius-sm:             8px;
+  --radius-md:             14px;
+  --radius-lg:             18px;
+  --radius-pill:           100px;
 }
 
+
+/* ------------------------------------------------------------------
+   RESET & BASE
+------------------------------------------------------------------ */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: "Nunito", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 500;
   font-style: normal;
-  color: var(--dark-fg-blue);
+  color: var(--text-primary);
 }
 
 body {
+  background-color: var(--surface-body);
   background-image: url("assets/tropicalline-02.jpg");
   background-repeat: repeat;
   background-size: 50px;
+  /* overlay tenue: il pattern rimane visibile ma non compete con le card */
+  background-blend-mode: overlay;
 }
 
+
+/* ------------------------------------------------------------------
+   TIPOGRAFIA
+   Gerarchia: h1 → 800  ·  h3 (sottotitolo muted) → 600
+------------------------------------------------------------------ */
+h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 768px) {
+  h1 { font-size: 28px; }
+}
+
+
+/* ------------------------------------------------------------------
+   LAYOUT GENERALE
+------------------------------------------------------------------ */
 .container {
-  padding: 16px;
-  max-width: 380px;
+  padding: 20px 16px;
+  max-width: 400px;
   margin: auto;
 }
 
-.header{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-  height: 80px;
-  background: var(--not-so-dark-fg-blue);
-  margin-top: auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.header-title{
-  font-family: "Momo Signature", cursive;
-  font-weight: 400;
-  font-style: normal;
-  font-size: xx-large;
-  color: var(--accent-lighter-blue);
-  text-shadow: 0 2px 4px var(--background-clearer);
-  text-decoration: none;
-}
-
-h1 {
-  font-size: 22px;
-  margin-bottom: 4px;
+.title {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 8px rgba(10, 30, 61, 0.06);
 }
 
 input {
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  margin-bottom: 20px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 16px;
   margin-top: 4px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-medium);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-ul{
+input:focus {
+  border-color: var(--brand-mid);
+  box-shadow: 0 0 0 3px rgba(26, 95, 168, 0.1);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+ul {
   list-style: none;
   margin-bottom: 20px;
 }
 
-#home-tiles {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  list-style: none;
-  margin-bottom: 0px;
-  list-style: none;
+
+/* ------------------------------------------------------------------
+   HEADER
+------------------------------------------------------------------ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  background: var(--brand-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-li {
-  background: var(--accent-lighter-blue);
-  padding: 16px;
-  margin-bottom: 0px;
-  border-radius: 10px;
-  font-size: 16px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease, margin 0.2s ease;
-  touch-action: manipulation;
-}
-
-/* FIX: niente font-size */
-li:active:not(.dragging){
-  background-color: var(--accent-light-blue);
-  transform: scale(1.03);
-}
-
-/* elemento trascinato */
-.dragging {
-  opacity: 0.5;
-  transform: scale(1.05);
-  z-index: 10;
-  background-color: var(--accent-light-blue);
-}
-
-/* placeholder migliorato */
-.placeholder {
-  height: 60px;
-  margin-bottom: 10px;
-  border: 2px dashed #ccc;
-  border-radius: 10px;
-  background: transparent;
-}
-
-button {
-  width: 100%;
-  padding: 16px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: none;
-  background: var(--background-clearer);
-  color: black;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2)
-}
-
-button:active {
-  opacity: 0.8;
+.header-title {
+  font-family: "Momo Signature", cursive;
+  font-weight: 400;
+  font-size: 28px;
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: 0.02em;
 }
 
 #favollo-img {
-  height: 65px;
+  height: 52px;
   width: auto;
   display: block;
-  margin: 20 20;
+  margin: 0 12px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
 }
 
 
-
-/* Desktop enhancement */
-@media (min-width: 768px) {
-  h1 {
-    font-size: 28px;
-  }
+/* ------------------------------------------------------------------
+   ITEMS GENERICI (li)
+------------------------------------------------------------------ */
+li {
+  background: var(--surface-card);
+  padding: 16px;
+  margin-bottom: 0;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 4px rgba(10, 30, 61, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  touch-action: manipulation;
 }
 
-/* home tiles*/
-.home-tile{
+li:hover {
+  box-shadow: 0 4px 12px rgba(10, 30, 61, 0.1);
+}
+
+li:active:not(.dragging) {
+  background-color: var(--surface-card-hover);
+  transform: scale(1.02);
+}
+
+
+/* ------------------------------------------------------------------
+   HOME TILES (griglia 2 colonne)
+------------------------------------------------------------------ */
+#home-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.home-tile {
   height: 150px;
+  cursor: pointer;
 }
 
-.home-tile .item-content{
-  flex-direction: column;
-  align-content: space-between;display: flex;
+.home-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(10, 30, 61, 0.12);
+}
+
+.home-tile .item-content {
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 130px;
-  margin-bottom: 0px;
+  height: 100%;
   text-decoration: none;
 }
 
-.home-tile-icon{
-  font-size: xx-large;
+/* titolo tile: sovrascrive h3 generico */
+.home-tile h3 {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+
+/* label descrittiva sotto l'icona */
+.home-tile span:last-child {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.home-tile-icon {
+  font-size: 28px;
 }
 
 
-/* warehouse items */
+/* ------------------------------------------------------------------
+   DRAG & DROP
+------------------------------------------------------------------ */
+.dragging {
+  opacity: 0.5;
+  transform: scale(1.04);
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(10, 30, 61, 0.15);
+}
 
-.warehouse-item{
-  background: var(--accent-lighter-blue);
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 10px;
+.placeholder {
+  height: 60px;
+  margin-bottom: 10px;
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  background: transparent;
+}
+
+
+/* ------------------------------------------------------------------
+   BOTTONI
+------------------------------------------------------------------ */
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--brand-dark);
+  color: #ffffff;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+button:hover {
+  opacity: 0.88;
+}
+
+button:active {
+  opacity: 0.75;
+  transform: scale(0.98);
+}
+
+
+/* ------------------------------------------------------------------
+   WAREHOUSE – item e controlli portatori
+------------------------------------------------------------------ */
+.warehouse-item {
+  background: var(--surface-card);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 4px rgba(10, 30, 61, 0.05);
 }
 
 .item-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
+.item-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* bottone "Lo porto io!" — pill scuro, larghezza automatica */
 .take-btn {
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
   border: none;
-  background: var(--background-clearer);
+  background: var(--brand-dark);
+  color: #ffffff;
   cursor: pointer;
-  font-size: 14px;
-  max-width: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: auto;
+  box-shadow: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
-.take-btn:active {
-  transform: scale(0.95);
-}
+.take-btn:hover  { opacity: 0.85; }
+.take-btn:active { transform: scale(0.96); }
 
+/* lista portatori */
 .people {
   margin-top: 10px;
   display: flex;
@@ -207,63 +343,61 @@ button:active {
 }
 
 .person-tag {
-  background: var(--accent-light-blue);
-  padding: 6px 8px;
-  border-radius: 8px;
-  font-size: 14px;
-
+  background: var(--brand-pale);
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  border: 1px solid rgba(26, 95, 168, 0.15);
 }
 
 .person-name {
-  margin-right: 4px;
+  color: var(--text-primary);
+  font-weight: 700;
 }
 
+/* bottoni +/– quantità */
 .qty-btn {
-  border: none;
-  background: var(--background-clearer);
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 12px;
+  border: 1px solid var(--border-medium);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
+  width: auto;
+  box-shadow: none;
+  transition: background 0.15s ease;
 }
 
-.qty-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.qty-btn:hover    { background: var(--surface-card-hover); opacity: 1; }
+.qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* bottone rimozione */
 .remove-btn {
   border: none;
-  background: #ff6b6b;
-  color: white;
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 12px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
   cursor: pointer;
+  width: auto;
+  box-shadow: none;
+  transition: background 0.15s ease;
 }
 
-.title {
-  background: var(--background-clearer);
-  border-radius: 10px;
-  padding: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
+.remove-btn:hover { background: #fed7d7; opacity: 1; }
 
-h1 {
-  color: var(--darker-fg-blue);
-  text-align: center;
-}
 
-h3 {
-  color: var(--darker-fg-blue);
-  text-align: center;
-}
-
-/* buffon animation */
-
+/* ------------------------------------------------------------------
+   ANIMAZIONE BUFFON
+------------------------------------------------------------------ */
 .buffon {
   position: fixed;
   width: 50px;
@@ -273,60 +407,82 @@ h3 {
 }
 
 @keyframes buffon-fly {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-120px) scale(1.2);
-  }
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
 }
 
-/*marker-icons*/
-.marker-icon{
-font-size: 30px;
-color: var(--accent-lighter-blue);
-text-shadow: 3px 3px rgba(0, 0, 0, 0.5);
-width: 50px;
-height: 50px;
-display: inline-block;
 
+/* ------------------------------------------------------------------
+   MAPPA – marker e sidebar categorie
+------------------------------------------------------------------ */
+.marker-icon {
+  font-size: 28px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  line-height: 1;
 }
 
+/* accordion categoria */
 .category {
-  margin: 12px 0;
-  border-radius: 12px;
+  margin: 10px 0;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--accent-lighter-blue) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 4px rgba(10, 30, 61, 0.06);
 }
 
 .category-header {
-  padding: 14px;
+  padding: 14px 16px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   display: flex;
   justify-content: space-between;
-  background: var(--accent-lighter-blue)
+  align-items: center;
+  background: var(--surface-card);
+  transition: background 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.category-header:hover {
+  background: var(--surface-card-hover);
 }
 
 .category-content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
-  background: var(--accent-lighter-blue) !important;
+  background: var(--surface-card);
 }
 
 .category.open .category-content {
-  max-height: 500px; /* abbastanza grande */
+  max-height: 500px;
 }
 
 .place {
-  padding: 10px 14px;
-  border-top: 1px solid var(--background-blue);
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease;
 }
 
-.category, .category-header, .category-content {
-  background-color: var(--accent-lighter-blue);
+.place:hover {
+  background: var(--brand-pale);
+}
+
+.place a {
+  color: var(--brand-mid);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.place a:hover {
+  text-decoration: underline;
 }

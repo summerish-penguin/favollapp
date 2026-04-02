@@ -1,102 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FavollApp</title>
+
+  <!-- Stile -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Font Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 
-<link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
-<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">   
+  <!-- Icone FontAwesome -->
+  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
 </head>
 <body>
 
-<div class="header">
-  <a href="index.html" class="header-title">FavollApp</a>&ensp;
-  <a href="index.html"><img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt=""></a>
-</div>
-
-<div class="container">
-
-  <div class="title">
-    <h1>Favollo 2026 </h1>
-    <h3>📍 Montbarbat, Catalunia</h3>
-    <h3>🗓️ 13 - 20 agosto 2026</h3>
+  <!-- Header con logo -->
+  <div class="header">
+    <a href="index.html" class="header-title">FavollApp</a>&ensp;
+    <a href="index.html">
+      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
+    </a>
   </div>
 
-<br>
+  <div class="container">
 
-  <ul id="home-tiles">
+    <!-- Titolo vacanza -->
+    <div class="title">
+      <h1>Favollo 2026</h1>
+      <h3>📍 Montbarbat, Catalogna</h3>
+      <h3>🗓️ 13 – 20 agosto 2026</h3>
+    </div>
 
-    <li class="item home-tile">
-      <div class="item-content">
-        <div>
-        <h3>La tana del favollo</h3>
-        </div>
-        <div>
+    <br>
+
+    <!-- Griglia di navigazione principale -->
+    <ul id="home-tiles">
+
+      <!-- Tile: La casa (non ancora collegata) -->
+      <li class="item home-tile">
+        <div class="item-content">
+          <h3>La tana del favollo</h3>
           <span class="home-tile-icon">🏠</span>
+          <span>La nostra casa</span>
         </div>
-        <div>
-        <span>La nostra casa</span>
-        </div>
-      </div>
-    </li>
+      </li>
 
-    <li class="item home-tile">
-      <a href="warehouse.html" class="item-content">
-        <div>
-        <h3>Il bagaglio del favollo</h3>
-        </div>
-        <div>
-          <span class="home-tile-icon">🎒</span>      
-        </div>
-        <div>
-        <span>Chi porta cosa</span>
-        </div>
-      </a>
-    </li>
+      <!-- Tile: Bagaglio -->
+      <li class="item home-tile">
+        <a href="warehouse.html" class="item-content">
+          <h3>Il bagaglio del favollo</h3>
+          <span class="home-tile-icon">🎒</span>
+          <span>Chi porta cosa</span>
+        </a>
+      </li>
 
-    <li class="item home-tile">
-      <a href="map.html" class="item-content">
-      <div class="item-content">
-        <div>
-        <h3>La mappa del favollo</h3>
-        </div>
-        <div>
-          <span class="home-tile-icon">🗺️</span>         
-        </div>
-        <div>
-        <span>Vicino a noi</span>
-        </div>
-      </div>
-      </a>
-    </li>
+      <!-- Tile: Mappa -->
+      <li class="item home-tile">
+        <a href="map.html" class="item-content">
+          <h3>La mappa del favollo</h3>
+          <span class="home-tile-icon">🗺️</span>
+          <span>Vicino a noi</span>
+        </a>
+      </li>
 
-
-    <li class="item home-tile">
-      <div class="item-content">
-        <div>
-        <h3>Il cast della vacanza</h3>
+      <!-- Tile: Cast (non ancora collegata) -->
+      <li class="item home-tile">
+        <div class="item-content">
+          <h3>Il cast della vacanza</h3>
+          <span class="home-tile-icon">😎</span>
+          <span>Né pochi né buoni</span>
         </div>
-        <div>
-           <span class="home-tile-icon">😎</span>   
-        </div>
-        <div>
-        <span>Né pochi né buoni</span>
-        </div>
-      </div>
-    </li>
+      </li>
 
-  </ul>
+    </ul>
 
-</div>
-
-<script src="warehouse.js"></script>
+  </div>
 
 </body>
 </html>

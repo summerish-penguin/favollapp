@@ -1,160 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FavollApp</title>
+  <title>FavollApp – Mappa</title>
 
-  
+  <!-- Stile app -->
+  <link rel="stylesheet" href="style.css">
 
-  <!-- Fonts -->
+  <!-- Font Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-<script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap" rel="stylesheet">
 
-  <!-- Icons -->
+  <!-- Icone FontAwesome -->
   <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
 
-  <!-- Leaflet -->
+  <!-- Leaflet (mappa interattiva) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
 
+  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
 
-  <script src="map.js"defer></script>
-  
-<link rel="stylesheet" href="style.css">  
+  <!-- Logica mappa (markers + sidebar categorie) -->
+  <script src="map.js" defer></script>
 </head>
-
 <body>
 
-<div class="header">
-  <a href="index.html" class="header-title">FavollApp</a>&ensp;
-  <a href="index.html">
-    <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="">
-  </a>
-</div>
-
-<div class="container">
-
-  <div class="title">
-    <h1>La mappa del Favollo</h1>
-    <h3>Luoghi vicino a noi</h3>
+  <!-- Header con logo -->
+  <div class="header">
+    <a href="index.html" class="header-title">FavollApp</a>&ensp;
+    <a href="index.html">
+      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
+    </a>
   </div>
 
-  <br>
+  <div class="container">
 
-  <div id="map" style="height: 400px;"></div>
+    <!-- Titolo pagina -->
+    <div class="title">
+      <h1>La mappa del Favollo</h1>
+      <h3>Luoghi vicino a noi</h3>
+    </div>
 
-  <div id="categories"></div>
+    <br>
 
-</div>
+    <!-- Mappa Leaflet (altezza fissa, popolata da map.js) -->
+    <div id="map" style="height: 400px;"></div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+    <!-- Sidebar categorie luoghi (popolata da map.js) -->
+    <div id="categories"></div>
 
-  const map = L.map('map').setView([41.74067, 2.77950], 11);
-
-  /* TILE */
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap & Carto'
-}).addTo(map);
-
-  /* ICONE */
-  const markerHome = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">🏠</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerSupermkt = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">🛒</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerBeach = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">🏖️</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerGasSt = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">⛽</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerPharma = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">⚕️</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerAtm = L.divIcon({
-    className: '',
-    html: `<span class="marker-icon">🏧</span>`,
-    iconSize: [30, 30]
-  });
-
-  const markerMap = {
-    home: markerHome,
-    supermarket: markerSupermkt,
-    beach: markerBeach,
-    gas: markerGasSt,
-    pharmacy: markerPharma,
-    atm: markerAtm
-  };
-
-  /* FETCH DATI */
-  fetch('./data/locations.json')
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Errore nel caricamento JSON");
-      }
-      return res.json();
-    })
-    .then(data => {
-
-      data.forEach(location => {
-
-        const lat = location.Lat;
-        const lng = location.Lng;
-
-        const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-
-        const icon = markerMap[location.LocCategory] || markerHome;
-
-        const mins = location.MinsAway 
-          ? `${location.MinsAway} minuti`
-          : '';
-
-        const marker = L.marker([lat, lng], { icon })
-          .addTo(map)
-          .bindPopup(`
-            <div>
-              <h3>${location.LocationName}</h3>
-              ${mins ? mins + '<br>' : ''}
-              <a href="${link}" target="_blank">➢ Google Maps</a>
-            </div>
-          `);
-
-        // apre popup solo per casa
-        if (location.LocCategory === 'home') {
-          marker.openPopup();
-        }
-
-      });
-
-    })
-    .catch(err => {
-      console.error("Errore:", err);
-    });
-
-});
-</script>
+  </div>
 
 </body>
 </html>
