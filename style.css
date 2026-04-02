@@ -8,19 +8,19 @@
 ------------------------------------------------------------------ */
 :root {
   /* Superfici */
-  --surface-body:          #e8f4fd;   /* sfondo pagina: azzurro molto tenue */
-  --surface-card:          #ffffff;   /* card e items */
-  --surface-card-hover:    #f8fbff;   /* card al hover */
+  --surface-body:          #e8f4fd;
+  --surface-card:          #ffffff;
+  --surface-card-hover:    #f8fbff;
 
   /* Brand */
-  --brand-dark:            #0a1e3d;   /* header, testi primari, bottoni scuri */
-  --brand-mid:             #1a5fa8;   /* accenti, link, focus ring */
-  --brand-pale:            #dbeeff;   /* badge, tag, sfondi leggeri */
+  --brand-dark:            #0a1e3d;
+  --brand-mid:             #1a5fa8;
+  --brand-pale:            #dbeeff;
 
   /* Testo */
   --text-primary:          #0a1e3d;
   --text-secondary:        #4b6080;
-  --text-muted:            #8fa3bb;
+  --text-muted:            #7f93ab;
 
   /* Bordi */
   --border-subtle:         rgba(10, 30, 61, 0.08);
@@ -56,14 +56,12 @@ body {
   background-image: url("assets/tropicalline-02.jpg");
   background-repeat: repeat;
   background-size: 50px;
-  /* overlay tenue: il pattern rimane visibile ma non compete con le card */
   background-blend-mode: overlay;
 }
 
 
 /* ------------------------------------------------------------------
    TIPOGRAFIA
-   Gerarchia: h1 → 800  ·  h3 (sottotitolo muted) → 600
 ------------------------------------------------------------------ */
 h1 {
   font-size: 22px;
@@ -71,7 +69,7 @@ h1 {
   color: var(--text-primary);
   text-align: center;
   line-height: 1.2;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 h3 {
@@ -166,6 +164,57 @@ ul {
 
 
 /* ------------------------------------------------------------------
+   COUNTDOWN BAR
+   Fascia sotto l'header: mostra i giorni mancanti alla vacanza
+------------------------------------------------------------------ */
+.countdown-bar {
+  background: var(--brand-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.countdown-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-pale);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.countdown-days {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+
+/* ------------------------------------------------------------------
+   META-PILLS (luogo e data nel titolo)
+------------------------------------------------------------------ */
+.meta-pills {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meta-pill {
+  background: var(--brand-pale);
+  color: var(--brand-dark);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(26, 95, 168, 0.15);
+}
+
+
+/* ------------------------------------------------------------------
    ITEMS GENERICI (li)
 ------------------------------------------------------------------ */
 li {
@@ -204,6 +253,7 @@ li:active:not(.dragging) {
 .home-tile {
   height: 150px;
   cursor: pointer;
+  position: relative; /* necessario per posizionare .tile-badge */
 }
 
 .home-tile:hover {
@@ -219,7 +269,6 @@ li:active:not(.dragging) {
   text-decoration: none;
 }
 
-/* titolo tile: sovrascrive h3 generico */
 .home-tile h3 {
   font-size: 12px;
   font-weight: 800;
@@ -228,7 +277,6 @@ li:active:not(.dragging) {
   letter-spacing: 0.01em;
 }
 
-/* label descrittiva sotto l'icona */
 .home-tile span:last-child {
   font-size: 11px;
   font-weight: 600;
@@ -239,6 +287,34 @@ li:active:not(.dragging) {
 
 .home-tile-icon {
   font-size: 28px;
+}
+
+/* Tile non ancora collegate: opacità ridotta, nessun hover lift */
+.tile-disabled {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tile-disabled:hover {
+  transform: none;
+  box-shadow: 0 1px 4px rgba(10, 30, 61, 0.06);
+}
+
+/* Badge "presto" in alto a destra sulla tile */
+.tile-badge {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  line-height: 1;
 }
 
 
@@ -278,14 +354,8 @@ button {
   transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
-button:hover {
-  opacity: 0.88;
-}
-
-button:active {
-  opacity: 0.75;
-  transform: scale(0.98);
-}
+button:hover  { opacity: 0.88; }
+button:active { opacity: 0.75; transform: scale(0.98); }
 
 
 /* ------------------------------------------------------------------
@@ -313,7 +383,6 @@ button:active {
   color: var(--text-primary);
 }
 
-/* bottone "Lo porto io!" — pill scuro, larghezza automatica */
 .take-btn {
   padding: 9px 16px;
   border-radius: var(--radius-pill);
@@ -334,7 +403,6 @@ button:active {
 .take-btn:hover  { opacity: 0.85; }
 .take-btn:active { transform: scale(0.96); }
 
-/* lista portatori */
 .people {
   margin-top: 10px;
   display: flex;
@@ -359,7 +427,6 @@ button:active {
   font-weight: 700;
 }
 
-/* bottoni +/– quantità */
 .qty-btn {
   border: 1px solid var(--border-medium);
   background: var(--surface-card);
@@ -377,7 +444,6 @@ button:active {
 .qty-btn:hover    { background: var(--surface-card-hover); opacity: 1; }
 .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* bottone rimozione */
 .remove-btn {
   border: none;
   background: var(--danger-bg);
@@ -415,6 +481,14 @@ button:active {
 /* ------------------------------------------------------------------
    MAPPA – marker e sidebar categorie
 ------------------------------------------------------------------ */
+#map {
+  height: 400px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 4px rgba(10, 30, 61, 0.06);
+}
+
 .marker-icon {
   font-size: 28px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -424,7 +498,6 @@ button:active {
   line-height: 1;
 }
 
-/* accordion categoria */
 .category {
   margin: 10px 0;
   border-radius: var(--radius-md);

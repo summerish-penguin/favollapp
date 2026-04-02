@@ -29,13 +29,22 @@
     </a>
   </div>
 
+  <!-- Barra countdown: giorni mancanti alla vacanza (popolata da JS) -->
+  <div class="countdown-bar">
+    <span class="countdown-label">-</span>
+    <span class="countdown-days" id="countdown-days">—</span>
+    <span class="countdown-label">giorni alla partenza</span>
+  </div>
+
   <div class="container">
 
-    <!-- Titolo vacanza -->
+    <!-- Titolo vacanza con meta-pill per luogo e data -->
     <div class="title">
       <h1>Favollo 2026</h1>
-      <h3>📍 Montbarbat, Catalogna</h3>
-      <h3>🗓️ 13 – 20 agosto 2026</h3>
+      <div class="meta-pills">
+        <span class="meta-pill">📍 Montbarbat, Catalogna</span>
+        <span class="meta-pill">🗓️ 13–20 ago</span>
+      </div>
     </div>
 
     <br>
@@ -43,13 +52,14 @@
     <!-- Griglia di navigazione principale -->
     <ul id="home-tiles">
 
-      <!-- Tile: La casa (non ancora collegata) -->
-      <li class="item home-tile">
+      <!-- Tile: La casa — non ancora collegata -->
+      <li class="item home-tile tile-disabled">
         <div class="item-content">
           <h3>La tana del favollo</h3>
           <span class="home-tile-icon">🏠</span>
           <span>La nostra casa</span>
         </div>
+        <span class="tile-badge">coming soon</span>
       </li>
 
       <!-- Tile: Bagaglio -->
@@ -70,18 +80,39 @@
         </a>
       </li>
 
-      <!-- Tile: Cast (non ancora collegata) -->
-      <li class="item home-tile">
+      <!-- Tile: Cast — non ancora collegata -->
+      <li class="item home-tile tile-disabled">
         <div class="item-content">
           <h3>Il cast della vacanza</h3>
           <span class="home-tile-icon">😎</span>
           <span>Né pochi né buoni</span>
         </div>
+        <span class="tile-badge">coming soon</span>
       </li>
 
     </ul>
 
   </div>
+
+  <script>
+    // Calcola i giorni mancanti alla data di inizio vacanza
+    const vacanza = new Date("2026-08-13");
+    const oggi    = new Date();
+    oggi.setHours(0, 0, 0, 0);
+    const diff    = Math.ceil((vacanza - oggi) / (1000 * 60 * 60 * 24));
+    const el      = document.getElementById("countdown-days");
+
+    if (diff > 0) {
+      el.textContent = diff;
+    } else if (diff === 0) {
+      el.textContent = "0";
+      document.querySelector(".countdown-bar").innerHTML =
+        '<span class="countdown-label" style="font-size:15px">🦀 Si parte oggi!</span>';
+    } else {
+      document.querySelector(".countdown-bar").innerHTML =
+        '<span class="countdown-label" style="font-size:15px">🦀 Il Favollo è stato!</span>';
+    }
+  </script>
 
 </body>
 </html>
