@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from db import engine, SessionLocal
 from models import Base, User, Item, Contribution
@@ -16,14 +17,24 @@ app.add_middleware(
         "http://localhost:8000",
         "http://127.0.0.1:8000",
         "https://summerish-penguin.github.io",
-        "*"  # opzionale (debug)
+        "*"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# =========================
+# DB INIT
+# =========================
 Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # =========================
 # SCHEMAS
@@ -53,20 +64,14 @@ def get_or_create_user(db, name):
     return user
 
 
-# ✅ FIX CRITICO: target sempre valorizzato
 def get_or_create_item(db, name):
     item = db.query(Item).filter_by(name=name).first()
     if not item:
-        item = Item(name=name, target=1)  # ← FIX
+        item = Item(name=name, target=1)
         db.add(item)
         db.commit()
         db.refresh(item)
     return item
-
-
-def get_total(db, item_id):
-    contribs = db.query(Contribution).filter_by(item_id=item_id).all()
-    return sum(c.quantity for c in contribs)
 
 
 # =========================
@@ -109,33 +114,22 @@ def get_warehouse(request: Request):
 
 @app.post("/warehouse/update")
 def update(data: UpdateRequest, db: Session = Depends(get_db)):
-    item = db.query(Item).filter_by(name=data.item).first()
 
-    if not item:
-        item = Item(name=data.item, target=1)
-        db.add(item)
-        db.commit()
-        db.refresh(item)
+    item = get_or_create_item(db, data.item)
+    user = get_or_create_user(db, data.user)
 
-    user = db.query(User).filter_by(name=data.user).first()
-    if not user:
-        user = User(name=data.user)
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-
-    entry = db.query(Warehouse).filter_by(
+    entry = db.query(Contribution).filter_by(
         user_id=user.id,
         item_id=item.id
     ).first()
 
     if not entry:
-        entry = Warehouse(user_id=user.id, item_id=item.id, qty=0)
+        entry = Contribution(user_id=user.id, item_id=item.id, quantity=0)
         db.add(entry)
 
-    entry.qty += data.delta
+    entry.quantity += data.delta
 
-    if entry.qty <= 0:
+    if entry.quantity <= 0:
         db.delete(entry)
 
     db.commit()
