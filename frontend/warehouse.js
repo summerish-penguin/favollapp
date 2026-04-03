@@ -70,6 +70,18 @@ function getTotal(itemName) {
 
 /* ========================= */
 
+function spawnBuffon(x, y) {
+  const img = document.createElement("img");
+  img.src = "./assets/buffon.png";
+  img.classList.add("buffon");
+  img.style.left = (x - 25) + "px";
+  img.style.top  = (y - 25) + "px";
+  document.body.appendChild(img);
+  setTimeout(() => img.remove(), 1000);
+}
+
+/* ========================= */
+
 function renderAll() {
   container.innerHTML = "";
   Object.entries(state).forEach(([itemName, { users, target }]) => {
@@ -94,9 +106,6 @@ function createItemElement(itemName, people, target) {
   const total = getTotal(itemName);
   targetLabel.classList.add("target-label");
 
-  // =========================
-  // LOGICA COLORI LABEL
-  // =========================
   if (total === 0) {
     targetLabel.classList.add("target-red");
   } else if (total > 0 && total < target) {
@@ -110,17 +119,14 @@ function createItemElement(itemName, people, target) {
   const btn = document.createElement("button");
   btn.innerText = "Lo porto io";
   btn.classList.add("take-btn");
-
-  // =========================
-  // DISABILITA SE TARGET RAGGIUNTO
-  // =========================
   btn.disabled = total >= target;
 
   btn.onclick = async () => {
     const user = usernameInput.value.trim();
     if (!user) return alert("Inserisci il tuo nome");
 
-    console.log("CLICK:", { user, itemName });
+    const rect = btn.getBoundingClientRect();
+    spawnBuffon(rect.left + rect.width / 2, rect.top);
 
     await optimisticUpdate(user, itemName, +1);
   };
@@ -153,15 +159,13 @@ function renderPeople(container, people, itemName, target) {
     const plus = document.createElement("button");
     plus.innerText = "▲";
     plus.classList.add("qty-btn");
-    // =========================
-    // DISABILITA ▲ SE TARGET RAGGIUNTO
-    // =========================
     plus.disabled = total >= target;
     plus.onclick = async () => await optimisticUpdate(name, itemName, +1);
 
     const minus = document.createElement("button");
     minus.innerText = "▼";
     minus.classList.add("qty-btn");
+    minus.disabled = qty === 1;
     minus.onclick = async () => await optimisticUpdate(name, itemName, -1);
 
     const remove = document.createElement("button");
@@ -174,9 +178,7 @@ function renderPeople(container, people, itemName, target) {
   });
 }
 
-/* =========================
-   🔴 QUI STA IL PROBLEMA
-========================= */
+/* ========================= */
 
 async function optimisticUpdate(user, item, delta) {
   console.log("UPDATE START", { user, item, delta });
@@ -191,9 +193,7 @@ async function optimisticUpdate(user, item, delta) {
   try {
     const res = await fetch(`${API_BASE}/warehouse/update`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user, item, delta })
     });
 
@@ -226,7 +226,6 @@ async function optimisticRemove(user, item) {
       body: JSON.stringify({ user, item })
     });
 
-    // ✅ Aggiorna lo stato locale
     if (state[item] && state[item].users[user] !== undefined) {
       delete state[item].users[user];
     }
