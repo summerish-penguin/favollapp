@@ -32,13 +32,16 @@ async function loadWarehouse() {
   const data = await res.json();
 
   items.forEach(item => {
-    const name = item.querySelector("span").innerText;
+    const itemName = item.dataset.item;
     const peopleDiv = item.querySelector(".people");
 
-    const backendItem = data.find(i => i.name === name);
-    if (!backendItem) return;
+    const backendItem = data.find(i => i.name === itemName);
 
-    renderPeople(peopleDiv, backendItem.users, name);
+    if (backendItem) {
+      renderPeople(peopleDiv, backendItem.users, itemName);
+    } else {
+      peopleDiv.innerHTML = "";
+    }
   });
 }
 
