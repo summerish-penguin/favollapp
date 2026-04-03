@@ -8,6 +8,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, index=True)
     desc = Column(String, nullable=True)
+    icon = Column(String, nullable=True)
 
 class Item(Base):
     __tablename__ = "items"

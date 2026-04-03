@@ -38,6 +38,26 @@ function renderUsers(users) {
 
 /* ========================= */
 
+function stringToColor(str) {
+    if (!str) return "#ccc";
+
+    let hash = 0;
+
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const h = hash % 360; 
+
+    const s = 60;
+
+    const l = 65;
+
+    return `hsl(${h}, ${s}, ${l})`;
+}
+
+/* ========================= */
+
 function createUserCard(user) {
   const card = document.createElement("div");
   card.classList.add("user-card");
@@ -49,7 +69,7 @@ function createUserCard(user) {
   // Avatar placeholder (future-proof)
   const avatar = document.createElement("div");
   avatar.classList.add("user-avatar");
-  avatar.innerText = getInitials(user.name);
+  avatar.innerText = user.icon;
 
   // Nome
   const name = document.createElement("div");
