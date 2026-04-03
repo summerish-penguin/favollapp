@@ -24,17 +24,17 @@ function renderWarehouse(data) {
     itemDiv.classList.add("warehouse-item");
     itemDiv.dataset.item = item.name;
 
-    const title = document.createElement("span");
-    title.innerText = item.name;
-    itemDiv.appendChild(title);
+    // --- NUOVO CONTAINER FLEX PER TITOLO + BOTTONE ---
+    const contentDiv = document.createElement("div");
+    contentDiv.classList.add("item-content");
 
-    const peopleDiv = document.createElement("div");
-    peopleDiv.classList.add("people");
-    itemDiv.appendChild(peopleDiv);
+    const title = document.createElement("span");
+    title.classList.add("item-name");
+    title.innerText = item.name;
 
     const takeBtn = document.createElement("button");
     takeBtn.classList.add("take-btn");
-    takeBtn.innerText = "Prendi";
+    takeBtn.innerText = "Lo porto io!";
     takeBtn.onclick = async () => {
       const user = usernameInput.value.trim();
       if (!user) return alert("Inserisci il tuo nome");
@@ -44,9 +44,16 @@ function renderWarehouse(data) {
 
       await updateQty(user, item.name, 1);
     };
-    itemDiv.appendChild(takeBtn);
 
+    contentDiv.appendChild(title);
+    contentDiv.appendChild(takeBtn);
+    itemDiv.appendChild(contentDiv);
+    // --- FINE MODIFICA ---
+
+    const peopleDiv = document.createElement("div");
+    peopleDiv.classList.add("people");
     renderPeople(peopleDiv, item.users, item.name);
+    itemDiv.appendChild(peopleDiv);
 
     warehouseContainer.appendChild(itemDiv);
   });

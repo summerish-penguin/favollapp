@@ -34,95 +34,21 @@
 
   <div class="container">
 
-    <!-- Titolo pagina -->
-    <div class="title">
-      <h1>Il bagaglio del Favollo</h1>
-      <h3>Chi porta cosa?</h3>
-    </div>
-
-    <br>
-
-    <!-- Input nome utente (usato da warehouse.js per associare oggetti alla persona) -->
-    <input id="username" placeholder="Il tuo nome" />
-
-    <!-- Lista oggetti: ogni item viene gestito da warehouse.js -->
-    <ul id="items-list">
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Ombrellone</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Borsa frigo</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Ghiaccini</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Sedia da spiaggia</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Carte da gioco</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Crema solare</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Rete da beach</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Palla da beach</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-      
-      <li class="item warehouse-item">
-        <div class="item-content">
-          <span class="item-name">Bocce</span>
-          <button class="take-btn">Lo porto io!</button>
-        </div>
-        <div class="people"></div>
-      </li>
-
-    </ul>
+  <!-- Titolo pagina -->
+  <div class="title">
+    <h1>Il bagaglio del Favollo</h1>
+    <h3>Chi porta cosa?</h3>
   </div>
+
+  <br>
+
+  <!-- Input nome utente -->
+  <input id="username" placeholder="Il tuo nome" />
+
+  <!-- Lista oggetti: generata dinamicamente dal JS -->
+  <div id="warehouse-container"></div>
+
+</div>
 
 </body>
 </html>

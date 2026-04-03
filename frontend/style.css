@@ -95,7 +95,7 @@ h3 {
 }
 
 .title {
-  background: var(--surface-card);
+  background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-body));
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   border: 1px solid var(--border-subtle);
@@ -254,6 +254,7 @@ li:active:not(.dragging) {
   height: 150px;
   cursor: pointer;
   position: relative; /* necessario per posizionare .tile-badge */
+  background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-body));
 }
 
 .home-tile:hover {
@@ -362,7 +363,7 @@ button:active { opacity: 0.75; transform: scale(0.98); }
    WAREHOUSE – item e controlli portatori
 ------------------------------------------------------------------ */
 .warehouse-item {
-  background: var(--surface-card);
+  background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-body));
   padding: 14px 16px;
   margin-bottom: 10px;
   border-radius: var(--radius-md);
@@ -516,7 +517,7 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--surface-card);
+  background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-body));
   transition: background 0.15s ease;
   letter-spacing: 0.01em;
 }
