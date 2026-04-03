@@ -145,9 +145,6 @@ def update(data: UpdateRequest, db: Session = Depends(get_db)):
         "target": item.target
     }
 
-    finally:
-        db.close()
-
 
 @app.post("/warehouse/remove")
 def remove(req: RemoveRequest):
