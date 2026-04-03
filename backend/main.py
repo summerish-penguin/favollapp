@@ -167,7 +167,13 @@ def remove(req: RemoveRequest):
 @app.get("/users")
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).order_by(User.name).all()
-    return [u.name for u in users]
+    return [
+        {
+            "name": u.name,
+            "desc": u.desc
+        } 
+    for u in users
+    ]
 
 @app.get("/health")
 def health():
@@ -192,20 +198,20 @@ SEED_ITEMS = [
 ]
 
 SEED_USERS = [
-    "Bea",
-    "Cassi",
-    "Ila",
-    "Marta",
-    "Pril",
-    "Bak",
-    "Pippo",
-    "Ciccio",
-    "Pisi",
-    "Ciolo",
-    "Varru",
-    "Giolli",
-    "Anna Colli",
-    "Ziba"
+    ("Bea", "Ministro dei Rapporti con il Parlamento"),
+    ("Cassi", "Ministro dei Beni Culturali"),
+    ("Ila", "Presidente del Consiglio dei Ministri"),
+    ("Marta", "Ministro degli Esteri"),
+    ("Pril", "Ministro delle Infrastrutture"),
+    ("Bak", "Ministro della Difesa"),
+    ("Pippo", "Ministro dell'Istruzione"),
+    ("Ciccio", "Ministro delle Pari Opportunità"),
+    ("Pisi", "Ministro dell'Agricoltura e della Sovranità Alimentare"),
+    ("Ciolo", "Ministro della Giustizia"),
+    ("Varru", "Ministro dell'Innovazione"),
+    ("Giolli", "Ministro dell'Energia"),
+    ("Anna Colli", "Ministro dell'Interno"),
+    ("Ziba", "Ministro dello Sport"),
 ]
 
 def seed():
@@ -218,10 +224,12 @@ def seed():
             else:
                 item.target = target
         db.commit()
-        for name in SEED_USERS:
+        for name, desc in SEED_USERS:
             user = db.query(User).filter(User.name.ilike(name)).first()
             if not user:
-                db.add(User(name=name))
+                db.add(User(name=name, desc=desc))
+            else: 
+                user.desc = desc
         db.commit()
             
     finally:

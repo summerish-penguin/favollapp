@@ -54,7 +54,7 @@ function createUserCard(user) {
   // Nome
   const name = document.createElement("div");
   name.classList.add("user-name");
-  name.innerText = user;
+  name.innerText = user.name;
 
   header.append(avatar, name);
 
@@ -64,7 +64,7 @@ function createUserCard(user) {
 
   const placeholder = document.createElement("div");
   placeholder.classList.add("user-placeholder");
-  placeholder.innerText = "Nessuna informazione";
+  placeholder.innerText = user.desc || "Nessuna informazione";
 
   body.appendChild(placeholder);
 
