@@ -1,5 +1,5 @@
 /* ==========================================================================
-   WAREHOUSE.JS – FIX SENZA CAMBIARE UI
+   WAREHOUSE.JS – DEBUG BACKEND UPDATE
    ========================================================================== */
 
 const API_BASE = "https://favollapp.onrender.com";
@@ -7,7 +7,6 @@ const API_BASE = "https://favollapp.onrender.com";
 const usernameInput = document.getElementById("username");
 const container = document.getElementById("warehouse-container");
 
-// stato: { itemName: { users: { user: qty }, target: N } }
 const state = {};
 
 const DEFAULT_ITEMS = [
@@ -22,7 +21,6 @@ const DEFAULT_ITEMS = [
   "Bocce"
 ];
 
-/* ========================= */
 init();
 
 async function init() {
@@ -31,21 +29,15 @@ async function init() {
   loadWarehouse();
 }
 
-/* ========================= */
 function initEmptyState(items) {
   items.forEach(name => {
     if (!state[name]) state[name] = { users: {}, target: 1 };
   });
 }
 
-/* =========================
-   FIX: merge invece di reset
-========================= */
 async function loadWarehouse() {
   try {
     const res = await fetch(`${API_BASE}/warehouse`);
-    if (!res.ok) throw new Error();
-
     const data = await res.json();
 
     data.forEach(item => {
@@ -64,28 +56,19 @@ async function loadWarehouse() {
     renderAll();
 
   } catch (e) {
-    console.warn("fallback locale");
+    console.error("LOAD ERROR:", e);
   }
 }
 
 /* ========================= */
+
 function getTotal(itemName) {
   const users = state[itemName]?.users ?? {};
   return Object.values(users).reduce((sum, qty) => sum + qty, 0);
 }
 
 /* ========================= */
-function spawnBuffon(x, y) {
-  const img = document.createElement("img");
-  img.src = "./assets/buffon.png";
-  img.classList.add("buffon");
-  img.style.left = (x - 25) + "px";
-  img.style.top  = (y - 25) + "px";
-  document.body.appendChild(img);
-  setTimeout(() => img.remove(), 1000);
-}
 
-/* ========================= */
 function renderAll() {
   container.innerHTML = "";
   Object.entries(state).forEach(([itemName, { users, target }]) => {
@@ -94,6 +77,7 @@ function renderAll() {
 }
 
 /* ========================= */
+
 function createItemElement(itemName, people, target) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("warehouse-item");
@@ -107,20 +91,17 @@ function createItemElement(itemName, people, target) {
 
   const targetLabel = document.createElement("span");
   targetLabel.classList.add("target-label");
-  updateTargetLabel(targetLabel, getTotal(itemName), target);
+  targetLabel.textContent = `${getTotal(itemName)} / ${target}`;
 
   const btn = document.createElement("button");
   btn.innerText = "Lo porto io";
-  btn.classList.add("take-btn"); // ✅ CLASSE ORIGINALE RIPRISTINATA
+  btn.classList.add("take-btn");
 
-  if (getTotal(itemName) >= target) btn.disabled = true;
-
-  btn.onclick = async (e) => {
+  btn.onclick = async () => {
     const user = usernameInput.value.trim();
     if (!user) return alert("Inserisci il tuo nome");
 
-    const rect = btn.getBoundingClientRect();
-    spawnBuffon(rect.left + rect.width / 2, rect.top);
+    console.log("CLICK:", { user, itemName });
 
     await optimisticUpdate(user, itemName, +1);
   };
@@ -129,24 +110,15 @@ function createItemElement(itemName, people, target) {
 
   const peopleDiv = document.createElement("div");
   peopleDiv.classList.add("people");
-  renderPeople(peopleDiv, people, itemName, target);
+  renderPeople(peopleDiv, people, itemName);
 
   wrapper.append(topRow, peopleDiv);
   return wrapper;
 }
 
 /* ========================= */
-function updateTargetLabel(el, total, target) {
-  el.textContent = `${total} / ${target}`;
-  el.classList.remove("target-red", "target-yellow", "target-green");
 
-  if (total === 0)          el.classList.add("target-red");
-  else if (total < target)  el.classList.add("target-yellow");
-  else                      el.classList.add("target-green");
-}
-
-/* ========================= */
-function renderPeople(container, people, itemName, target) {
+function renderPeople(container, people, itemName) {
   container.innerHTML = "";
 
   Object.entries(people).forEach(([name, qty]) => {
@@ -159,19 +131,17 @@ function renderPeople(container, people, itemName, target) {
 
     const plus = document.createElement("button");
     plus.innerText = "▲";
-    plus.classList.add("qty-btn"); // ✅ RIPRISTINATO
-    if (getTotal(itemName) >= target) plus.disabled = true;
+    plus.classList.add("qty-btn");
     plus.onclick = async () => await optimisticUpdate(name, itemName, +1);
 
     const minus = document.createElement("button");
     minus.innerText = "▼";
-    minus.classList.add("qty-btn"); // ✅ RIPRISTINATO
-    if (qty === 1) minus.disabled = true;
+    minus.classList.add("qty-btn");
     minus.onclick = async () => await optimisticUpdate(name, itemName, -1);
 
     const remove = document.createElement("button");
     remove.innerText = "✕";
-    remove.classList.add("remove-btn"); // ✅ RIPRISTINATO
+    remove.classList.add("remove-btn");
     remove.onclick = async () => await optimisticRemove(name, itemName);
 
     tag.append(label, plus, minus, remove);
@@ -180,10 +150,11 @@ function renderPeople(container, people, itemName, target) {
 }
 
 /* =========================
-   FIX LOGICO (NESSUN CAMBIO UI)
+   🔴 QUI STA IL PROBLEMA
 ========================= */
+
 async function optimisticUpdate(user, item, delta) {
-  const prev = JSON.parse(JSON.stringify(state));
+  console.log("UPDATE START", { user, item, delta });
 
   if (!state[item]) state[item] = { users: {}, target: 1 };
 
@@ -195,30 +166,34 @@ async function optimisticUpdate(user, item, delta) {
   try {
     const res = await fetch(`${API_BASE}/warehouse/update`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ user, item, delta })
     });
 
-    const data = await res.json();
+    console.log("RESPONSE STATUS:", res.status);
 
-    // ✅ sincronizza target backend
+    const data = await res.json();
+    console.log("RESPONSE DATA:", data);
+
+    if (!data.ok) {
+      alert("Errore backend: " + data.reason);
+    }
+
     if (state[item]) {
       state[item].target = data.target ?? state[item].target;
     }
 
   } catch (e) {
-    Object.assign(state, prev);
-    renderAll();
+    console.error("UPDATE ERROR:", e);
+    alert("Errore chiamata backend");
   }
 }
 
 /* ========================= */
+
 async function optimisticRemove(user, item) {
-  const prev = JSON.parse(JSON.stringify(state));
-
-  delete state[item].users[user];
-  renderAll();
-
   try {
     await fetch(`${API_BASE}/warehouse/remove`, {
       method: "POST",
@@ -226,7 +201,6 @@ async function optimisticRemove(user, item) {
       body: JSON.stringify({ user, item })
     });
   } catch (e) {
-    Object.assign(state, prev);
-    renderAll();
+    console.error("REMOVE ERROR:", e);
   }
 }

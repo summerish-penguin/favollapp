@@ -12,7 +12,13 @@ app = FastAPI()
 # =========================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "https://summerish-penguin.github.io",
+        "*"  # opzionale (debug)
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -102,42 +108,42 @@ def get_warehouse(request: Request):
 
 
 @app.post("/warehouse/update")
-def update(req: UpdateRequest):
-    db = SessionLocal()
-    try:
-        user = get_or_create_user(db, req.user)
-        item = get_or_create_item(db, req.item)
+def update(data: UpdateRequest, db: Session = Depends(get_db)):
+    item = db.query(Item).filter_by(name=data.item).first()
 
-        # blocco target
-        if req.delta > 0:
-            total = get_total(db, item.id)
-            if total >= item.target:
-                return {"ok": False, "reason": "target_reached"}
-
-        contrib = db.query(Contribution).filter_by(
-            user_id=user.id,
-            item_id=item.id
-        ).first()
-
-        if contrib:
-            contrib.quantity += req.delta
-            if contrib.quantity <= 0:
-                db.delete(contrib)
-        else:
-            contrib = Contribution(
-                user_id=user.id,
-                item_id=item.id,
-                quantity=max(1, req.delta)
-            )
-            db.add(contrib)
-
+    if not item:
+        item = Item(name=data.item, target=1)
+        db.add(item)
         db.commit()
+        db.refresh(item)
 
-        # ✅ FIX: ritorna target
-        return {
-            "ok": True,
-            "target": item.target
-        }
+    user = db.query(User).filter_by(name=data.user).first()
+    if not user:
+        user = User(name=data.user)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    entry = db.query(Warehouse).filter_by(
+        user_id=user.id,
+        item_id=item.id
+    ).first()
+
+    if not entry:
+        entry = Warehouse(user_id=user.id, item_id=item.id, qty=0)
+        db.add(entry)
+
+    entry.qty += data.delta
+
+    if entry.qty <= 0:
+        db.delete(entry)
+
+    db.commit()
+
+    return {
+        "ok": True,
+        "target": item.target
+    }
 
     finally:
         db.close()
