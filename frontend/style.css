@@ -562,3 +562,38 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   text-decoration: underline;
 }
 
+
+/* ------------------------------------------------------------------
+   TARGET LABEL (dentro .warehouse-item)
+   Mostra "X su Y" con colore semantico in base al progresso.
+------------------------------------------------------------------ */
+.target-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 0 unità → rosso */
+.target-red {
+  background: #fff0f0;
+  color: #a32d2d;
+  border: 1px solid rgba(163, 45, 45, 0.2);
+}
+
+/* 1+ unità, target non raggiunto → giallo */
+.target-yellow {
+  background: #fef9ec;
+  color: #854f0b;
+  border: 1px solid rgba(133, 79, 11, 0.2);
+}
+
+/* target raggiunto → verde */
+.target-green {
+  background: #edfaf3;
+  color: #0f6e56;
+  border: 1px solid rgba(15, 110, 86, 0.2);
+}

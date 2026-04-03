@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# crea tabelle
+# crea tabelle (aggiunge colonne nuove se il db esiste già)
 Base.metadata.create_all(bind=engine)
 
 
@@ -57,19 +57,22 @@ def get_or_create_item(db, name):
         db.refresh(item)
     return item
 
+def get_total(db, item_id):
+    """Somma le quantità di tutti i contributor per un item."""
+    contribs = db.query(Contribution).filter_by(item_id=item_id).all()
+    return sum(c.quantity for c in contribs)
+
 
 # =========================
 # ENDPOINTS
 # =========================
 
-# 🔥 supporta GET + HEAD (fix 405)
 @app.api_route("/warehouse", methods=["GET", "HEAD"])
 def get_warehouse(request: Request):
     if request.method == "HEAD":
         return
 
     db = SessionLocal()
-
     try:
         items = db.query(Item).all()
         result = []
@@ -82,17 +85,14 @@ def get_warehouse(request: Request):
 
             for c in contributions:
                 user = db.get(User, c.user_id)
-
-                users.append({
-                    "name": user.name,
-                    "qty": c.quantity
-                })
+                users.append({ "name": user.name, "qty": c.quantity })
                 total += c.quantity
 
             result.append({
-                "name": item.name,
-                "total": total,
-                "users": users
+                "name":   item.name,
+                "target": item.target,   # ← esposto al frontend
+                "total":  total,
+                "users":  users
             })
 
         return result
@@ -104,10 +104,15 @@ def get_warehouse(request: Request):
 @app.post("/warehouse/update")
 def update(req: UpdateRequest):
     db = SessionLocal()
-
     try:
         user = get_or_create_user(db, req.user)
         item = get_or_create_item(db, req.item)
+
+        # non superare il target
+        if req.delta > 0:
+            total = get_total(db, item.id)
+            if total >= item.target:
+                return {"ok": False, "reason": "target_reached"}
 
         contrib = db.query(Contribution).filter_by(
             user_id=user.id,
@@ -116,7 +121,6 @@ def update(req: UpdateRequest):
 
         if contrib:
             contrib.quantity += req.delta
-
             if contrib.quantity <= 0:
                 db.delete(contrib)
         else:
@@ -137,7 +141,6 @@ def update(req: UpdateRequest):
 @app.post("/warehouse/remove")
 def remove(req: RemoveRequest):
     db = SessionLocal()
-
     try:
         user = db.query(User).filter_by(name=req.user).first()
         item = db.query(Item).filter_by(name=req.item).first()
@@ -171,32 +174,35 @@ def health():
 
 # =========================
 # SEED
+# Target = quante unità del gruppo servono in totale.
+# Modificalo liberamente per ogni item.
 # =========================
+
+SEED_ITEMS = [
+    ("Ombrellone",           3),
+    ("Gazebo",               1),
+    ("Borsa frigo",          2),
+    ("Ghiaccini",            4),
+    ("Sedia da spiaggia",    7),
+    ("Carte da gioco",       1),
+    ("Crema solare",         4),
+    ("Rete da beach",        1),
+    ("Palla da beach",       1),
+    ("Bocce",                1),
+    ("Settimana enigmistica", 1),
+]
 
 def seed():
     db = SessionLocal()
-
     try:
-        items = [
-            "Ombrellone",
-            "Gazebo",
-            "Borsa frigo",
-            "Ghiaccini",
-            "Sedia da spiaggia",
-            "Carte da gioco",
-            "Crema solare",
-            "Rete da beach",
-            "Palla da beach",
-            "Bocce",
-            "Settimana enigmistica"
-        ]
-
-        for name in items:
-            if not db.query(Item).filter_by(name=name).first():
-                db.add(Item(name=name))
-
+        for name, target in SEED_ITEMS:
+            item = db.query(Item).filter_by(name=name).first()
+            if not item:
+                db.add(Item(name=name, target=target))
+            else:
+                # aggiorna il target se l'item esiste già
+                item.target = target
         db.commit()
-
     finally:
         db.close()
 
