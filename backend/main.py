@@ -179,6 +179,7 @@ def seed():
     try:
         items = [
             "Ombrellone",
+            "Gazebo",
             "Borsa frigo",
             "Ghiaccini",
             "Sedia da spiaggia",
@@ -186,7 +187,8 @@ def seed():
             "Crema solare",
             "Rete da beach",
             "Palla da beach",
-            "Bocce"
+            "Bocce",
+            "Settimana enigmistica"
         ]
 
         for name in items:
