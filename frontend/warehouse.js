@@ -1,58 +1,61 @@
-/* ==========================================================================
-   WAREHOUSE.JS – VERSIONE CON BACKEND
-   ========================================================================== */
-
 const API_BASE = "https://favollapp.onrender.com";
 
-/* =========================
-   BUFFON ANIMATION
-========================= */
+const usernameInput = document.getElementById("username");
+const warehouseContainer = document.getElementById("warehouse-container"); // div principale dove metti tutti gli items
+
 function spawnBuffon(x, y) {
   const img = document.createElement("img");
   img.src = "./assets/buffon.png";
   img.classList.add("buffon");
   img.style.left = (x - 25) + "px";
   img.style.top  = (y - 25) + "px";
-
   document.body.appendChild(img);
   setTimeout(() => img.remove(), 1000);
 }
 
-/* =========================
-   ELEMENTI DOM
-========================= */
-const usernameInput = document.getElementById("username");
-const items = document.querySelectorAll(".warehouse-item");
+// =========================
+// RENDER COMPLETO
+// =========================
+function renderWarehouse(data) {
+  warehouseContainer.innerHTML = ""; // reset
 
-/* =========================
-   LOAD INIZIALE DAL BACKEND
-========================= */
-async function loadWarehouse() {
-  const res = await fetch(`${API_BASE}/warehouse`);
-  const data = await res.json();
+  data.forEach(item => {
+    const itemDiv = document.createElement("div");
+    itemDiv.classList.add("warehouse-item");
+    itemDiv.dataset.item = item.name;
 
-  items.forEach(item => {
-    const itemName = item.dataset.item;
-    const peopleDiv = item.querySelector(".people");
+    const title = document.createElement("span");
+    title.innerText = item.name;
+    itemDiv.appendChild(title);
 
-    const backendItem = data.find(i => i.name === itemName);
+    const peopleDiv = document.createElement("div");
+    peopleDiv.classList.add("people");
+    itemDiv.appendChild(peopleDiv);
 
-    if (backendItem) {
-      renderPeople(peopleDiv, backendItem.users, itemName);
-    } else {
-      peopleDiv.innerHTML = "";
-    }
+    const takeBtn = document.createElement("button");
+    takeBtn.classList.add("take-btn");
+    takeBtn.innerText = "Prendi";
+    takeBtn.onclick = async () => {
+      const user = usernameInput.value.trim();
+      if (!user) return alert("Inserisci il tuo nome");
+
+      const rect = takeBtn.getBoundingClientRect();
+      spawnBuffon(rect.left + rect.width / 2, rect.top);
+
+      await updateQty(user, item.name, 1);
+    };
+    itemDiv.appendChild(takeBtn);
+
+    renderPeople(peopleDiv, item.users, item.name);
+
+    warehouseContainer.appendChild(itemDiv);
   });
 }
 
-/* =========================
-   RENDER
-========================= */
 function renderPeople(container, users, itemName) {
   container.innerHTML = "";
 
   users.forEach(({ name, qty }) => {
-
     const tag = document.createElement("div");
     tag.classList.add("person-tag");
 
@@ -60,31 +63,21 @@ function renderPeople(container, users, itemName) {
     label.classList.add("person-name");
     label.innerText = `${name} (${qty})`;
 
-    // ▲
     const plus = document.createElement("button");
     plus.innerText = "▲";
     plus.classList.add("qty-btn");
-    plus.onclick = async () => {
-      await updateQty(name, itemName, 1);
-    };
+    plus.onclick = async () => updateQty(name, itemName, 1);
 
-    // ▼
     const minus = document.createElement("button");
     minus.innerText = "▼";
     minus.classList.add("qty-btn");
-    if (qty === 1) minus.disabled = true;
+    minus.disabled = qty === 1;
+    minus.onclick = async () => updateQty(name, itemName, -1);
 
-    minus.onclick = async () => {
-      await updateQty(name, itemName, -1);
-    };
-
-    // ✕
     const remove = document.createElement("button");
     remove.innerText = "✕";
     remove.classList.add("remove-btn");
-    remove.onclick = async () => {
-      await removeUser(name, itemName);
-    };
+    remove.onclick = async () => removeUser(name, itemName);
 
     tag.appendChild(label);
     tag.appendChild(plus);
@@ -95,61 +88,36 @@ function renderPeople(container, users, itemName) {
   });
 }
 
-/* =========================
-   API CALLS
-========================= */
+// =========================
+// API
+// =========================
+async function loadWarehouse() {
+  const res = await fetch(`${API_BASE}/warehouse`);
+  const data = await res.json();
+  renderWarehouse(data);
+}
+
 async function updateQty(user, item, delta) {
-  await fetch(`${API_BASE}/warehouse/update`, {
+  const res = await fetch(`${API_BASE}/warehouse/update`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user, item, delta })
   });
-
-  await loadWarehouse();
+  const updated = await res.json();
+  renderWarehouse(updated);
 }
 
 async function removeUser(user, item) {
-  await fetch(`${API_BASE}/warehouse/remove`, {
+  const res = await fetch(`${API_BASE}/warehouse/remove`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ user, item })
   });
-
-  await loadWarehouse();
+  const updated = await res.json();
+  renderWarehouse(updated);
 }
 
-/* =========================
-   EVENTI UI
-========================= */
-items.forEach(item => {
-
-  const button = item.querySelector(".take-btn");
-  const itemName = item.querySelector("span").innerText;
-
-  button.addEventListener("click", async () => {
-
-    const user = usernameInput.value.trim();
-
-    if (!user) {
-      alert("Inserisci il tuo nome");
-      return;
-    }
-
-    // animazione
-    const rect = button.getBoundingClientRect();
-    spawnBuffon(rect.left + rect.width / 2, rect.top);
-
-    // chiamata backend
-    await updateQty(user, itemName, 1);
-  });
-
-});
-
-/* =========================
-   INIT
-========================= */
+// =========================
+// INIT
+// =========================
 loadWarehouse();
