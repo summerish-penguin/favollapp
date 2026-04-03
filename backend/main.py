@@ -20,7 +20,6 @@ app.add_middleware(
 # crea tabelle (aggiunge colonne nuove se il db esiste già)
 Base.metadata.create_all(bind=engine)
 
-
 # =========================
 # SCHEMAS
 # =========================
@@ -34,6 +33,9 @@ class RemoveRequest(BaseModel):
     user: str
     item: str
 
+class AddItemRequest(BaseModel):
+    name: str
+    target: int = 1
 
 # =========================
 # HELPERS
@@ -58,7 +60,6 @@ def get_or_create_item(db, name):
     return item
 
 def get_total(db, item_id):
-    """Somma le quantità di tutti i contributor per un item."""
     contribs = db.query(Contribution).filter_by(item_id=item_id).all()
     return sum(c.quantity for c in contribs)
 
@@ -82,21 +83,33 @@ def get_warehouse(request: Request):
 
             users = []
             total = 0
-
             for c in contributions:
                 user = db.get(User, c.user_id)
-                users.append({ "name": user.name, "qty": c.quantity })
+                users.append({"name": user.name, "qty": c.quantity})
                 total += c.quantity
 
             result.append({
-                "name":   item.name,
-                "target": item.target,   # ← esposto al frontend
-                "total":  total,
-                "users":  users
+                "name": item.name,
+                "target": item.target,
+                "total": total,
+                "users": users
             })
-
         return result
+    finally:
+        db.close()
 
+
+@app.post("/warehouse/add")
+def add_item(req: AddItemRequest):
+    db = SessionLocal()
+    try:
+        item = db.query(Item).filter_by(name=req.name).first()
+        if not item:
+            item = Item(name=req.name, target=req.target)
+            db.add(item)
+            db.commit()
+            db.refresh(item)
+        return {"ok": True, "name": item.name, "target": item.target}
     finally:
         db.close()
 
@@ -132,8 +145,7 @@ def update(req: UpdateRequest):
             db.add(contrib)
 
         db.commit()
-        return {"ok": True}
-
+        return {"ok": True, "target": item.target}
     finally:
         db.close()
 
@@ -158,15 +170,13 @@ def remove(req: RemoveRequest):
             db.commit()
 
         return {"ok": True}
-
     finally:
         db.close()
 
 
 # =========================
-# HEALTH CHECK (per UptimeRobot)
+# HEALTH CHECK
 # =========================
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -174,21 +184,19 @@ def health():
 
 # =========================
 # SEED
-# Target = quante unità del gruppo servono in totale.
-# Modificalo liberamente per ogni item.
 # =========================
 
 SEED_ITEMS = [
-    ("Ombrellone",           3),
-    ("Gazebo",               1),
-    ("Borsa frigo",          2),
-    ("Ghiaccini",            4),
-    ("Sedia da spiaggia",    7),
-    ("Carte da gioco",       1),
-    ("Crema solare",         4),
-    ("Rete da beach",        1),
-    ("Palla da beach",       1),
-    ("Bocce",                1),
+    ("Ombrellone", 3),
+    ("Gazebo", 1),
+    ("Borsa frigo", 2),
+    ("Ghiaccini", 4),
+    ("Sedia da spiaggia", 7),
+    ("Carte da gioco", 1),
+    ("Crema solare", 4),
+    ("Rete da beach", 1),
+    ("Palla da beach", 1),
+    ("Bocce", 1),
     ("Settimana enigmistica", 1),
 ]
 
@@ -200,16 +208,11 @@ def seed():
             if not item:
                 db.add(Item(name=name, target=target))
             else:
-                # aggiorna il target se l'item esiste già
                 item.target = target
         db.commit()
     finally:
         db.close()
 
-
-# =========================
-# STARTUP
-# =========================
 
 @app.on_event("startup")
 def startup():
