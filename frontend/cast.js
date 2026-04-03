@@ -49,7 +49,7 @@ function createUserCard(user) {
   // Avatar placeholder (future-proof)
   const avatar = document.createElement("div");
   avatar.classList.add("user-avatar");
-  avatar.innerText = getInitials(user);
+  avatar.innerText = getInitials(user.name);
 
   // Nome
   const name = document.createElement("div");
@@ -81,6 +81,8 @@ function createUserCard(user) {
 /* ========================= */
 
 function getInitials(name) {
+  if (!name || typeof name !== "string") return "";
+
   return name
     .split(" ")
     .map(n => n[0])
