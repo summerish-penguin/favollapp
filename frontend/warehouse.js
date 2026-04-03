@@ -28,6 +28,7 @@ async function init() {
   initEmptyState(DEFAULT_ITEMS);
   renderAll();
   loadWarehouse();
+  loadUsers();
 }
 
 function initEmptyState(items) {
@@ -59,6 +60,32 @@ async function loadWarehouse() {
   } catch (e) {
     console.error("LOAD ERROR:", e);
   }
+}
+
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API_BASE}/users`);
+    const users = await res.json();
+
+    console.log("USERS:", users);
+
+    // esempio: popolare datalist o select
+    populateUserInput(users);
+
+  } catch (e) {
+    console.error("USERS LOAD ERROR:", e);
+  }
+}
+
+function populateUserInput(users) {
+  const datalist = document.getElementById("users-list");
+  datalist.innerHTML = "";
+
+  users.forEach(u => {
+    const option = document.createElement("option");
+    option.value = u;
+    datalist.appendChild(option);
+  });
 }
 
 /* ========================= */

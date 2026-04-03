@@ -164,6 +164,10 @@ def remove(req: RemoveRequest):
     finally:
         db.close()
 
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(User.name).all()
+    return [u.name for u in users]
 
 @app.get("/health")
 def health():
@@ -187,6 +191,23 @@ SEED_ITEMS = [
     ("Bocce", 1),
 ]
 
+SEED_USERS = [
+    "Bea",
+    "Cassi",
+    "Ila",
+    "Marta",
+    "Pril",
+    "Bak",
+    "Pippo",
+    "Ciccio",
+    "Pisi",
+    "Ciolo",
+    "Varru",
+    "Giolli",
+    "Anna Colli",
+    "Ziba"
+]
+
 def seed():
     db = SessionLocal()
     try:
@@ -197,6 +218,12 @@ def seed():
             else:
                 item.target = target
         db.commit()
+        for name in SEED_USERS:
+            user = db.query(User).filter(User.name.ilike(name)).first()
+            if not user:
+                db.add(User(name=name))
+        db.commit()
+            
     finally:
         db.close()
 
