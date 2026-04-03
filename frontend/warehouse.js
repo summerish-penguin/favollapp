@@ -11,6 +11,7 @@ const state = {};
 
 const DEFAULT_ITEMS = [
   "Ombrellone",
+  "Gazebo",
   "Borsa frigo",
   "Ghiaccini",
   "Sedia da spiaggia",
@@ -90,12 +91,30 @@ function createItemElement(itemName, people, target) {
   title.innerText = itemName;
 
   const targetLabel = document.createElement("span");
+  const total = getTotal(itemName);
   targetLabel.classList.add("target-label");
-  targetLabel.textContent = `${getTotal(itemName)} / ${target}`;
+
+  // =========================
+  // LOGICA COLORI LABEL
+  // =========================
+  if (total === 0) {
+    targetLabel.classList.add("target-red");
+  } else if (total > 0 && total < target) {
+    targetLabel.classList.add("target-yellow");
+  } else if (total >= target) {
+    targetLabel.classList.add("target-green");
+  }
+
+  targetLabel.textContent = `${total} / ${target}`;
 
   const btn = document.createElement("button");
   btn.innerText = "Lo porto io";
   btn.classList.add("take-btn");
+
+  // =========================
+  // DISABILITA SE TARGET RAGGIUNTO
+  // =========================
+  btn.disabled = total >= target;
 
   btn.onclick = async () => {
     const user = usernameInput.value.trim();
@@ -110,7 +129,7 @@ function createItemElement(itemName, people, target) {
 
   const peopleDiv = document.createElement("div");
   peopleDiv.classList.add("people");
-  renderPeople(peopleDiv, people, itemName);
+  renderPeople(peopleDiv, people, itemName, target);
 
   wrapper.append(topRow, peopleDiv);
   return wrapper;
@@ -118,8 +137,10 @@ function createItemElement(itemName, people, target) {
 
 /* ========================= */
 
-function renderPeople(container, people, itemName) {
+function renderPeople(container, people, itemName, target) {
   container.innerHTML = "";
+
+  const total = getTotal(itemName);
 
   Object.entries(people).forEach(([name, qty]) => {
     const tag = document.createElement("div");
@@ -132,6 +153,10 @@ function renderPeople(container, people, itemName) {
     const plus = document.createElement("button");
     plus.innerText = "▲";
     plus.classList.add("qty-btn");
+    // =========================
+    // DISABILITA ▲ SE TARGET RAGGIUNTO
+    // =========================
+    plus.disabled = total >= target;
     plus.onclick = async () => await optimisticUpdate(name, itemName, +1);
 
     const minus = document.createElement("button");
@@ -200,6 +225,14 @@ async function optimisticRemove(user, item) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user, item })
     });
+
+    // ✅ Aggiorna lo stato locale
+    if (state[item] && state[item].users[user] !== undefined) {
+      delete state[item].users[user];
+    }
+
+    renderAll();
+
   } catch (e) {
     console.error("REMOVE ERROR:", e);
   }
