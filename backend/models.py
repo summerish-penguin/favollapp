@@ -13,7 +13,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
     category = Column(String, nullable=True)
-    target = Column(Integer, default=1)   # quante unità totali si vogliono portare
+    target = Column(Integer, nullable=False, default=1)   # quante unità totali si vogliono portare
 
 class Contribution(Base):
     __tablename__ = "contributions"
