@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -49,6 +49,10 @@ class RemoveRequest(BaseModel):
     user: str
     item: str
 
+class CreateItemRequest(BaseModel):
+    name: str
+    target: int = 1
+
 
 # =========================
 # HELPERS
@@ -62,7 +66,6 @@ def get_or_create_user(db, name):
         db.commit()
         db.refresh(user)
     return user
-
 
 def get_or_create_item(db, name):
     item = db.query(Item).filter_by(name=name).first()
@@ -100,10 +103,10 @@ def get_warehouse(request: Request):
                 total += c.quantity
 
             result.append({
-                "name": item.name,
+                "name":   item.name,
                 "target": item.target,
-                "total": total,
-                "users": users
+                "total":  total,
+                "users":  users
             })
 
         return result
@@ -114,9 +117,8 @@ def get_warehouse(request: Request):
 
 @app.post("/warehouse/update")
 def update(data: UpdateRequest, db: Session = Depends(get_db)):
-
-    item = get_or_create_item(db, data.item)
-    user = get_or_create_user(db, data.user)
+    item  = get_or_create_item(db, data.item)
+    user  = get_or_create_user(db, data.user)
 
     entry = db.query(Contribution).filter_by(
         user_id=user.id,
@@ -134,10 +136,7 @@ def update(data: UpdateRequest, db: Session = Depends(get_db)):
 
     db.commit()
 
-    return {
-        "ok": True,
-        "target": item.target
-    }
+    return {"ok": True, "target": item.target}
 
 
 @app.post("/warehouse/remove")
@@ -164,17 +163,35 @@ def remove(req: RemoveRequest):
     finally:
         db.close()
 
+
+# =========================
+# CREA NUOVO ITEM
+# Chiamato dal modal "Aggiungi oggetto" nel frontend.
+# Restituisce errore 409 se l'item esiste già.
+# =========================
+
+@app.post("/items")
+def create_item(req: CreateItemRequest, db: Session = Depends(get_db)):
+    existing = db.query(Item).filter_by(name=req.name).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Item già esistente.")
+
+    if req.target < 1:
+        raise HTTPException(status_code=422, detail="Il target deve essere almeno 1.")
+
+    new_item = Item(name=req.name, target=req.target)
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+
+    return {"ok": True, "name": new_item.name, "target": new_item.target}
+
+
 @app.get("/users")
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).order_by(User.name).all()
-    return [
-        {
-            "name": u.name,
-            "desc": u.desc,
-            "icon": u.icon
-        } 
-    for u in users
-    ]
+    return [{"name": u.name, "desc": u.desc, "icon": u.icon} for u in users]
+
 
 @app.get("/health")
 def health():
@@ -186,33 +203,33 @@ def health():
 # =========================
 
 SEED_ITEMS = [
-    ("Ombrellone", 6),
-    ("Gazebo", 1),
-    ("Borsa frigo", 7),
-    ("Ghiaccini", 20),
+    ("Ombrellone",        6),
+    ("Gazebo",            1),
+    ("Borsa frigo",       7),
+    ("Ghiaccini",        20),
     ("Sedia da spiaggia", 6),
-    ("Carte da gioco", 2),
-    ("Crema solare", 2),
-    ("Rete da beach", 1),
-    ("Palla da beach", 2),
-    ("Bocce", 1),
+    ("Carte da gioco",    2),
+    ("Crema solare",      2),
+    ("Rete da beach",     1),
+    ("Palla da beach",    2),
+    ("Bocce",             1),
 ]
 
 SEED_USERS = [
-    ("Bea", "Ministro dei Rapporti con il Parlamento" , "🏠"),
-    ("Cassi", "Ministro dei Beni Culturali" , "🎨"),
-    ("Ila", "Presidente del Consiglio dei Ministri" , "👑"),
-    ("Marta", "Ministro degli Esteri" , "✈️"),
-    ("Pril", "Ministro delle Infrastrutture" , "🧱"),
-    ("Bak", "Ministro della Difesa" , "🛡️"),
-    ("Pippo", "Ministro dell'Istruzione" , "🧑‍🎓"),
-    ("Ciccio", "Ministro delle Pari Opportunità" , "👴🏾"),
-    ("Pisi", "Ministro della Sovranità Alimentare" , "🌾"),
-    ("Ciolo", "Ministro della Giustizia" , "⚖️"),
-    ("Varru", "Ministro dell'Innovazione" , "🖥️"),
-    ("Giolli", "Ministro dell'Energia" , "🔋"),
-    ("Anna Colli", "Ministro dell'Interno" , "🚓"),
-    ("Ziba", "Ministro dello Sport" , "⚽")
+    ("Bea",        "Ministro dei Rapporti con il Parlamento", "🏠"),
+    ("Cassi",      "Ministro dei Beni Culturali",             "🎨"),
+    ("Ila",        "Presidente del Consiglio dei Ministri",   "👑"),
+    ("Marta",      "Ministro degli Esteri",                   "✈️"),
+    ("Pril",       "Ministro delle Infrastrutture",           "🧱"),
+    ("Bak",        "Ministro della Difesa",                   "🛡️"),
+    ("Pippo",      "Ministro dell'Istruzione",                "🧑‍🎓"),
+    ("Ciccio",     "Ministro delle Pari Opportunità",         "👴🏾"),
+    ("Pisi",       "Ministro della Sovranità Alimentare",     "🌾"),
+    ("Ciolo",      "Ministro della Giustizia",                "⚖️"),
+    ("Varru",      "Ministro dell'Innovazione",               "🖥️"),
+    ("Giolli",     "Ministro dell'Energia",                   "🔋"),
+    ("Anna Colli", "Ministro dell'Interno",                   "🚓"),
+    ("Ziba",       "Ministro dello Sport",                    "⚽"),
 ]
 
 def seed():
@@ -225,15 +242,16 @@ def seed():
             else:
                 item.target = target
         db.commit()
+
         for name, desc, icon in SEED_USERS:
             user = db.query(User).filter(User.name.ilike(name)).first()
             if not user:
                 db.add(User(name=name, desc=desc, icon=icon))
-            else: 
+            else:
                 user.desc = desc
-                user.icon =icon
+                user.icon = icon
         db.commit()
-            
+
     finally:
         db.close()
 
