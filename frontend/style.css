@@ -610,9 +610,9 @@ button:active { opacity: 0.75; transform: scale(0.98); }
 }
 
 .user-header {
-  display: flex;
   align-items: center;
-  gap: 10px;
+  align-content: center;
+  align-self: center;
 }
 
 .user-avatar {
@@ -623,15 +623,40 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: x-large;
 }
 
 .user-name {
   font-size: 16px;
   font-weight: 600;
+  text-align: left;
 }
 
 .user-body {
-  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
   font-size: 14px;
   opacity: 0.7;
+}
+
+.user-placeholder{
+  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-right: 15px;
+}
+
+select{
+  background: var(--brand-pale);
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(26, 95, 168, 0.15);
+  background-image: linear-gradient(to bottom right, var(--surface-gradient), var(--brand-pale));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
 }

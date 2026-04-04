@@ -16,7 +16,6 @@ const DEFAULT_ITEMS = [
   "Ghiaccini",
   "Sedia da spiaggia",
   "Carte da gioco",
-  "Crema solare",
   "Rete da beach",
   "Palla da beach",
   "Bocce"
@@ -25,6 +24,7 @@ const DEFAULT_ITEMS = [
 init();
 
 async function init() {
+  await loadUsersDropdown();
   initEmptyState(DEFAULT_ITEMS);
   renderAll();
   loadWarehouse();
@@ -83,9 +83,27 @@ function populateUserInput(users) {
 
   users.forEach(u => {
     const option = document.createElement("option");
-    option.value = u;
+    option.value = u.name;
     datalist.appendChild(option);
   });
+}
+
+
+async function loadUsersDropdown() {
+  const select = document.getElementById("username");
+  try {
+    const res = await fetch(`${API_BASE}/users`);
+    const users = await res.json();
+
+    users.forEach(u => {
+      const option = document.createElement("option");
+      option.value = u.name;
+      option.textContent = u.name; // puoi usare anche u.desc in futuro
+      select.appendChild(option);
+    });
+  } catch (e) {
+    console.error("LOAD USERS DROPDOWN ERROR:", e);
+  }
 }
 
 /* ========================= */
@@ -150,7 +168,7 @@ function createItemElement(itemName, people, target) {
 
   btn.onclick = async () => {
     const user = usernameInput.value.trim();
-    if (!user) return alert("Inserisci il tuo nome");
+    if (!user) return alert("Seleziona il tuo nome");
 
     const rect = btn.getBoundingClientRect();
     spawnBuffon(rect.left + rect.width / 2, rect.top);

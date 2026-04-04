@@ -207,7 +207,7 @@ SEED_USERS = [
     ("Bak", "Ministro della Difesa" , "🛡️"),
     ("Pippo", "Ministro dell'Istruzione" , "🧑‍🎓"),
     ("Ciccio", "Ministro delle Pari Opportunità" , "👴🏾"),
-    ("Pisi", "Ministro dell'Agricoltura e della Sovranità Alimentare" , "🌾"),
+    ("Pisi", "Ministro della Sovranità Alimentare" , "🌾"),
     ("Ciolo", "Ministro della Giustizia" , "⚖️"),
     ("Varru", "Ministro dell'Innovazione" , "🖥️"),
     ("Giolli", "Ministro dell'Energia" , "🔋"),
