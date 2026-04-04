@@ -198,23 +198,23 @@ SEED_ITEMS = [
 ]
 
 SEED_USERS = [
-    ("Bea", "Ministro dei Rapporti con il Parlamento" , "🏠")
-    ("Cassi", "Ministro dei Beni Culturali" , "🎨")
-    ("Ila", "Presidente del Consiglio dei Ministri" , "👑")
-    ("Marta", "Ministro degli Esteri" , "✈️")
-    ("Pril", "Ministro delle Infrastrutture" , "🧱")
-    ("Bak", "Ministro della Difesa" , "🛡️")
-    ("Pippo", "Ministro dell'Istruzione" , "🧑‍🎓")
-    ("Ciccio", "Ministro delle Pari Opportunità" , "👴🏾")
-    ("Pisi", "Ministro dell'Agricoltura e della Sovranità Alimentare" , "🌾")
-    ("Ciolo", "Ministro della Giustizia" , "⚖️")
-    ("Varru", "Ministro dell'Innovazione" , "🖥️")
-    ("Giolli", "Ministro dell'Energia" , "🔋")
-    ("Anna Colli", "Ministro dell'Interno" , "🚓")
+    ("Bea", "Ministro dei Rapporti con il Parlamento" , "🏠"),
+    ("Cassi", "Ministro dei Beni Culturali" , "🎨"),
+    ("Ila", "Presidente del Consiglio dei Ministri" , "👑"),
+    ("Marta", "Ministro degli Esteri" , "✈️"),
+    ("Pril", "Ministro delle Infrastrutture" , "🧱"),
+    ("Bak", "Ministro della Difesa" , "🛡️"),
+    ("Pippo", "Ministro dell'Istruzione" , "🧑‍🎓"),
+    ("Ciccio", "Ministro delle Pari Opportunità" , "👴🏾"),
+    ("Pisi", "Ministro dell'Agricoltura e della Sovranità Alimentare" , "🌾"),
+    ("Ciolo", "Ministro della Giustizia" , "⚖️"),
+    ("Varru", "Ministro dell'Innovazione" , "🖥️"),
+    ("Giolli", "Ministro dell'Energia" , "🔋"),
+    ("Anna Colli", "Ministro dell'Interno" , "🚓"),
     ("Ziba", "Ministro dello Sport" , "⚽")
 ]
 
-def seed():
+def seed(),,,:
     db = SessionLocal()
     try:
         for name, target in SEED_ITEMS:
