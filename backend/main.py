@@ -214,7 +214,7 @@ SEED_USERS = [
     ("Ziba", "Ministro dello Sport" , "⚽")
 ]
 
-def seed(),,,:
+def seed():
     db = SessionLocal()
     try:
         for name, target in SEED_ITEMS:
