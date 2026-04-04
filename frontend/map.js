@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     supermarket: makeIcon("🛒"),
     beach:       makeIcon("🏖️"),
     gas:         makeIcon("⛽"),
-    pharmacy:    makeIcon("⚕️"),
+    pharmacy:    makeIcon("💊"),
     atm:         makeIcon("🏧")
   };
 
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     supermarket: "🛒 Supermercati",
     beach:       "🏖️ Spiagge",
     gas:         "⛽ Benzinai",
-    pharmacy:    "⚕️ Farmacie",
+    pharmacy:    "💊 Farmacie",
     atm:         "🏧 Bancomat"
   };
 

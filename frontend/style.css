@@ -321,25 +321,6 @@ li:active:not(.dragging) {
 
 
 /* ------------------------------------------------------------------
-   DRAG & DROP
------------------------------------------------------------------- */
-.dragging {
-  opacity: 0.5;
-  transform: scale(1.04);
-  z-index: 10;
-  box-shadow: 0 8px 24px rgba(10, 30, 61, 0.15);
-}
-
-.placeholder {
-  height: 60px;
-  margin-bottom: 10px;
-  border: 2px dashed var(--border-medium);
-  border-radius: var(--radius-md);
-  background: transparent;
-}
-
-
-/* ------------------------------------------------------------------
    BOTTONI
 ------------------------------------------------------------------ */
 button {
@@ -350,6 +331,7 @@ button {
   border-radius: var(--radius-pill);
   border: none;
   background: var(--brand-dark);
+  background-image: linear-gradient(to bottom right, var(--brand-dark), var(--brand-mid));
   color: #ffffff;
   cursor: pointer;
   letter-spacing: 0.02em;
@@ -363,6 +345,19 @@ button:active { opacity: 0.75; transform: scale(0.98); }
 /* ------------------------------------------------------------------
    WAREHOUSE – item e controlli portatori
 ------------------------------------------------------------------ */
+
+select{
+  background: var(--brand-pale);
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid rgba(26, 95, 168, 0.15);
+  background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-gradient));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+}
+
 .warehouse-item {
   background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-gradient));
   padding: 14px 16px;
@@ -389,7 +384,6 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   padding: 9px 16px;
   border-radius: var(--radius-pill);
   border: none;
-  background: var(--brand-dark);
   color: #ffffff;
   cursor: pointer;
   font-size: 13px;
@@ -404,6 +398,15 @@ button:active { opacity: 0.75; transform: scale(0.98); }
 
 .take-btn:hover  { opacity: 0.85; }
 .take-btn:active { transform: scale(0.96); }
+
+#add-item-cnt{
+  display: flex;
+  justify-content: space-around;
+}
+
+#add-item-btn{
+  width: 50%;
+}
 
 .people {
   margin-top: 10px;
@@ -457,7 +460,7 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   cursor: pointer;
   width: auto;
   box-shadow: none;
-  transition: background 0.15s ease;
+  transition: backgro 0.15s ease;
 }
 
 .remove-btn:hover { background: #fed7d7; opacity: 1; }
@@ -478,6 +481,116 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
 }
+
+
+/* ------------------------------------------------------------------
+   MODAL — Aggiungi oggetto
+------------------------------------------------------------------ */
+ 
+/* Overlay scuro che copre tutta la pagina */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 30, 61, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+ 
+/* Card bianca centrata */
+.modal-card {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 340px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(10, 30, 61, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+ 
+.modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: left;
+  margin: 0;
+}
+ 
+/* Input dentro il modal (nome e target) */
+.modal-input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-medium);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  outline: none;
+  margin: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+ 
+.modal-input:focus {
+  border-color: var(--brand-mid);
+  box-shadow: 0 0 0 3px rgba(26, 95, 168, 0.1);
+}
+ 
+/* Messaggio di errore */
+.modal-error {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--danger);
+  margin-top: -4px;
+}
+ 
+/* Riga bottoni */
+.modal-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+ 
+.modal-cancel-btn {
+  flex: 1;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-medium);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s ease;
+}
+ 
+.modal-cancel-btn:hover {
+  background: var(--surface-card-hover);
+  opacity: 1;
+}
+ 
+.modal-create-btn {
+  flex: 1;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--brand-dark);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: none;
+  transition: opacity 0.15s ease;
+}
+ 
+.modal-create-btn:hover  { opacity: 0.88; }
+.modal-create-btn:active { opacity: 0.75; }
 
 
 /* ------------------------------------------------------------------
@@ -601,29 +714,47 @@ button:active { opacity: 0.75; transform: scale(0.98); }
 /* ------------------------------------------------------------------
    CAST
 ------------------------------------------------------------------ */
+#cast-container{
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+
 .user-card {
   border-radius: var(--radius-md);
   padding: 12px;
   background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-gradient));
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 10px;
+  width: 48.37%;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  height: 100px;
 }
 
+.user-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(10, 30, 61, 0.12);
+}  
+
+
 .user-header {
-  align-items: center;
-  align-content: center;
-  align-self: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   font-size: x-large;
+  margin-right: 4px;
 }
 
 .user-name {
@@ -644,19 +775,4 @@ button:active { opacity: 0.75; transform: scale(0.98); }
   padding-top: 15px;
   padding-bottom: 10px;
   padding-right: 15px;
-}
-
-select{
-  background: var(--brand-pale);
-  padding: 5px 10px;
-  border-radius: var(--radius-pill);
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid rgba(26, 95, 168, 0.15);
-  background-image: linear-gradient(to bottom right, var(--surface-gradient), var(--brand-pale));
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 10px;
 }

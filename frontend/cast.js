@@ -76,7 +76,7 @@ function createUserCard(user) {
   name.classList.add("user-name");
   name.innerText = user.name;
 
-  header.append(name);
+  header.append(name, avatar);
 
   // BODY (placeholder per future info)
   const body = document.createElement("div");
@@ -86,7 +86,7 @@ function createUserCard(user) {
   placeholder.classList.add("user-placeholder");
   placeholder.innerText = user.desc || "Nessuna informazione";
 
-  body.append(placeholder, avatar);
+  body.append(placeholder);
 
   // FOOTER (espandibile in futuro)
   const footer = document.createElement("div");
