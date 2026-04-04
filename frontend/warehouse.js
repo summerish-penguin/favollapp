@@ -162,7 +162,7 @@ function openAddItemModal() {
   const targetInput = document.createElement("input");
   targetInput.type        = "number";
   targetInput.min         = "1";
-  targetInput.value       = "1";
+  targetInput.value       = "";
   targetInput.placeholder = "Quantità target";
   targetInput.classList.add("modal-input");
 
