@@ -170,7 +170,8 @@ def get_users(db: Session = Depends(get_db)):
     return [
         {
             "name": u.name,
-            "desc": u.desc
+            "desc": u.desc,
+            "icon": u.icon
         } 
     for u in users
     ]
