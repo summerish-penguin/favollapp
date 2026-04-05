@@ -43,15 +43,16 @@ document.getElementById("clear-note").addEventListener("click", async () => {
   }
 });
 
-const textarea = document.getElementById("prompt-textarea");
+const textarea  = document.getElementById("prompt-textarea");
 const submitBtn = document.getElementById("send-prompt-btn");
 
 textarea.addEventListener("keydown", function(event) {
   if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault(); // Prevents new line
-    submitBtn.click();      // Triggers the button
+    event.preventDefault();
+    submitBtn.click();
   }
 });
+
 
 /* ==========================================================================
    LOADING OVERLAY
@@ -131,7 +132,6 @@ function addEmptyRow() {
   qtyTd.className       = "qty-col";
   qtyTd.contentEditable = "true";
 
-  /* Cella azione con wrapper div per allineamento corretto */
   const actionTd = document.createElement("td");
   actionTd.className = "checkout-col-td";
 
@@ -168,7 +168,9 @@ function addEmptyRow() {
 
 
 /* ==========================================================================
-   RIGA SALVATA — checkbox comprato + bottone elimina
+   RIGA SALVATA — editabile, checkbox comprato + bottone elimina
+   Le celle sono contenteditable; ogni modifica trigghera un PUT /shopping/{id}
+   con debounce da 600ms per non spammare il backend ad ogni tasto.
    ========================================================================== */
 
 function buildSavedRow(id, day, ingredient, qty, bought = false) {
@@ -177,18 +179,33 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   if (bought) tr.classList.add("bought");
 
   const dayTd = document.createElement("td");
-  dayTd.className = "time-col";
-  dayTd.innerText = day;
+  dayTd.className       = "time-col";
+  dayTd.contentEditable = "true";
+  dayTd.innerText       = day;
 
   const ingTd = document.createElement("td");
-  ingTd.className = "ingredient-col";
-  ingTd.innerText = ingredient;
+  ingTd.className       = "ingredient-col";
+  ingTd.contentEditable = "true";
+  ingTd.innerText       = ingredient;
 
   const qtyTd = document.createElement("td");
-  qtyTd.className = "qty-col";
-  qtyTd.innerText = qty;
+  qtyTd.className       = "qty-col";
+  qtyTd.contentEditable = "true";
+  qtyTd.innerText       = qty;
 
-  /* Cella azione con wrapper div per allineamento verticale */
+  /* Debounce: invia la modifica al backend dopo 600ms di inattività */
+  let debounceTimer = null;
+  const onEdit = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      updateRow(id, dayTd.innerText.trim(), ingTd.innerText.trim(), qtyTd.innerText.trim());
+    }, 600);
+  };
+
+  dayTd.addEventListener("input", onEdit);
+  ingTd.addEventListener("input", onEdit);
+  qtyTd.addEventListener("input", onEdit);
+
   const actionTd = document.createElement("td");
   actionTd.className = "checkout-col-td";
 
@@ -254,6 +271,19 @@ async function saveRow(day, ingredient, qty) {
     console.error("SAVE ROW ERROR:", e);
     alert("Errore di rete nel salvataggio. Riprova.");
     return null;
+  }
+}
+
+/* Aggiorna una riga salvata — chiamata dal debounce onEdit */
+async function updateRow(id, day, ingredient, qty) {
+  try {
+    await fetch(`${API_BASE}/shopping/${id}`, {
+      method:  "PUT",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ day, ingredient, qty })
+    });
+  } catch (e) {
+    console.error("UPDATE ROW ERROR:", e);
   }
 }
 

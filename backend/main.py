@@ -66,6 +66,11 @@ class RecipeRequest(BaseModel):
 class ShoppingItemRequest(BaseModel):
     day:        str = ""
     ingredient: str
+    qty:        str = ""    
+
+class ShoppingItemUpdate(BaseModel):
+    day:        str = ""
+    ingredient: str = ""
     qty:        str = ""
 
 
@@ -287,6 +292,17 @@ def delete_shopping_item(id: int, db: Session = Depends(get_db)):
     if not item:
         raise HTTPException(status_code=404, detail="Item non trovato.")
     db.delete(item)
+    db.commit()
+    return {"ok": True}
+
+@app.put("/shopping/{id}")
+def update_shopping_item(id: int, req: ShoppingItemUpdate, db: Session = Depends(get_db)):
+    item = db.query(ShoppingItem).filter_by(id=id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item non trovato.")
+    item.day        = req.day
+    item.ingredient = req.ingredient
+    item.qty        = req.qty
     db.commit()
     return {"ok": True}
 
