@@ -43,6 +43,16 @@ document.getElementById("clear-note").addEventListener("click", async () => {
   }
 });
 
+const textarea = document.getElementById("prompt-textarea");
+const submitBtn = document.getElementById("send-prompt-btn");
+
+textarea.addEventListener("keydown", function(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault(); // Prevents new line
+    submitBtn.click();      // Triggers the button
+  }
+});
+
 /* ==========================================================================
    LOADING OVERLAY
    ========================================================================== */

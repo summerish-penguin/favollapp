@@ -810,6 +810,7 @@ select{
   border-radius: var(--radius-sm);
   border: var(--border-medium);
   padding: 5px;
+  resize: none;
 }
 
 #prompt-textarea:focus{
