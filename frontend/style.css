@@ -385,7 +385,7 @@ select{
 }
 
 .take-btn {
-  padding: 9px 16px;
+  padding: 9px;
   border-radius: var(--radius-pill);
   border: none;
   color: #ffffff;

@@ -22,7 +22,6 @@ const DEFAULT_ITEMS = [
   "Carte da gioco",
   "Rete da beach",
   "Palla da beach",
-  "Bocce"
 ];
 
 
