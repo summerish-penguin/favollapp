@@ -225,7 +225,7 @@ SEED_ITEMS = [
     ("Crema solare",      2),
     ("Rete da beach",     1),
     ("Palla da beach",    2),
-    ("Bocce",             1),
+    ("Bocce spiaggia",    1),
 ]
 
 SEED_USERS = [
