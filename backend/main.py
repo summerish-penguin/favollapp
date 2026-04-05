@@ -63,6 +63,11 @@ class CreateItemRequest(BaseModel):
 class RecipeRequest(BaseModel):
     prompt: str
 
+class ShoppingItemRequest(BaseModel):
+    day:        str = ""
+    ingredient: str
+    qty:        str = ""
+
 
 # =========================
 # HELPERS
@@ -217,6 +222,7 @@ REGOLE:
 - Usa nomi semplici
 - Quantità realistiche
 - NIENTE spiegazioni
+- Considera eventuale contesto dato dall'utente assieme alla ricetta per adattare l'output (per esempio rispetto a varianti della ricetta o quantità)
 """
 
         response = requests.post(
@@ -253,6 +259,26 @@ REGOLE:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/shopping")
+def save_shopping_item(req: ShoppingItemRequest, db: Session = Depends(get_db)):
+    if not req.ingredient.strip():
+        raise HTTPException(status_code=422, detail="Ingrediente obbligatorio.")
+    item = ShoppingItem(day=req.day, ingredient=req.ingredient, qty=req.qty)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return {"ok": True, "id": item.id}
+
+
+@app.get("/shopping")
+def get_shopping_items(db: Session = Depends(get_db)):
+    items = db.query(ShoppingItem).order_by(ShoppingItem.id).all()
+    return [
+        {"id": item.id, "day": item.day, "ingredient": item.ingredient, "qty": item.qty}
+        for item in items
+    ]
 
 # =========================
 # CREA NUOVO ITEM

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FavollApp – Cast</title>
+
+  <!-- Stile -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Swanky+and+Moo+Moo&family=Vibur&display=swap" rel="stylesheet">
+
+  <!-- Icone FontAwesome -->
+  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
+
+  <!-- Logica warehouse -->
+  <script src="menu.js" defer></script>
+</head>
+<body>
+
+  <!-- Header con logo -->
+  <div class="header">
+    <a href="index.html" class="header-title">FavollApp</a>&ensp;
+    <a href="index.html">
+      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
+    </a>
+  </div>
+
+  <div class="container">
+
+  <!-- Titolo pagina -->
+  <div class="title">
+    <h1>Il Menù</h1>
+    <h3>Modifica la lista della spesa, o utilizza l'AI per cercare una ricetta e generare gli ingredienti da acquistare</h3>
+  </div>
+
+  <br>
+
+  <textarea name="" id="prompt-textarea" rows="5" columns="100" placeholder="Dimmi una ricetta"></textarea>
+
+  <div id="send-prompt-div">
+    <div></div>
+    <button id="send-prompt-btn">✨ Genera</button>
+  </div>
+
+
+  <!-- Lista della spesa: generata dinamicamente dal JS -->
+  <div id="grocery-container"></div>
+
+  <div class="notebook">
+    <h1 class="notebook-title">Lista della spesa</h1>
+<table id="sketch-table">
+  <thead>
+    <tr>
+      <th contenteditable="true" class="time-col">Spesa del</th>
+      <th contenteditable="true" class="ingredient-col">Ingrediente</th>
+      <th contenteditable="true" class="qty-col">Qta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td contenteditable="true" class="time-col"></td>
+      <td contenteditable="true" class="ingredient-col"></td>
+      <td contenteditable="true" class="qty-col"></td>
+      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
+    </tr>
+    <tr>
+      <td contenteditable="true" class="time-col"></td>
+      <td contenteditable="true" class="ingredient-col"></td>
+      <td contenteditable="true" class="qty-col"></td>
+      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
+    </tr>
+    <tr>
+      <td contenteditable="true" class="time-col"></td>
+      <td contenteditable="true" class="ingredient-col"></td>
+      <td contenteditable="true" class="qty-col"></td>
+      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
+    </tr>
+    <tr>
+      <td contenteditable="true" class="time-col"></td>
+      <td contenteditable="true" class="ingredient-col"></td>
+      <td contenteditable="true" class="qty-col"></td>
+      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
+    </tr>
+  </tbody>
+</table>
+  </div>
+ 
+  <button class="add-row-btn" id="add-row">+ aggiungi riga</button>
+
+</div>
+
+</body>
+</html>

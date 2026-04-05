@@ -23,3 +23,10 @@ class Contribution(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     item_id = Column(Integer, ForeignKey("items.id"))
     quantity = Column(Integer, default=1)
+
+class ShoppingItem(Base):
+    __tablename__ = "shopping_items"
+    id         = Column(Integer, primary_key=True)
+    day        = Column(String, nullable=True)
+    ingredient = Column(String, nullable=False)
+    qty        = Column(String, nullable=True)
