@@ -748,9 +748,9 @@ select{
   padding: 12px;
   background-image: linear-gradient(to bottom right, var(--surface-card), var(--surface-gradient));
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  width: 48.37%;
+  width: 48%;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  height: 100px;
+  height: 120px;
 }
 
 .user-card:hover {
