@@ -15,8 +15,8 @@ function todayLabel() {
    ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadShoppingItems();  // prima le righe da backend
-  addEmptyRow();              // poi la riga vuota in fondo
+  await loadShoppingItems();
+  addEmptyRow();
 
   document.getElementById("send-prompt-btn").addEventListener("click", handlePrompt);
 
@@ -27,6 +27,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("add-row").addEventListener("click", addEmptyRow);
 });
 
+document.getElementById("clear-note").addEventListener("click", async () => {
+  if (!confirm("Sei sicuro di voler svuotare tutta la lista?")) return;
+
+  try {
+    const res  = await fetch(`${API_BASE}/shopping`, { method: "DELETE" });
+    const data = await res.json();
+    if (data.ok) {
+      document.querySelector("#sketch-tbody").innerHTML = "";
+      addEmptyRow();
+    }
+  } catch (e) {
+    console.error("CLEAR ERROR:", e);
+    alert("Errore di rete. Riprova.");
+  }
+});
 
 /* ==========================================================================
    LOADING OVERLAY
@@ -70,7 +85,6 @@ async function handlePrompt() {
       throw new Error("Risposta AI non valida");
     }
 
-    /* Inserisce le righe AI prima della riga vuota in fondo */
     for (const ing of data.ingredients) {
       const qty = `${ing.quantity ?? ""} ${ing.unit ?? ""}`.trim();
       const id  = await saveRow(todayLabel(), ing.name ?? "", qty);
@@ -87,10 +101,7 @@ async function handlePrompt() {
 
 
 /* ==========================================================================
-   TABELLA — RIGA VUOTA
-   Ha gli stessi controlli delle righe salvate (+ al posto di checkbox+🧹).
-   Quando si salva, viene sostituita dalla riga salvata e ne viene
-   aggiunta una nuova vuota in fondo.
+   RIGA VUOTA — editabile, con bottone +
    ========================================================================== */
 
 function addEmptyRow() {
@@ -101,7 +112,6 @@ function addEmptyRow() {
   const dayTd = document.createElement("td");
   dayTd.className       = "time-col";
   dayTd.contentEditable = "true";
-  dayTd.setAttribute("placeholder", todayLabel());
 
   const ingTd = document.createElement("td");
   ingTd.className       = "ingredient-col";
@@ -111,12 +121,16 @@ function addEmptyRow() {
   qtyTd.className       = "qty-col";
   qtyTd.contentEditable = "true";
 
+  /* Cella azione con wrapper div per allineamento corretto */
   const actionTd = document.createElement("td");
-  actionTd.className = "checkout-col";
+  actionTd.className = "checkout-col-td";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "action-wrapper";
 
   const addBtn = document.createElement("button");
   addBtn.className   = "add-row-inline-btn";
-  addBtn.textContent = "+";
+  addBtn.textContent = "➕";
 
   addBtn.onclick = async () => {
     const day        = dayTd.innerText.trim() || todayLabel();
@@ -132,19 +146,19 @@ function addEmptyRow() {
     const id = await saveRow(day, ingredient, qty);
     if (id) {
       tbody.replaceChild(buildSavedRow(id, day, ingredient, qty), tr);
-      addEmptyRow();  // nuova riga vuota sempre in fondo
+      addEmptyRow();
     }
   };
 
-  actionTd.appendChild(addBtn);
+  wrapper.appendChild(addBtn);
+  actionTd.appendChild(wrapper);
   tr.append(dayTd, ingTd, qtyTd, actionTd);
   tbody.appendChild(tr);
-  ingTd.focus();
 }
 
 
 /* ==========================================================================
-   TABELLA — RIGA SALVATA
+   RIGA SALVATA — checkbox comprato + bottone elimina
    ========================================================================== */
 
 function buildSavedRow(id, day, ingredient, qty, bought = false) {
@@ -164,8 +178,12 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   qtyTd.className = "qty-col";
   qtyTd.innerText = qty;
 
+  /* Cella azione con wrapper div per allineamento verticale */
   const actionTd = document.createElement("td");
-  actionTd.className = "checkout-col";
+  actionTd.className = "checkout-col-td";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "action-wrapper";
 
   /* Checkbox "comprato" → strikethrough */
   const checkbox = document.createElement("input");
@@ -177,24 +195,24 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   /* Bottone elimina */
   const delBtn = document.createElement("button");
   delBtn.className   = "delete-row-btn";
-  delBtn.textContent = "🧹";
+  delBtn.textContent = "🗑️";
   delBtn.title       = "Elimina";
   delBtn.onclick     = async () => {
     const ok = await deleteRow(id);
     if (ok) tr.remove();
   };
 
-  actionTd.append(checkbox, delBtn);
+  wrapper.append(checkbox, delBtn);
+  actionTd.appendChild(wrapper);
   tr.append(dayTd, ingTd, qtyTd, actionTd);
   return tr;
 }
 
-/* Inserisce una riga salvata prima della riga vuota in fondo. */
+/* Inserisce una riga salvata prima della riga vuota in fondo */
 function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
   const tbody    = document.querySelector("#sketch-tbody");
   const emptyRow = tbody.querySelector(".empty-row");
   const savedTr  = buildSavedRow(id, day, ingredient, qty);
-
   if (emptyRow) {
     tbody.insertBefore(savedTr, emptyRow);
   } else {
@@ -202,7 +220,7 @@ function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
   }
 }
 
-/* Aggiunge una riga salvata in fondo (usata al caricamento da backend). */
+/* Aggiunge una riga salvata in fondo — usata al caricamento da backend */
 function appendSavedRow(id, day, ingredient, qty, bought = false) {
   const tbody = document.querySelector("#sketch-tbody");
   tbody.appendChild(buildSavedRow(id, day, ingredient, qty, bought));

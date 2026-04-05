@@ -847,9 +847,13 @@ select{
     .notebook table {
       width: 100%;
       border-collapse: collapse;
-      font-family: 'Swanky and Moo Moo', cursive;
+      font-family: 'Rock Salt', cursive;
       table-layout: fixed;
       width: 100%;
+    }
+
+    .notebook tr {
+      height: 28px;
     }
     
     .time-col{
@@ -867,9 +871,9 @@ select{
     }
 
     .notebook th {
-      font-family: 'Swanky and Moo Moo', cursive;
-      font-size: 17px;
-      font-weight: 600;
+      font-family: 'Rock Salt', cursive;
+      font-size: 12px;
+      font-weight: 400;
       color: #3a5a8a;
       border-bottom: 2px solid rgba(100,140,200,0.5);
       padding: 6px 6px;
@@ -878,9 +882,9 @@ select{
     }
  
     .notebook td {
-      font-family: 'Swanky and Moo Moo', cursive;
-      font-size: 16px;
-      font-weight: 400;
+      font-family: 'Rock Salt', cursive;
+      font-size: 10px;
+      font-weight: 300;
       color: #2a2a3a;
       padding: 2px;
       background: transparent;
@@ -900,9 +904,22 @@ select{
       border-radius: 3px;
     }
 
+ .action-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+  .checkout-col-td {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+  
     .checkout-btn {
-  font-family: 'Swanky and Moo Moo', cursive;
-  font-size: 16px;
+  font-family: 'Rock Salt', cursive;
+  font-size: 12px;
   background: transparent;
   border: 1.5px solid #a0b8d0;
   border-radius: 5px;
@@ -922,12 +939,8 @@ select{
 }
 
     .notebook-title{
-      font-family: 'Swanky and Moo Moo', cursive;
-      font-size: 32px;
-    }
-
-     .add-row-btn {
-      margin-top: 12px;
+      font-family: 'Rock Salt', cursive;
+      font-size: 20px;
     }
 
 /* ------------------------------------------------------------------
@@ -968,17 +981,16 @@ tr.bought td {
  
 /* Checkbox "comprato" */
 .bought-checkbox {
+  margin: 0;
   width: 16px;
   height: 16px;
-  cursor: pointer;
-  accent-color: var(--brand-mid);
-  flex-shrink: 0;
+  display: block;
 }
  
 /* Bottone + inline (righe vuote) */
 .add-row-inline-btn {
-  font-family: 'Caveat', cursive;
-  font-size: 18px;
+  font-family: 'Rock Salt', cursive;
+  font-size: 10px;
   font-weight: 600;
   line-height: 1;
   background: transparent;
@@ -1000,7 +1012,18 @@ tr.bought td {
 }
  
 /* Bottone elimina riga */
+.end-notebook{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 12px;
+  gap: 12px;
+}
+
 .delete-row-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
   line-height: 1;
   background: transparent;

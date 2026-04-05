@@ -289,6 +289,12 @@ def delete_shopping_item(id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"ok": True}
 
+@app.delete("/shopping")
+def clear_shopping(db: Session = Depends(get_db)):
+    db.query(ShoppingItem).delete()
+    db.commit()
+    return {"ok": True}
+
 # =========================
 # CREA NUOVO ITEM
 # Chiamato dal modal "Aggiungi oggetto" nel frontend.
