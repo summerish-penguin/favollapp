@@ -869,13 +869,13 @@ select{
     }
 
     .ingredient-col{
-      width: 40%;
+      width: 45%;
       border-left: 2px solid rgba(100,140,200,0.5);
       border-right: 2px solid rgba(100,140,200,0.5);
     }
 
     .qty-col{
-      width: 25%;
+      width: 20%;
     }
 
     .notebook th {
@@ -891,7 +891,7 @@ select{
  
     .notebook td {
       font-family: 'Rock Salt', cursive;
-      font-size: 10px;
+      font-size: 8px;
       font-weight: 300;
       color: #2a2a3a;
       padding: 2px;
