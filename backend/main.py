@@ -2,11 +2,18 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+import os
+import request
 
 from db import engine, SessionLocal
 from models import Base, User, Item, Contribution
 
 app = FastAPI()
+
+load_dotenv()
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # =========================
 # CORS
@@ -53,6 +60,9 @@ class CreateItemRequest(BaseModel):
     name: str
     target: int = 1
 
+class RecipeRequest(BaseModel):
+    prompt: str
+
 
 # =========================
 # HELPERS
@@ -75,6 +85,9 @@ def get_or_create_item(db, name):
         db.commit()
         db.refresh(item)
     return item
+
+def get_user_count(db: Session):
+    return db.query(User).count()
 
 
 # =========================
@@ -176,6 +189,70 @@ def delete_item(name: str, db: Session = Depends(get_db)):
 
     return {"ok": True}
 
+
+@app.post("/ai/recipe")
+def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
+    try:
+        people = get_user_count(db)
+
+        GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+        if not GROQ_API_KEY:
+            raise HTTPException(status_code=500, detail="API key mancante")
+
+        system_prompt = f"""
+Sei un assistente che genera ingredienti per ricette.
+
+OBIETTIVO:
+Dato un piatto, restituisci SOLO un JSON valido con ingredienti e quantità.
+
+REGOLE:
+- Considera {people} persone
+- Output SOLO JSON (niente testo)
+- Formato:
+{{
+  "ingredients": [
+    {{"name": "nome", "quantity": numero, "unit": "g|ml|pz"}}
+  ]
+}}
+- Usa nomi semplici
+- Quantità realistiche
+- NIENTE spiegazioni
+"""
+
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": req.prompt}
+                ],
+                "temperature": 0.3
+            }
+        )
+
+        data = response.json()
+
+        content = data["choices"][0]["message"]["content"]
+
+        # 🔥 Parsing sicuro JSON (gestisce anche eventuale testo sporco)
+        import json
+        try:
+            parsed = json.loads(content)
+        except:
+            # fallback: prova a estrarre JSON
+            start = content.find("{")
+            end = content.rfind("}") + 1
+            parsed = json.loads(content[start:end])
+
+        return parsed
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # =========================
 # CREA NUOVO ITEM
