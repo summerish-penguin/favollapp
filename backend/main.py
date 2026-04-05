@@ -222,6 +222,7 @@ REGOLE:
 - Usa nomi semplici
 - Quantità realistiche
 - NIENTE spiegazioni
+- Qualora trovassi nomi degli ingredienti in altre lingue, traduci sempre in italiano
 - Considera eventuale contesto dato dall'utente assieme alla ricetta per adattare l'output (per esempio rispetto a varianti della ricetta o quantità)
 """
 
