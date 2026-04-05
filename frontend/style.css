@@ -853,7 +853,7 @@ select{
     }
     
     .time-col{
-      width: 25%;
+      width: 15%;
     }
 
     .ingredient-col{
@@ -872,7 +872,7 @@ select{
       font-weight: 600;
       color: #3a5a8a;
       border-bottom: 2px solid rgba(100,140,200,0.5);
-      padding: 6px 12px;
+      padding: 6px 6px;
       text-align: left;
       background: transparent;
     }
@@ -882,7 +882,7 @@ select{
       font-size: 16px;
       font-weight: 400;
       color: #2a2a3a;
-      padding: 0;
+      padding: 2px;
       background: transparent;
       height: 28px;
       vertical-align: middle;
@@ -954,4 +954,66 @@ select{
  
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------------
+   MENU — righe tabella spesa
+------------------------------------------------------------------ */
+ 
+/* Riga comprata: testo barrato e opacità ridotta */
+tr.bought td {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+ 
+/* Checkbox "comprato" */
+.bought-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--brand-mid);
+  flex-shrink: 0;
+}
+ 
+/* Bottone + inline (righe vuote) */
+.add-row-inline-btn {
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  background: transparent;
+  border: 1.5px solid #a0b8d0;
+  border-radius: 5px;
+  color: #1a5fa8;
+  width: 28px;
+  height: 24px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+  box-shadow: none;
+  width: auto;
+}
+ 
+.add-row-inline-btn:hover {
+  background: rgba(26, 95, 168, 0.1);
+  border-color: #1a5fa8;
+}
+ 
+/* Bottone elimina riga */
+.delete-row-btn {
+  font-size: 14px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  box-shadow: none;
+  width: auto;
+  transition: background 0.15s;
+}
+ 
+.delete-row-btn:hover {
+  background: rgba(229, 62, 62, 0.1);
+  opacity: 1;
 }

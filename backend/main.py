@@ -280,6 +280,15 @@ def get_shopping_items(db: Session = Depends(get_db)):
         for item in items
     ]
 
+@app.delete("/shopping/{id}")
+def delete_shopping_item(id: int, db: Session = Depends(get_db)):
+    item = db.query(ShoppingItem).filter_by(id=id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item non trovato.")
+    db.delete(item)
+    db.commit()
+    return {"ok": True}
+
 # =========================
 # CREA NUOVO ITEM
 # Chiamato dal modal "Aggiungi oggetto" nel frontend.

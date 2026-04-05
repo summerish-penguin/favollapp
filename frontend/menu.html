@@ -36,7 +36,7 @@
 
   <!-- Titolo pagina -->
   <div class="title">
-    <h1>Il Menù</h1>
+    <h1>La lista della spesa</h1>
     <h3>Modifica la lista della spesa, o utilizza l'AI per cercare una ricetta e generare gli ingredienti da acquistare</h3>
   </div>
 
@@ -58,36 +58,12 @@
 <table id="sketch-table">
   <thead>
     <tr>
-      <th contenteditable="true" class="time-col">Spesa del</th>
-      <th contenteditable="true" class="ingredient-col">Ingrediente</th>
-      <th contenteditable="true" class="qty-col">Qta</th>
+      <th class="time-col">Data</th>
+      <th class="ingredient-col">Ingrediente</th>
+      <th class="qty-col">Qta</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td contenteditable="true" class="time-col"></td>
-      <td contenteditable="true" class="ingredient-col"></td>
-      <td contenteditable="true" class="qty-col"></td>
-      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
-    </tr>
-    <tr>
-      <td contenteditable="true" class="time-col"></td>
-      <td contenteditable="true" class="ingredient-col"></td>
-      <td contenteditable="true" class="qty-col"></td>
-      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
-    </tr>
-    <tr>
-      <td contenteditable="true" class="time-col"></td>
-      <td contenteditable="true" class="ingredient-col"></td>
-      <td contenteditable="true" class="qty-col"></td>
-      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
-    </tr>
-    <tr>
-      <td contenteditable="true" class="time-col"></td>
-      <td contenteditable="true" class="ingredient-col"></td>
-      <td contenteditable="true" class="qty-col"></td>
-      <td class="checkout-col"><button class="checkout-btn" onclick="checkoutRow(this)">✓</button></td>
-    </tr>
+  <tbody id="sketch-body">
   </tbody>
 </table>
   </div>
