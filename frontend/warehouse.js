@@ -297,6 +297,9 @@ function createItemElement(itemName, people, target) {
   const topRow = document.createElement("div");
   topRow.classList.add("item-content");
 
+  const titleDiv = document.createElement("div");
+  titleDiv.classList.add("item-name-div")
+
   const title = document.createElement("span");
   title.classList.add("item-name");
   title.innerText = itemName;
@@ -345,7 +348,8 @@ function createItemElement(itemName, people, target) {
     await deleteItem(itemName);
   };
 
-  topRow.append(title, space, targetLabel, btn, deleteBtn);
+  titleDiv.append(title)
+  topRow.append(titleDiv, space, targetLabel, btn, deleteBtn);
 
   wrapper.append(topRow, peopleDiv);
   return wrapper;

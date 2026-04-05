@@ -374,6 +374,12 @@ select{
   gap: 12px;
 }
 
+.item-name-div{
+  display: flex;
+  align-content: flex-start;
+  width: 200px;
+}
+
 .item-name {
   font-size: 15px;
   font-weight: 700;
@@ -381,7 +387,7 @@ select{
 }
 
 .space-div{
-  width: 30px;
+  width: 1px;
 }
 
 .take-btn {
