@@ -7,7 +7,7 @@ import os
 import requests
 
 from db import engine, SessionLocal
-from models import Base, User, Item, Contribution
+from models import Base, User, Item, Contribution, ShoppingItem
 
 app = FastAPI()
 
