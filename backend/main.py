@@ -229,6 +229,7 @@ REGOLE:
 - NIENTE spiegazioni
 - Qualora trovassi nomi degli ingredienti in altre lingue, traduci sempre in italiano (per esempio "onion" --> "cipolla")
 - Considera eventuale contesto dato dall'utente assieme alla ricetta per adattare l'output (per esempio rispetto a varianti della ricetta o quantità)
+- Se il prompt dell'utente non specifica diversamente, considera che le quantità vanno tarate tra il medio e l'abbondante. Per esempio, per la pasta: 120 grammi a persona. Le quantità degli altri ingredienti siano scalate in proporzione
 """
 
         response = requests.post(
