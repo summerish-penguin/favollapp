@@ -108,6 +108,8 @@ async function handlePrompt() {
   } finally {
     hideLoading();
   }
+
+  textarea.value = "";
 }
 
 
