@@ -1,139 +1,146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FavollApp</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FavollApp</title>
 
-  <!-- Stile -->
-  <link rel="stylesheet" href="style.css">
+    <!-- Stile -->
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- Font Google -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <!-- Font Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Icone FontAwesome -->
-  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
+    <!-- Icone FontAwesome -->
+    <script
+      src="https://kit.fontawesome.com/de9ea88d4a.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
-</head>
-<body>
-
-  <!-- Header con logo -->
-  <div class="header">
-    <a href="index.html" class="header-title">FavollApp</a>&ensp;
-    <a href="index.html">
-      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
-    </a>
-  </div>
-
-  <!-- Barra countdown: giorni mancanti alla vacanza (popolata da JS) -->
-  <div class="countdown-bar">
-    <span class="countdown-label">-</span>
-    <span class="countdown-days" id="countdown-days">—</span>
-    <span class="countdown-label">giorni alla partenza</span>
-  </div>
-
-  <div class="container">
-
-    <!-- Titolo vacanza con meta-pill per luogo e data -->
-    <div class="title">
-      <h1>Favollo 2026</h1>
-      <div class="meta-pills">
-        <span class="meta-pill">📍 Montbarbat, Catalogna</span>
-        <span class="meta-pill">🗓️ 13–20 ago</span>
-      </div>
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+    />
+  </head>
+  <body>
+    <!-- Header con logo -->
+    <div class="header">
+      <a href="index.html" class="header-title">FavollApp</a>&ensp;
+      <a href="index.html">
+        <img
+          id="favollo-img"
+          src="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+          alt="Logo Favollo"
+        />
+      </a>
     </div>
 
-    <br>
+    <!-- Barra countdown: giorni mancanti alla vacanza (popolata da JS) -->
+    <div class="countdown-bar">
+      <span class="countdown-label">-</span>
+      <span class="countdown-days" id="countdown-days">—</span>
+      <span class="countdown-label">giorni alla partenza</span>
+    </div>
 
-    <!-- Griglia di navigazione principale -->
-    <ul id="home-tiles">
-
-      <!-- Tile: Bagaglio -->
-      <li class="item home-tile">
-        <a href="warehouse.html" class="item-content">
-          <h3>Il bagaglio del favollo</h3>
-          <span class="home-tile-icon">🎒</span>
-          <span>Chi porta cosa</span>
-        </a>
-      </li>
-
-      <!-- Tile: Mappa -->
-      <li class="item home-tile">
-        <a href="map.html" class="item-content">
-          <h3>La mappa del favollo</h3>
-          <span class="home-tile-icon">🗺️</span>
-          <span>Vicino a noi</span>
-        </a>
-      </li>
-
-            <!-- Tile: Cast — non ancora collegata -->
-      <li class="item home-tile">
-        <a href="cast.html" class="item-content">
-          <h3>Il cast della vacanza</h3>
-          <span class="home-tile-icon">😎</span>
-          <span>Né pochi né buoni</span>
-        </a>
-      </li>
-
-<!-- Tile: Il Menù - non ancora collegata -->
-      <li class="item home-tile">
-        <a href="menu.html" class="item-content">
-          <h3>La lista della spesa</h3>
-          <span class="home-tile-icon">🍝</span>
-          <span>Con supporto AI</span>
-        </a>
-      </li>
-
-<!-- Tile: La casa — non ancora collegata -->
-      <li class="item home-tile tile-disabled">
-        <div class="item-content">
-          <h3>La tana del favollo</h3>
-          <span class="home-tile-icon">🏠</span>
-          <span>La nostra casa</span>
+    <div class="container">
+      <!-- Titolo vacanza con meta-pill per luogo e data -->
+      <div class="title">
+        <h1>Favollo 2026</h1>
+        <div class="meta-pills">
+          <span class="meta-pill">📍 Montbarbat, Catalogna</span>
+          <span class="meta-pill">🗓️ 13–20 ago</span>
         </div>
-        <span class="tile-badge">coming soon</span>
-      </li>
+      </div>
 
+      <br />
 
-      <!-- Tile: Carpooling - non ancora collegata -->
-      <li class="item home-tile tile-disabled">
-        <div class="item-content">
-          <h3>Carpooling</h3>
-          <span class="home-tile-icon">🚗</span>
-          <span>Gli equipaggi</span>
-        </div>
-        <span class="tile-badge">coming soon</span>
-      </li>
+      <!-- Griglia di navigazione principale -->
+      <ul id="home-tiles">
+        <!-- Tile: Bagaglio -->
+        <li class="item home-tile">
+          <a href="warehouse.html" class="item-content">
+            <h3>Il bagaglio del favollo</h3>
+            <span class="home-tile-icon">🎒</span>
+            <span>Chi porta cosa</span>
+          </a>
+        </li>
 
-      
+        <!-- Tile: Mappa -->
+        <li class="item home-tile">
+          <a href="map.html" class="item-content">
+            <h3>La mappa del favollo</h3>
+            <span class="home-tile-icon">🗺️</span>
+            <span>Vicino a noi</span>
+          </a>
+        </li>
 
-    </ul>
+        <!-- Tile: Cast — non ancora collegata -->
+        <li class="item home-tile">
+          <a href="cast.html" class="item-content">
+            <h3>Il cast della vacanza</h3>
+            <span class="home-tile-icon">😎</span>
+            <span>Né pochi né buoni</span>
+          </a>
+        </li>
 
-  </div>
+        <!-- Tile: Il Menù - non ancora collegata -->
+        <li class="item home-tile">
+          <a href="menu.html" class="item-content">
+            <h3>La lista della spesa</h3>
+            <span class="home-tile-icon">🍝</span>
+            <span>Con supporto AI</span>
+          </a>
+        </li>
 
-  <script>
-    // Calcola i giorni mancanti alla data di inizio vacanza
-    const vacanza = new Date("2026-08-13");
-    const oggi    = new Date();
-    oggi.setHours(0, 0, 0, 0);
-    const diff    = Math.ceil((vacanza - oggi) / (1000 * 60 * 60 * 24));
-    const el      = document.getElementById("countdown-days");
+        <!-- Tile: La casa — non ancora collegata -->
+        <li class="item home-tile tile-disabled">
+          <div class="item-content">
+            <h3>La tana del favollo</h3>
+            <span class="home-tile-icon">🏠</span>
+            <span>La nostra casa</span>
+          </div>
+          <span class="tile-badge">coming soon</span>
+        </li>
 
-    if (diff > 0) {
-      el.textContent = diff;
-    } else if (diff === 0) {
-      el.textContent = "0";
-      document.querySelector(".countdown-bar").innerHTML =
-        '<span class="countdown-label" style="font-size:15px">🦀 Si parte oggi!</span>';
-    } else {
-      document.querySelector(".countdown-bar").innerHTML =
-        '<span class="countdown-label" style="font-size:15px">🦀 Il Favollo è stato!</span>';
-    }
-  </script>
+        <!-- Tile: Carpooling - non ancora collegata -->
+        <li class="item home-tile tile-disabled">
+          <div class="item-content">
+            <h3>Carpooling</h3>
+            <span class="home-tile-icon">🚗</span>
+            <span>Gli equipaggi</span>
+          </div>
+          <span class="tile-badge">coming soon</span>
+        </li>
+      </ul>
+    </div>
 
-</body>
+    <script>
+      // Calcola i giorni mancanti alla data di inizio vacanza
+      const vacanza = new Date('2026-08-13');
+      const oggi = new Date();
+      oggi.setHours(0, 0, 0, 0);
+      const diff = Math.ceil((vacanza - oggi) / (1000 * 60 * 60 * 24));
+      const el = document.getElementById('countdown-days');
+
+      if (diff > 0) {
+        el.textContent = diff;
+      } else if (diff === 0) {
+        el.textContent = '0';
+        document.querySelector('.countdown-bar').innerHTML =
+          '<span class="countdown-label" style="font-size:15px">🦀 Si parte oggi!</span>';
+      } else {
+        document.querySelector('.countdown-bar').innerHTML =
+          '<span class="countdown-label" style="font-size:15px">🦀 Il Favollo è stato!</span>';
+      }
+    </script>
+  </body>
 </html>

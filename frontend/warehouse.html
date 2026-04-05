@@ -1,64 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FavollApp – Bagaglio</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FavollApp – Bagaglio</title>
 
-  <!-- Stile -->
-  <link rel="stylesheet" href="style.css">
+    <!-- Stile -->
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- Font Google -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <!-- Font Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Leckerli+One&family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Icone FontAwesome -->
-  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
+    <!-- Icone FontAwesome -->
+    <script
+      src="https://kit.fontawesome.com/de9ea88d4a.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+    />
 
-  <!-- Logica warehouse -->
-  <script src="warehouse.js" defer></script>
-</head>
-<body>
+    <!-- Logica warehouse -->
+    <script src="warehouse.js" defer></script>
+  </head>
+  <body>
+    <!-- Header con logo -->
+    <div class="header">
+      <a href="index.html" class="header-title">FavollApp</a>&ensp;
+      <a href="index.html">
+        <img
+          id="favollo-img"
+          src="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+          alt="Logo Favollo"
+        />
+      </a>
+    </div>
 
-  <!-- Header con logo -->
-  <div class="header">
-    <a href="index.html" class="header-title">FavollApp</a>&ensp;
-    <a href="index.html">
-      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
-    </a>
-  </div>
+    <div class="container">
+      <!-- Titolo pagina -->
+      <div class="title">
+        <h1>Il bagaglio del Favollo</h1>
+        <h3>Chi porta cosa?</h3>
+      </div>
 
-  <div class="container">
+      <br />
 
-  <!-- Titolo pagina -->
-  <div class="title">
-    <h1>Il bagaglio del Favollo</h1>
-    <h3>Chi porta cosa?</h3>
-  </div>
-
-  <br>
-
-  <!-- Input nome utente 
+      <!-- Input nome utente 
   <input id="username" list="users-list">
   <datalist id="users-list"></datalist>-->
 
- <select id="username">
-  <option value="" disabled selected>Seleziona il tuo nome</option>
-</select>
-  <datalist id="users-list"></datalist>
+      <select id="username">
+        <option value="" disabled selected>Seleziona il tuo nome</option>
+      </select>
+      <datalist id="users-list"></datalist>
 
-  <!-- Lista oggetti: generata dinamicamente dal JS -->
-  <div id="warehouse-container"></div>
+      <!-- Lista oggetti: generata dinamicamente dal JS -->
+      <div id="warehouse-container"></div>
 
-  <div id="add-item-cnt">
-    <button id="add-item-btn">Aggiungi un oggetto</button>
-  </div>
-
-</div>
-
-</body>
+      <div id="add-item-cnt">
+        <button id="add-item-btn">Aggiungi un oggetto</button>
+      </div>
+    </div>
+  </body>
 </html>

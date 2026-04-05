@@ -2,9 +2,9 @@
    CAST.JS – USER CARDS
    ========================================================================== */
 
-const API_BASE = "https://favollapp.onrender.com";
+const API_BASE = 'https://favollapp.onrender.com';
 
-const container = document.getElementById("cast-container");
+const container = document.getElementById('cast-container');
 
 init();
 
@@ -20,18 +20,17 @@ async function loadUsers() {
     const users = await res.json();
 
     renderUsers(users);
-
   } catch (e) {
-    console.error("LOAD USERS ERROR:", e);
+    console.error('LOAD USERS ERROR:', e);
   }
 }
 
 /* ========================= */
 
 function renderUsers(users) {
-  container.innerHTML = "";
+  container.innerHTML = '';
 
-  users.forEach(user => {
+  users.forEach((user) => {
     container.appendChild(createUserCard(user));
   });
 }
@@ -39,58 +38,58 @@ function renderUsers(users) {
 /* ========================= */
 
 function stringToColor(str) {
-    if (!str) return "#ccc";
+  if (!str) return '#ccc';
 
-    let hash = 0;
+  let hash = 0;
 
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
 
-    const h = hash % 360; 
+  const h = hash % 360;
 
-    const s = 60;
+  const s = 60;
 
-    const l = 65;
+  const l = 65;
 
-    return `hsl(${h}, ${s}, ${l})`;
+  return `hsl(${h}, ${s}, ${l})`;
 }
 
 /* ========================= */
 
 function createUserCard(user) {
-  const card = document.createElement("div");
-  card.classList.add("user-card");
+  const card = document.createElement('div');
+  card.classList.add('user-card');
 
   // HEADER
-  const header = document.createElement("div");
-  header.classList.add("user-header");
+  const header = document.createElement('div');
+  header.classList.add('user-header');
 
   // Avatar placeholder (future-proof)
-  const avatar = document.createElement("div");
-  avatar.classList.add("user-avatar");
+  const avatar = document.createElement('div');
+  avatar.classList.add('user-avatar');
   avatar.innerText = user.icon;
 
   // Nome
-  const name = document.createElement("div");
-  name.classList.add("user-name");
+  const name = document.createElement('div');
+  name.classList.add('user-name');
   name.innerText = user.name;
 
   header.append(name, avatar);
 
   // BODY (placeholder per future info)
-  const body = document.createElement("div");
-  body.classList.add("user-body");
+  const body = document.createElement('div');
+  body.classList.add('user-body');
 
-  const placeholder = document.createElement("div");
-  placeholder.classList.add("user-placeholder");
-  placeholder.innerText = user.desc || "Nessuna informazione";
+  const placeholder = document.createElement('div');
+  placeholder.classList.add('user-placeholder');
+  placeholder.innerText = user.desc || 'Nessuna informazione';
 
   body.append(placeholder);
 
   // FOOTER (espandibile in futuro)
-  const footer = document.createElement("div");
-  footer.classList.add("user-footer");
+  const footer = document.createElement('div');
+  footer.classList.add('user-footer');
 
   // composizione card
   card.append(header, body, footer);
@@ -101,11 +100,11 @@ function createUserCard(user) {
 /* ========================= */
 
 function getInitials(name) {
-  if (!name || typeof name !== "string") return "";
+  if (!name || typeof name !== 'string') return '';
 
   return name
-    .split(" ")
-    .map(n => n[0])
-    .join("")
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
     .toUpperCase();
 }

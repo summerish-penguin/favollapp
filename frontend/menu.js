@@ -2,156 +2,155 @@
    MENU.JS
    ========================================================================== */
 
-const API_BASE = "https://favollapp.onrender.com";
+const API_BASE = 'https://favollapp.onrender.com';
 
 function todayLabel() {
   const d = new Date();
-  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+  return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
-
 
 /* ==========================================================================
    INIT
    ========================================================================== */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener('DOMContentLoaded', async () => {
   await loadShoppingItems();
   addEmptyRow();
 
-  document.getElementById("send-prompt-btn").addEventListener("click", handlePrompt);
+  document
+    .getElementById('send-prompt-btn')
+    .addEventListener('click', handlePrompt);
 
-  document.getElementById("prompt-textarea").addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.ctrlKey) handlePrompt();
-  });
+  document
+    .getElementById('prompt-textarea')
+    .addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) handlePrompt();
+    });
 
-  document.getElementById("add-row").addEventListener("click", addEmptyRow);
+  document.getElementById('add-row').addEventListener('click', addEmptyRow);
 });
 
-document.getElementById("clear-note").addEventListener("click", async () => {
-  if (!confirm("Sei sicuro di voler svuotare tutta la lista?")) return;
+document.getElementById('clear-note').addEventListener('click', async () => {
+  if (!confirm('Sei sicuro di voler svuotare tutta la lista?')) return;
 
   try {
-    const res  = await fetch(`${API_BASE}/shopping`, { method: "DELETE" });
+    const res = await fetch(`${API_BASE}/shopping`, { method: 'DELETE' });
     const data = await res.json();
     if (data.ok) {
-      document.querySelector("#sketch-tbody").innerHTML = "";
+      document.querySelector('#sketch-tbody').innerHTML = '';
       addEmptyRow();
     }
   } catch (e) {
-    console.error("CLEAR ERROR:", e);
-    alert("Errore di rete. Riprova.");
+    console.error('CLEAR ERROR:', e);
+    alert('Errore di rete. Riprova.');
   }
 });
 
-const textarea  = document.getElementById("prompt-textarea");
-const submitBtn = document.getElementById("send-prompt-btn");
+const textarea = document.getElementById('prompt-textarea');
+const submitBtn = document.getElementById('send-prompt-btn');
 
-textarea.addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && !event.shiftKey) {
+textarea.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
     submitBtn.click();
   }
 });
-
 
 /* ==========================================================================
    LOADING OVERLAY
    ========================================================================== */
 
 function showLoading() {
-  if (document.getElementById("loading-overlay")) return;
-  const overlay = document.createElement("div");
-  overlay.id = "loading-overlay";
+  if (document.getElementById('loading-overlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'loading-overlay';
   overlay.innerHTML = `<div class="loading-spinner"></div>`;
   document.body.appendChild(overlay);
 }
 
 function hideLoading() {
-  const el = document.getElementById("loading-overlay");
+  const el = document.getElementById('loading-overlay');
   if (el) el.remove();
 }
-
 
 /* ==========================================================================
    PROMPT AI → TABELLA
    ========================================================================== */
 
 async function handlePrompt() {
-  const prompt = document.getElementById("prompt-textarea").value.trim();
+  const prompt = document.getElementById('prompt-textarea').value.trim();
   if (!prompt) return;
 
   showLoading();
 
   try {
     const res = await fetch(`${API_BASE}/ai/recipe`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ prompt })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
     });
 
     if (!res.ok) throw new Error(`Errore ${res.status}`);
     const data = await res.json();
 
     if (!data.ingredients || !Array.isArray(data.ingredients)) {
-      throw new Error("Risposta AI non valida");
+      throw new Error('Risposta AI non valida');
     }
 
     for (const ing of data.ingredients) {
-      const qty = `${ing.quantity ?? ""} ${ing.unit ?? ""}`.trim();
-      const id  = await saveRow(todayLabel(), ing.name ?? "", qty);
-      if (id) insertSavedRowBeforeEmpty(id, todayLabel(), ing.name ?? "", qty);
+      const qty = `${ing.quantity ?? ''} ${ing.unit ?? ''}`.trim();
+      const id = await saveRow(todayLabel(), ing.name ?? '', qty);
+      if (id) insertSavedRowBeforeEmpty(id, todayLabel(), ing.name ?? '', qty);
     }
-
   } catch (e) {
-    console.error("PROMPT ERROR:", e);
-    alert("Errore nella generazione. Riprova.");
+    console.error('PROMPT ERROR:', e);
+    alert('Errore nella generazione. Riprova.');
   } finally {
     hideLoading();
   }
 
-  textarea.value = "";
+  textarea.value = '';
 }
-
 
 /* ==========================================================================
    RIGA VUOTA — editabile, con bottone +
    ========================================================================== */
 
 function addEmptyRow() {
-  const tbody = document.querySelector("#sketch-tbody");
-  const tr    = document.createElement("tr");
-  tr.classList.add("empty-row");
+  const tbody = document.querySelector('#sketch-tbody');
+  const tr = document.createElement('tr');
+  tr.classList.add('empty-row');
 
-  const dayTd = document.createElement("td");
-  dayTd.className       = "time-col";
-  dayTd.contentEditable = "true";
+  const dayTd = document.createElement('td');
+  dayTd.className = 'time-col';
+  dayTd.contentEditable = 'true';
 
-  const ingTd = document.createElement("td");
-  ingTd.className       = "ingredient-col";
-  ingTd.contentEditable = "true";
+  const ingTd = document.createElement('td');
+  ingTd.className = 'ingredient-col';
+  ingTd.contentEditable = 'true';
 
-  const qtyTd = document.createElement("td");
-  qtyTd.className       = "qty-col";
-  qtyTd.contentEditable = "true";
+  const qtyTd = document.createElement('td');
+  qtyTd.className = 'qty-col';
+  qtyTd.contentEditable = 'true';
 
-  const actionTd = document.createElement("td");
-  actionTd.className = "checkout-col-td";
+  const actionTd = document.createElement('td');
+  actionTd.className = 'checkout-col-td';
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "action-wrapper";
+  const wrapper = document.createElement('div');
+  wrapper.className = 'action-wrapper';
 
-  const addBtn = document.createElement("button");
-  addBtn.className   = "add-row-inline-btn";
-  addBtn.textContent = "➕";
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-row-inline-btn';
+  addBtn.textContent = '➕';
 
   addBtn.onclick = async () => {
-    const day        = dayTd.innerText.trim() || todayLabel();
+    const day = dayTd.innerText.trim() || todayLabel();
     const ingredient = ingTd.innerText.trim();
-    const qty        = qtyTd.innerText.trim();
+    const qty = qtyTd.innerText.trim();
 
     if (!ingredient) {
-      ingTd.style.outline = "1.5px solid #e53e3e";
-      setTimeout(() => ingTd.style.outline = "", 2000);
+      ingTd.style.outline = '1.5px solid #e53e3e';
+      setTimeout(() => (ingTd.style.outline = ''), 2000);
       return;
     }
 
@@ -168,7 +167,6 @@ function addEmptyRow() {
   tbody.appendChild(tr);
 }
 
-
 /* ==========================================================================
    RIGA SALVATA — editabile, checkbox comprato + bottone elimina
    Le celle sono contenteditable; ogni modifica trigghera un PUT /shopping/{id}
@@ -176,57 +174,62 @@ function addEmptyRow() {
    ========================================================================== */
 
 function buildSavedRow(id, day, ingredient, qty, bought = false) {
-  const tr = document.createElement("tr");
+  const tr = document.createElement('tr');
   tr.dataset.id = id;
-  if (bought) tr.classList.add("bought");
+  if (bought) tr.classList.add('bought');
 
-  const dayTd = document.createElement("td");
-  dayTd.className       = "time-col";
-  dayTd.contentEditable = "true";
-  dayTd.innerText       = day;
+  const dayTd = document.createElement('td');
+  dayTd.className = 'time-col';
+  dayTd.contentEditable = 'true';
+  dayTd.innerText = day;
 
-  const ingTd = document.createElement("td");
-  ingTd.className       = "ingredient-col";
-  ingTd.contentEditable = "true";
-  ingTd.innerText       = ingredient;
+  const ingTd = document.createElement('td');
+  ingTd.className = 'ingredient-col';
+  ingTd.contentEditable = 'true';
+  ingTd.innerText = ingredient;
 
-  const qtyTd = document.createElement("td");
-  qtyTd.className       = "qty-col";
-  qtyTd.contentEditable = "true";
-  qtyTd.innerText       = qty;
+  const qtyTd = document.createElement('td');
+  qtyTd.className = 'qty-col';
+  qtyTd.contentEditable = 'true';
+  qtyTd.innerText = qty;
 
   /* Debounce: invia la modifica al backend dopo 600ms di inattività */
   let debounceTimer = null;
   const onEdit = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
-      updateRow(id, dayTd.innerText.trim(), ingTd.innerText.trim(), qtyTd.innerText.trim());
+      updateRow(
+        id,
+        dayTd.innerText.trim(),
+        ingTd.innerText.trim(),
+        qtyTd.innerText.trim(),
+      );
     }, 600);
   };
 
-  dayTd.addEventListener("input", onEdit);
-  ingTd.addEventListener("input", onEdit);
-  qtyTd.addEventListener("input", onEdit);
+  dayTd.addEventListener('input', onEdit);
+  ingTd.addEventListener('input', onEdit);
+  qtyTd.addEventListener('input', onEdit);
 
-  const actionTd = document.createElement("td");
-  actionTd.className = "checkout-col-td";
+  const actionTd = document.createElement('td');
+  actionTd.className = 'checkout-col-td';
 
-  const wrapper = document.createElement("div");
-  wrapper.className = "action-wrapper";
+  const wrapper = document.createElement('div');
+  wrapper.className = 'action-wrapper';
 
   /* Checkbox "comprato" → strikethrough */
-  const checkbox = document.createElement("input");
-  checkbox.type    = "checkbox";
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
   checkbox.checked = bought;
-  checkbox.classList.add("bought-checkbox");
-  checkbox.onchange = () => tr.classList.toggle("bought", checkbox.checked);
+  checkbox.classList.add('bought-checkbox');
+  checkbox.onchange = () => tr.classList.toggle('bought', checkbox.checked);
 
   /* Bottone elimina */
-  const delBtn = document.createElement("button");
-  delBtn.className   = "delete-row-btn";
-  delBtn.textContent = "🗑️";
-  delBtn.title       = "Elimina";
-  delBtn.onclick     = async () => {
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-row-btn';
+  delBtn.textContent = '🗑️';
+  delBtn.title = 'Elimina';
+  delBtn.onclick = async () => {
     const ok = await deleteRow(id);
     if (ok) tr.remove();
   };
@@ -239,9 +242,9 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
 
 /* Inserisce una riga salvata prima della riga vuota in fondo */
 function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
-  const tbody    = document.querySelector("#sketch-tbody");
-  const emptyRow = tbody.querySelector(".empty-row");
-  const savedTr  = buildSavedRow(id, day, ingredient, qty);
+  const tbody = document.querySelector('#sketch-tbody');
+  const emptyRow = tbody.querySelector('.empty-row');
+  const savedTr = buildSavedRow(id, day, ingredient, qty);
   if (emptyRow) {
     tbody.insertBefore(savedTr, emptyRow);
   } else {
@@ -251,10 +254,9 @@ function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
 
 /* Aggiunge una riga salvata in fondo — usata al caricamento da backend */
 function appendSavedRow(id, day, ingredient, qty, bought = false) {
-  const tbody = document.querySelector("#sketch-tbody");
+  const tbody = document.querySelector('#sketch-tbody');
   tbody.appendChild(buildSavedRow(id, day, ingredient, qty, bought));
 }
-
 
 /* ==========================================================================
    API
@@ -262,16 +264,16 @@ function appendSavedRow(id, day, ingredient, qty, bought = false) {
 
 async function saveRow(day, ingredient, qty) {
   try {
-    const res  = await fetch(`${API_BASE}/shopping`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ day, ingredient, qty })
+    const res = await fetch(`${API_BASE}/shopping`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ day, ingredient, qty }),
     });
     const data = await res.json();
     return data.ok ? data.id : null;
   } catch (e) {
-    console.error("SAVE ROW ERROR:", e);
-    alert("Errore di rete nel salvataggio. Riprova.");
+    console.error('SAVE ROW ERROR:', e);
+    alert('Errore di rete nel salvataggio. Riprova.');
     return null;
   }
 }
@@ -280,22 +282,22 @@ async function saveRow(day, ingredient, qty) {
 async function updateRow(id, day, ingredient, qty) {
   try {
     await fetch(`${API_BASE}/shopping/${id}`, {
-      method:  "PUT",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ day, ingredient, qty })
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ day, ingredient, qty }),
     });
   } catch (e) {
-    console.error("UPDATE ROW ERROR:", e);
+    console.error('UPDATE ROW ERROR:', e);
   }
 }
 
 async function deleteRow(id) {
   try {
-    const res  = await fetch(`${API_BASE}/shopping/${id}`, { method: "DELETE" });
+    const res = await fetch(`${API_BASE}/shopping/${id}`, { method: 'DELETE' });
     const data = await res.json();
     return !!data.ok;
   } catch (e) {
-    console.error("DELETE ROW ERROR:", e);
+    console.error('DELETE ROW ERROR:', e);
     alert("Errore di rete nell'eliminazione. Riprova.");
     return false;
   }
@@ -303,12 +305,17 @@ async function deleteRow(id) {
 
 async function loadShoppingItems() {
   try {
-    const res   = await fetch(`${API_BASE}/shopping`);
+    const res = await fetch(`${API_BASE}/shopping`);
     const items = await res.json();
-    items.forEach(item => {
-      appendSavedRow(item.id, item.day ?? "", item.ingredient ?? "", item.qty ?? "");
+    items.forEach((item) => {
+      appendSavedRow(
+        item.id,
+        item.day ?? '',
+        item.ingredient ?? '',
+        item.qty ?? '',
+      );
     });
   } catch (e) {
-    console.error("LOAD SHOPPING ERROR:", e);
+    console.error('LOAD SHOPPING ERROR:', e);
   }
 }

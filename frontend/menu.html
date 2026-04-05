@@ -1,76 +1,99 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FavollApp – Menù</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FavollApp – Menù</title>
 
-  <!-- Stile -->
-  <link rel="stylesheet" href="style.css">
+    <!-- Stile -->
+    <link rel="stylesheet" href="style.css" />
 
-  <!-- Font Google -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rock+Salt&display=swap" rel="stylesheet">
+    <!-- Font Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rock+Salt&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Icone FontAwesome -->
-  <script src="https://kit.fontawesome.com/de9ea88d4a.js" crossorigin="anonymous" defer></script>
+    <!-- Icone FontAwesome -->
+    <script
+      src="https://kit.fontawesome.com/de9ea88d4a.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/Orange-Crab-Clipart-Transparent-PNG.png">
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+    />
 
-  <!-- Logica menu -->
-  <script src="menu.js" defer></script>
-</head>
-<body>
-
-  <!-- Header con logo -->
-  <div class="header">
-    <a href="index.html" class="header-title">FavollApp</a>&ensp;
-    <a href="index.html">
-      <img id="favollo-img" src="assets/Orange-Crab-Clipart-Transparent-PNG.png" alt="Logo Favollo">
-    </a>
-  </div>
-
-  <div class="container">
-
-    <!-- Titolo pagina -->
-    <div class="title">
-      <h1>La lista della spesa</h1>
-      <h3>Modifica la lista della spesa, o utilizza l'AI per cercare una ricetta e generare gli ingredienti da acquistare</h3>
+    <!-- Logica menu -->
+    <script src="menu.js" defer></script>
+  </head>
+  <body>
+    <!-- Header con logo -->
+    <div class="header">
+      <a href="index.html" class="header-title">FavollApp</a>&ensp;
+      <a href="index.html">
+        <img
+          id="favollo-img"
+          src="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+          alt="Logo Favollo"
+        />
+      </a>
     </div>
 
-    <br>
+    <div class="container">
+      <!-- Titolo pagina -->
+      <div class="title">
+        <h1>La lista della spesa</h1>
+        <h3>
+          Modifica la lista della spesa, o utilizza l'AI per cercare una ricetta
+          e generare gli ingredienti da acquistare
+        </h3>
+      </div>
 
-    <textarea id="prompt-textarea" rows="5" placeholder="Dimmi una ricetta"></textarea>
+      <br />
 
-    <div id="send-prompt-div">
-      <div class="warning-text">Dove non specificato, le dosi sono calcolate per il numero di persone censite in FavollApp. L'AI può commettere errori.</div>
-      <button id="send-prompt-btn">✨ Genera</button>
+      <textarea
+        id="prompt-textarea"
+        rows="5"
+        placeholder="Dimmi una ricetta"
+      ></textarea>
+
+      <div id="send-prompt-div">
+        <div class="warning-text">
+          Dove non specificato, le dosi sono calcolate per il numero di persone
+          censite in FavollApp. L'AI può commettere errori.
+        </div>
+        <button id="send-prompt-btn">✨ Genera</button>
+      </div>
+
+      <div class="notebook">
+        <h1 class="notebook-title">Lista della spesa</h1>
+        <table id="sketch-table">
+          <thead>
+            <tr>
+              <th class="time-col">Data</th>
+              <th class="ingredient-col">Ingrediente</th>
+              <th class="qty-col">Qta</th>
+              <th class="checkout-col-th"></th>
+            </tr>
+          </thead>
+          <tbody id="sketch-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="end-notebook">
+        <button class="clear-note-btn" id="clear-note">
+          ❌ svuota la lista
+        </button>
+        <!--<button class="add-row-btn" id="add-row">➕ aggiungi riga</button>-->
+      </div>
     </div>
-
-    <div class="notebook">
-      <h1 class="notebook-title">Lista della spesa</h1>
-      <table id="sketch-table">
-        <thead>
-          <tr>
-            <th class="time-col">Data</th>
-            <th class="ingredient-col">Ingrediente</th>
-            <th class="qty-col">Qta</th>
-            <th class="checkout-col-th"></th>
-          </tr>
-        </thead>
-        <tbody id="sketch-tbody">
-        </tbody>
-      </table>
-    </div>
-
-    <div class="end-notebook">
-      <button class="clear-note-btn" id="clear-note">❌ svuota la lista</button>
-      <!--<button class="add-row-btn" id="add-row">➕ aggiungi riga</button>-->
-    </div>
-
-  </div>
-
-</body>
+  </body>
 </html>
