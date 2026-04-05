@@ -1048,3 +1048,7 @@ tr.bought td {
   background: rgba(229, 62, 62, 0.1);
   opacity: 1;
 }
+
+.clear-note-btn{
+  width: 40%;
+}
