@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import os
-import request
+import requests
 
 from db import engine, SessionLocal
 from models import Base, User, Item, Contribution
