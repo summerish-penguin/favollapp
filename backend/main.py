@@ -260,7 +260,8 @@ REGOLE:
             start = content.find("{")
             end = content.rfind("}") + 1
             parsed = json.loads(content[start:end])
-
+        
+        print("People:", people)
         return parsed
 
     except Exception as e:
