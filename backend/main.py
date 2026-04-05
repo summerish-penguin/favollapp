@@ -163,6 +163,19 @@ def remove(req: RemoveRequest):
     finally:
         db.close()
 
+@app.delete("/items/{name}")
+def delete_item(name: str, db: Session = Depends(get_db)):
+    item = db.query(Item).filter_by(name=name).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item non trovato.")
+
+    # elimina anche tutti i contributi associati
+    db.query(Contribution).filter_by(item_id=item.id).delete()
+    db.delete(item)
+    db.commit()
+
+    return {"ok": True}
+
 
 # =========================
 # CREA NUOVO ITEM

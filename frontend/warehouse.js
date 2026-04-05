@@ -301,6 +301,9 @@ function createItemElement(itemName, people, target) {
   title.classList.add("item-name");
   title.innerText = itemName;
 
+  const space = document.createElement("div");
+  space.classList.add("space-div");
+
   /* Label "totale / target" con colore semantico */
   const targetLabel = document.createElement("span");
   const total       = getTotal(itemName);
@@ -328,15 +331,25 @@ function createItemElement(itemName, people, target) {
     await optimisticUpdate(user, itemName, +1);
   };
 
-  topRow.append(title, targetLabel, btn);
-
   /* -- Riga inferiore: tag persone -- */
   const peopleDiv = document.createElement("div");
   peopleDiv.classList.add("people");
   renderPeople(peopleDiv, people, itemName, target);
 
+  /* -- Bottone per eliminare un item -- */
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "🗑";
+  deleteBtn.classList.add("delete-item-btn");
+  deleteBtn.onclick = async () => {
+  if (!confirm(`Eliminare "${itemName}" dalla lista?`)) return;
+    await deleteItem(itemName);
+  };
+
+  topRow.append(title, space, targetLabel, btn, deleteBtn);
+
   wrapper.append(topRow, peopleDiv);
   return wrapper;
+
 }
 
 /* Popola il div .people con i tag di ogni portatore (nome, ▲, ▼, ✕). */
@@ -441,5 +454,26 @@ async function optimisticRemove(user, item) {
     console.error("REMOVE ERROR:", e);
     Object.assign(state, prev);  // rollback
     renderAll();
+  }
+}
+
+
+/* Rimuove item */
+async function deleteItem(itemName) {
+  const prev = JSON.parse(JSON.stringify(state));
+  delete state[itemName];
+  renderAll();
+
+  try {
+    const res = await fetch(`${API_BASE}/items/${encodeURIComponent(itemName)}`, {
+      method: "DELETE"
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.detail);
+  } catch (e) {
+    console.error("DELETE ITEM ERROR:", e);
+    Object.assign(state, prev); // rollback
+    renderAll();
+    alert("Errore eliminazione. Riprova.");
   }
 }

@@ -369,7 +369,7 @@ select{
 
 .item-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 12px;
 }
@@ -378,6 +378,10 @@ select{
   font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.space-div{
+  width: 80px;
 }
 
 .take-btn {
@@ -465,6 +469,22 @@ select{
 
 .remove-btn:hover { background: #fed7d7; opacity: 1; }
 
+.delete-item-btn {
+  border: none;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  width: auto;
+  box-shadow: none;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+  line-height: 1;
+}
+
+.delete-item-btn:hover { background: #fed7d7; opacity: 1; }
 
 /* ------------------------------------------------------------------
    ANIMAZIONE BUFFON
