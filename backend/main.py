@@ -7,7 +7,7 @@ import os
 import requests
 
 from db import engine, SessionLocal
-from models import Base, User, Item, Contribution, ShoppingItem
+from models import Base, User, Item, Contribution, ShoppingItem, Location
 
 app = FastAPI()
 
@@ -180,21 +180,7 @@ def delete_item(name: str, db: Session = Depends(get_db)):
 
     return {"ok": True}
 
-from models import Base, User, Item, Contribution, ShoppingItem, Location
 
-@app.get("/locations")
-def get_locations(db: Session = Depends(get_db)):
-    locs = db.query(Location).all()
-    return [
-        {
-            "LocationName": l.LocationName,
-            "Lat":          l.Lat,
-            "Lng":          l.Lng,
-            "LocCategory":  l.LocCategory,
-            "MinsAway":     l.MinsAway
-        }
-        for l in locs
-    ]
 
 @app.get("/health")
 def health():
