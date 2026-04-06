@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ------------------------------------------------------------------
      CARICAMENTO DATI E RENDER
   ------------------------------------------------------------------ */
-  fetch('./data/locations.json')
+  fetch('https://favollapp.onrender.com/locations')
     .then((res) => {
-      if (!res.ok) throw new Error('Errore nel caricamento JSON');
+      if (!res.ok) throw new Error('Errore nel caricamento locations');
       return res.json();
     })
     .then((data) => {

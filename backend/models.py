@@ -30,3 +30,12 @@ class ShoppingItem(Base):
     day        = Column(String, nullable=True)
     ingredient = Column(String, nullable=False)
     qty        = Column(String, nullable=True)
+    
+class Location(Base):
+    __tablename__ = "locations"
+    id           = Column(Integer, primary_key=True)
+    LocationName = Column(String)
+    Lat          = Column(Float)
+    Lng          = Column(Float)
+    LocCategory  = Column(String)
+    MinsAway     = Column(Integer, nullable=True)
