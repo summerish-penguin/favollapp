@@ -38,5 +38,5 @@ class Location(Base):
     Lat          = Column("lat", Float)
     Lng          = Column("lng", Float)
     LocCategory  = Column("loccategory", String)
-    MinsAway     = Column("minsaway", Integer, nullable=True) 
+    MinsAway     = Column("minsaway", Integer, nullable=True)
     

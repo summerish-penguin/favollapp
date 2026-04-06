@@ -47,16 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ------------------------------------------------------------------
      CARICAMENTO DATI E RENDER
   ------------------------------------------------------------------ */
-  fetch('./data/locations.json')
-    .then((res) => {
-      if (!res.ok) throw new Error('Errore nel caricamento JSON');
-      return res.json();
-    })
-    .then((data) => {
-      renderMarkers(data);
-      renderSidebar(data);
-    })
-    .catch((err) => console.error('Errore:', err));
+const API_BASE = 'https://favollapp.onrender.com';
+
+fetch(`${API_BASE}/locations`) // <--- Cambiato qui
+  .then((res) => {
+    if (!res.ok) throw new Error('Errore nel caricamento delle locations dal DB');
+    return res.json();
+  })
+  .then((data) => {
+    renderMarkers(data);
+    renderSidebar(data);
+  })
+  .catch((err) => console.error('Errore durante il fetch delle locations:', err));
 
   /* ------------------------------------------------------------------
      MARKER SU MAPPA

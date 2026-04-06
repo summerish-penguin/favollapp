@@ -343,6 +343,21 @@ def get_users(db: Session = Depends(get_db)):
     users = db.query(User).order_by(User.name).all()
     return [{"name": u.name, "desc": u.desc, "icon": u.icon} for u in users]
 
+@app.get("/locations")
+def get_locations(db: Session = Depends(get_db)):
+    """Recupera tutti i punti di interesse dal DB PostgreSQL."""
+    locations = db.query(Location).all()
+    # Trasformiamo i dati in una lista di dizionari per il frontend
+    return [
+        {
+            "LocationName": loc.LocationName,
+            "Lat": loc.Lat,
+            "Lng": loc.Lng,
+            "LocCategory": loc.LocCategory,
+            "MinsAway": loc.MinsAway
+        }
+        for loc in locations
+    ]
 
 @app.get("/health")
 def health():
