@@ -396,7 +396,6 @@ SEED_ITEMS = [
     ("Ghiaccini",        20),
     ("Sedia da spiaggia", 6),
     ("Carte da gioco",    2),
-    ("Crema solare",      2),
     ("Rete da beach",     1),
     ("Palla da beach",    2),
     ("Bocce spiaggia",    1),
