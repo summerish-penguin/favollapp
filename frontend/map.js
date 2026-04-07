@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ------------------------------------------------------------------ */
 const API_BASE = 'https://favollapp.onrender.com';
 
-fetch(`${API_BASE}/locations`) // <--- Cambiato qui
+fetch(`${API_BASE}/locations`)
   .then((res) => {
     if (!res.ok) throw new Error('Errore nel caricamento delle locations dal DB');
     return res.json();
