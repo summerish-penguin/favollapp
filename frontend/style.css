@@ -308,7 +308,7 @@ li:active:not(.dragging) {
   box-shadow: 0 1px 4px rgba(10, 30, 61, 0.06);
 }
 
-/* Badge "presto" in alto a destra sulla tile */
+/* Badge "Coming soon" in alto a destra sulla tile */
 .tile-badge {
   position: absolute;
   top: 9px;
