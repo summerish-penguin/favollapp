@@ -592,28 +592,6 @@ select {
   margin: 0;
 }
 
-/* Input dentro il modal (nome e target) */
-.modal-input {
-  width: 100%;
-  padding: 11px 14px;
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--border-medium);
-  background: var(--surface-card);
-  color: var(--text-primary);
-  outline: none;
-  margin: 0;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.modal-input:focus {
-  border-color: var(--brand-mid);
-  box-shadow: 0 0 0 3px rgba(26, 95, 168, 0.1);
-}
-
 /* Messaggio di errore */
 .modal-error {
   font-size: 12px;
