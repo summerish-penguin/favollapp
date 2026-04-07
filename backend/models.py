@@ -33,10 +33,10 @@ class ShoppingItem(Base):
     
 class Location(Base):
     __tablename__ = "locations"
-    LocationId   = Column(Integer, primary_key=True)
-    LocationName = Column(String)
-    Lat          = Column(Float)
-    Lng          = Column(Float)
-    LocCategory  = Column(String)
-    MinsAway     = Column(Integer, nullable=True) 
+    id         = Column(Integer, primary_key=True)
+    name       = Column(String)
+    lat        = Column(Float)
+    lng        = Column(Float)
+    category   = Column(String)
+    mins_away  = Column(Integer, nullable=True) 
     

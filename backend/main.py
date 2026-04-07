@@ -350,11 +350,11 @@ def get_locations(db: Session = Depends(get_db)):
     # Trasformiamo i dati in una lista di dizionari per il frontend
     return [
         {
-            "LocationName": loc.LocationName,
-            "Lat": loc.Lat,
-            "Lng": loc.Lng,
-            "LocCategory": loc.LocCategory,
-            "MinsAway": loc.MinsAway
+            "LocationName": loc.name,
+            "Lat": loc.lat,
+            "Lng": loc.lng,
+            "LocCategory": loc.category,
+            "MinsAway": loc.mins_away
         }
         for loc in locations
     ]
