@@ -60,6 +60,10 @@ class CreateItemRequest(BaseModel):
     name: str
     target: int = 1
 
+class UpdateItemRequest(BaseModel):
+    name: str
+    target: int
+
 class RecipeRequest(BaseModel):
     prompt: str
 
@@ -198,6 +202,23 @@ def delete_item(name: str, db: Session = Depends(get_db)):
     db.commit()
 
     return {"ok": True}
+
+@app.put("/items/{old_name}")
+def update_item(old_name: str, req: UpdateItemRequest, db: Session = Depends(get_db)):
+    item = db.query(Item).filter_by(name=old_name).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item non trovato.")
+    if req.target < 1:
+        raise HTTPException(status_code=422, detail="Il target deve essere almeno 1.")
+    # controlla che il nuovo nome non esista già (se è cambiato)
+    if req.name != old_name:
+        existing = db.query(Item).filter_by(name=req.name).first()
+        if existing:
+            raise HTTPException(status_code=409, detail="Nome già esistente.")
+    item.name   = req.name
+    item.target = req.target
+    db.commit()
+    return {"ok": True, "name": item.name, "target": item.target}
 
 
 @app.post("/ai/recipe")
