@@ -32,21 +32,18 @@ const DEFAULT_ITEMS = [
 init();
 
 async function init() {
-  await loadUsersDropdown(); // popola il <select> con gli utenti dal backend
+  await loadUsersDropdown();
   initEmptyState(DEFAULT_ITEMS);
   renderAll();
-  loadWarehouse(); // sovrascrive lo stato con i dati reali del backend
-  loadUsers(); // popola eventuale datalist di autocompletamento
+  loadWarehouse();
+  loadUsers();
 
-  // Bottone "aggiungi oggetto": apre il modal
   const addBtn = document.getElementById('add-item-btn');
   if (addBtn) addBtn.addEventListener('click', openAddItemModal);
 }
 
 /* ==========================================================================
    STATO INIZIALE (fallback locale)
-   Popola lo state con gli item di default prima che arrivi la risposta backend,
-   così la pagina non appare vuota durante il caricamento.
    ========================================================================== */
 
 function initEmptyState(items) {
@@ -59,7 +56,6 @@ function initEmptyState(items) {
    CARICAMENTO DAL BACKEND
    ========================================================================== */
 
-/* Carica la lista completa degli item con contributi e target. */
 async function loadWarehouse() {
   try {
     const res = await fetch(`${API_BASE}/warehouse`);
@@ -82,7 +78,6 @@ async function loadWarehouse() {
   }
 }
 
-/* Carica gli utenti e popola il datalist di autocompletamento (se presente). */
 async function loadUsers() {
   try {
     const res = await fetch(`${API_BASE}/users`);
@@ -104,7 +99,6 @@ function populateUserInput(users) {
   });
 }
 
-/* Popola il <select id="username"> con gli utenti registrati sul backend. */
 async function loadUsersDropdown() {
   const select = document.getElementById('username');
   try {
@@ -123,50 +117,74 @@ async function loadUsersDropdown() {
 
 /* ==========================================================================
    MODAL — AGGIUNGI OGGETTO
-   Crea un overlay con un form per specificare nome e target del nuovo item.
-   Al submit chiama POST /items sul backend e aggiorna lo stato locale.
    ========================================================================== */
 
 function openAddItemModal() {
-  /* Evita duplicati se il modal è già aperto */
   if (document.getElementById('add-item-modal')) return;
+  openItemModal({
+    titleText:   'Aggiungi un oggetto',
+    confirmText: 'Crea',
+    nameValue:   '',
+    targetValue: '',
+    onConfirm:   submitNewItem,
+  });
+}
 
-  /* --- Overlay scuro --- */
+/* ==========================================================================
+   MODAL — MODIFICA OGGETTO
+   Riusa la stessa struttura del modal di creazione, con testo "Salva"
+   e i campi pre-compilati con nome e target attuali.
+   ========================================================================== */
+
+function openEditItemModal(oldName, oldTarget) {
+  if (document.getElementById('add-item-modal')) return;
+  openItemModal({
+    titleText:   'Modifica oggetto',
+    confirmText: 'Salva',
+    nameValue:   oldName,
+    targetValue: String(oldTarget),
+    onConfirm:   (nameInput, targetInput, errorMsg, overlay) =>
+      submitEditItem(oldName, nameInput, targetInput, errorMsg, overlay),
+  });
+}
+
+/* ==========================================================================
+   MODAL — COSTRUTTORE GENERICO
+   Usato sia da openAddItemModal che da openEditItemModal.
+   ========================================================================== */
+
+function openItemModal({ titleText, confirmText, nameValue, targetValue, onConfirm }) {
   const overlay = document.createElement('div');
   overlay.id = 'add-item-modal';
   overlay.classList.add('modal-overlay');
-
-  /* Chiude il modal cliccando fuori */
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeModal(overlay);
   });
 
-  /* --- Card del modal --- */
   const modal = document.createElement('div');
   modal.classList.add('modal-card');
 
   const title = document.createElement('h2');
   title.classList.add('modal-title');
-  title.textContent = 'Aggiungi un oggetto';
+  title.textContent = titleText;
 
   const nameInput = document.createElement('input');
-  nameInput.type = 'text';
+  nameInput.type        = 'text';
   nameInput.placeholder = 'Nome oggetto';
+  nameInput.value       = nameValue;
   nameInput.classList.add('modal-input');
 
   const targetInput = document.createElement('input');
-  targetInput.type = 'number';
-  targetInput.min = '1';
-  targetInput.value = '';
+  targetInput.type        = 'number';
+  targetInput.min         = '1';
+  targetInput.value       = targetValue;
   targetInput.placeholder = 'Quantità target';
   targetInput.classList.add('modal-input');
 
-  /* Messaggio di errore (nascosto di default) */
   const errorMsg = document.createElement('span');
   errorMsg.classList.add('modal-error');
   errorMsg.style.display = 'none';
 
-  /* Riga bottoni Annulla / Crea */
   const btnRow = document.createElement('div');
   btnRow.classList.add('modal-btn-row');
 
@@ -175,70 +193,89 @@ function openAddItemModal() {
   cancelBtn.classList.add('modal-cancel-btn');
   cancelBtn.onclick = () => closeModal(overlay);
 
-  const createBtn = document.createElement('button');
-  createBtn.textContent = 'Crea';
-  createBtn.classList.add('modal-create-btn');
-  createBtn.onclick = () =>
-    submitNewItem(nameInput, targetInput, errorMsg, overlay);
+  const confirmBtn = document.createElement('button');
+  confirmBtn.textContent = confirmText;
+  confirmBtn.classList.add('modal-create-btn');
+  confirmBtn.onclick = () => onConfirm(nameInput, targetInput, errorMsg, overlay);
 
-  /* Invio con tasto Enter sull'input nome */
   nameInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter')
-      submitNewItem(nameInput, targetInput, errorMsg, overlay);
+    if (e.key === 'Enter') onConfirm(nameInput, targetInput, errorMsg, overlay);
   });
 
-  btnRow.append(cancelBtn, createBtn);
+  btnRow.append(cancelBtn, confirmBtn);
   modal.append(title, nameInput, targetInput, errorMsg, btnRow);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
   nameInput.focus();
+  /* posiziona il cursore in fondo al testo pre-compilato */
+  nameInput.setSelectionRange(nameInput.value.length, nameInput.value.length);
 }
 
 function closeModal(overlay) {
   overlay.remove();
 }
 
-/* Valida i campi e invia la richiesta di creazione al backend. */
+/* Validazione e invio per la CREAZIONE */
 async function submitNewItem(nameInput, targetInput, errorMsg, overlay) {
-  const name = nameInput.value.trim();
+  const name   = nameInput.value.trim();
   const target = parseInt(targetInput.value, 10);
 
-  if (!name) {
-    showModalError(errorMsg, "Inserisci il nome dell'oggetto.");
-    return;
-  }
-  if (!target || target < 1) {
-    showModalError(errorMsg, 'Il target deve essere almeno 1.');
-    return;
-  }
-  if (state[name]) {
-    showModalError(errorMsg, 'Questo oggetto esiste già.');
-    return;
-  }
+  if (!name) { showModalError(errorMsg, "Inserisci il nome dell'oggetto."); return; }
+  if (!target || target < 1) { showModalError(errorMsg, 'Il target deve essere almeno 1.'); return; }
+  if (state[name]) { showModalError(errorMsg, 'Questo oggetto esiste già.'); return; }
 
   errorMsg.style.display = 'none';
 
   try {
-    const res = await fetch(`${API_BASE}/items`, {
-      method: 'POST',
+    const res  = await fetch(`${API_BASE}/items`, {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, target }),
+      body:    JSON.stringify({ name, target }),
     });
-
     const data = await res.json();
 
-    if (!res.ok || !data.ok) {
-      showModalError(errorMsg, data.detail ?? 'Errore nella creazione.');
-      return;
-    }
+    if (!res.ok || !data.ok) { showModalError(errorMsg, data.detail ?? 'Errore nella creazione.'); return; }
 
-    /* Aggiunge il nuovo item allo stato locale e aggiorna la UI */
     state[name] = { users: {}, target };
     renderAll();
     closeModal(overlay);
   } catch (e) {
     console.error('CREATE ITEM ERROR:', e);
+    showModalError(errorMsg, 'Errore di rete. Riprova.');
+  }
+}
+
+/* Validazione e invio per la MODIFICA */
+async function submitEditItem(oldName, nameInput, targetInput, errorMsg, overlay) {
+  const newName  = nameInput.value.trim();
+  const newTarget = parseInt(targetInput.value, 10);
+
+  if (!newName) { showModalError(errorMsg, "Inserisci il nome dell'oggetto."); return; }
+  if (!newTarget || newTarget < 1) { showModalError(errorMsg, 'Il target deve essere almeno 1.'); return; }
+  if (newName !== oldName && state[newName]) { showModalError(errorMsg, 'Questo nome esiste già.'); return; }
+
+  errorMsg.style.display = 'none';
+
+  try {
+    const res  = await fetch(`${API_BASE}/items/${encodeURIComponent(oldName)}`, {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ name: newName, target: newTarget }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) { showModalError(errorMsg, data.detail ?? 'Errore nella modifica.'); return; }
+
+    /* Aggiorna lo stato locale: rinomina la chiave se il nome è cambiato */
+    const oldData = state[oldName];
+    delete state[oldName];
+    state[newName] = { ...oldData, target: newTarget };
+
+    renderAll();
+    closeModal(overlay);
+  } catch (e) {
+    console.error('EDIT ITEM ERROR:', e);
     showModalError(errorMsg, 'Errore di rete. Riprova.');
   }
 }
@@ -252,19 +289,17 @@ function showModalError(el, message) {
    HELPERS
    ========================================================================== */
 
-/* Calcola il totale delle unità portate per un item. */
 function getTotal(itemName) {
   const users = state[itemName]?.users ?? {};
   return Object.values(users).reduce((sum, qty) => sum + qty, 0);
 }
 
-/* Spawna l'immagine di Buffon che vola verso l'alto dal punto cliccato. */
 function spawnBuffon(x, y) {
   const img = document.createElement('img');
   img.src = './assets/buffon.png';
   img.classList.add('buffon');
   img.style.left = x - 25 + 'px';
-  img.style.top = y - 25 + 'px';
+  img.style.top  = y - 25 + 'px';
   document.body.appendChild(img);
   setTimeout(() => img.remove(), 1000);
 }
@@ -273,7 +308,6 @@ function spawnBuffon(x, y) {
    RENDER
    ========================================================================== */
 
-/* Ridisegna l'intera lista warehouse dal contenuto di state. */
 function renderAll() {
   container.innerHTML = '';
   Object.entries(state).forEach(([itemName, { users, target }]) => {
@@ -281,13 +315,10 @@ function renderAll() {
   });
 }
 
-/* Crea il div di un singolo item: riga superiore (nome + label target + bottone)
-   e riga inferiore (tag persone). */
 function createItemElement(itemName, people, target) {
   const wrapper = document.createElement('div');
   wrapper.classList.add('warehouse-item');
 
-  /* -- Riga superiore -- */
   const topRow = document.createElement('div');
   topRow.classList.add('item-content');
 
@@ -301,18 +332,16 @@ function createItemElement(itemName, people, target) {
   const space = document.createElement('div');
   space.classList.add('space-div');
 
-  /* Label "totale / target" con colore semantico */
   const targetLabel = document.createElement('span');
   const total = getTotal(itemName);
   targetLabel.classList.add('target-label');
 
-  if (total === 0) targetLabel.classList.add('target-red');
+  if (total === 0)         targetLabel.classList.add('target-red');
   else if (total < target) targetLabel.classList.add('target-yellow');
-  else targetLabel.classList.add('target-green');
+  else                     targetLabel.classList.add('target-green');
 
   targetLabel.textContent = `${total} / ${target}`;
 
-  /* Bottone "Lo porto io": disabilitato se il target è già raggiunto */
   const btn = document.createElement('button');
   btn.innerText = 'Lo porto io';
   btn.classList.add('take-btn');
@@ -321,19 +350,23 @@ function createItemElement(itemName, people, target) {
   btn.onclick = async () => {
     const user = usernameInput.value.trim();
     if (!user) return alert('Seleziona il tuo nome');
-
     const rect = btn.getBoundingClientRect();
     spawnBuffon(rect.left + rect.width / 2, rect.top);
-
     await optimisticUpdate(user, itemName, +1);
   };
 
-  /* -- Riga inferiore: tag persone -- */
-  const peopleDiv = document.createElement('div');
-  peopleDiv.classList.add('people');
-  renderPeople(peopleDiv, people, itemName, target);
+  /*Div padre dei bottoni modifica ed elimina*/
+  const actionsDiv = document.createElement('div');
+  actionsDiv.classList.add('actions-div');
 
-  /* -- Bottone per eliminare un item -- */
+  /* Bottone modifica */
+  const editBtn = document.createElement('button');
+  editBtn.textContent = '✎';
+  editBtn.classList.add('edit-item-btn');
+  editBtn.title = 'Modifica';
+  editBtn.onclick = () => openEditItemModal(itemName, target);
+
+  /* Bottone elimina */
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = '🗑';
   deleteBtn.classList.add('delete-item-btn');
@@ -342,14 +375,17 @@ function createItemElement(itemName, people, target) {
     await deleteItem(itemName);
   };
 
-  titleDiv.append(title);
-  topRow.append(titleDiv, space, targetLabel, btn, deleteBtn);
+  const peopleDiv = document.createElement('div');
+  peopleDiv.classList.add('people');
+  renderPeople(peopleDiv, people, itemName, target);
 
+  titleDiv.append(title);
+  actionsDiv.append(editBtn, deleteBtn);
+  topRow.append(titleDiv, space, targetLabel, btn, actionsDiv);
   wrapper.append(topRow, peopleDiv);
   return wrapper;
 }
 
-/* Popola il div .people con i tag di ogni portatore (nome, ▲, ▼, ✕). */
 function renderPeople(container, people, itemName, target) {
   container.innerHTML = '';
   const total = getTotal(itemName);
@@ -362,24 +398,22 @@ function renderPeople(container, people, itemName, target) {
     label.classList.add('person-name');
     label.innerText = `${name} (${qty})`;
 
-    /* ▲ disabilitato se il target globale è già raggiunto */
     const plus = document.createElement('button');
     plus.innerText = '▲';
     plus.classList.add('qty-btn');
     plus.disabled = total >= target;
-    plus.onclick = async () => await optimisticUpdate(name, itemName, +1);
+    plus.onclick  = async () => await optimisticUpdate(name, itemName, +1);
 
-    /* ▼ disabilitato se la quantità è già 1 */
     const minus = document.createElement('button');
     minus.innerText = '▼';
     minus.classList.add('qty-btn');
-    minus.disabled = qty === 1;
-    minus.onclick = async () => await optimisticUpdate(name, itemName, -1);
+    minus.disabled  = qty === 1;
+    minus.onclick   = async () => await optimisticUpdate(name, itemName, -1);
 
     const remove = document.createElement('button');
     remove.innerText = '✕';
     remove.classList.add('remove-btn');
-    remove.onclick = async () => await optimisticRemove(name, itemName);
+    remove.onclick   = async () => await optimisticRemove(name, itemName);
 
     tag.append(label, plus, minus, remove);
     container.appendChild(tag);
@@ -388,17 +422,12 @@ function renderPeople(container, people, itemName, target) {
 
 /* ==========================================================================
    OPTIMISTIC UPDATE
-   Aggiorna lo stato locale immediatamente per dare feedback istantaneo,
-   poi sincronizza col backend. In caso di errore ripristina lo stato precedente.
    ========================================================================== */
 
 async function optimisticUpdate(user, item, delta) {
   const target = state[item]?.target ?? 1;
-
-  /* Blocco client-side: non superare il target */
   if (delta > 0 && getTotal(item) >= target) return;
 
-  /* Snapshot per eventuale rollback */
   const prev = JSON.parse(JSON.stringify(state));
 
   if (!state[item]) state[item] = { users: {}, target };
@@ -408,20 +437,18 @@ async function optimisticUpdate(user, item, delta) {
   renderAll();
 
   try {
-    const res = await fetch(`${API_BASE}/warehouse/update`, {
-      method: 'POST',
+    const res  = await fetch(`${API_BASE}/warehouse/update`, {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, item, delta }),
+      body:    JSON.stringify({ user, item, delta }),
     });
     const data = await res.json();
 
     if (!data.ok) alert('Errore backend: ' + data.reason);
-
-    /* Aggiorna il target nel caso sia cambiato lato server */
     if (state[item]) state[item].target = data.target ?? state[item].target;
   } catch (e) {
     console.error('UPDATE ERROR:', e);
-    Object.assign(state, prev); // rollback
+    Object.assign(state, prev);
     renderAll();
     alert('Errore di rete. Riprova.');
   }
@@ -433,42 +460,34 @@ async function optimisticUpdate(user, item, delta) {
 
 async function optimisticRemove(user, item) {
   const prev = JSON.parse(JSON.stringify(state));
-
-  /* Aggiornamento ottimistico */
   if (state[item]?.users[user] !== undefined) delete state[item].users[user];
   renderAll();
 
   try {
     await fetch(`${API_BASE}/warehouse/remove`, {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, item }),
+      body:    JSON.stringify({ user, item }),
     });
   } catch (e) {
     console.error('REMOVE ERROR:', e);
-    Object.assign(state, prev); // rollback
+    Object.assign(state, prev);
     renderAll();
   }
 }
 
-/* Rimuove item */
 async function deleteItem(itemName) {
   const prev = JSON.parse(JSON.stringify(state));
   delete state[itemName];
   renderAll();
 
   try {
-    const res = await fetch(
-      `${API_BASE}/items/${encodeURIComponent(itemName)}`,
-      {
-        method: 'DELETE',
-      },
-    );
+    const res  = await fetch(`${API_BASE}/items/${encodeURIComponent(itemName)}`, { method: 'DELETE' });
     const data = await res.json();
     if (!data.ok) throw new Error(data.detail);
   } catch (e) {
     console.error('DELETE ITEM ERROR:', e);
-    Object.assign(state, prev); // rollback
+    Object.assign(state, prev);
     renderAll();
     alert('Errore eliminazione. Riprova.');
   }
