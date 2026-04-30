@@ -102,13 +102,12 @@
         </li>
 
         <!-- Tile: La casa — non ancora collegata -->
-        <li class="item home-tile tile-disabled">
-          <div class="item-content">
+        <li class="item home-tile">
+          <a href="galleries.html" class="item-content">
             <h3>La tana del favollo</h3>
             <span class="home-tile-icon">🏠</span>
             <span>La nostra casa</span>
-          </div>
-          <span class="tile-badge">coming soon</span>
+          </a>
         </li>
 
         <!-- Tile: Carpooling - non ancora collegata -->
@@ -120,6 +119,9 @@
           </div>
           <span class="tile-badge">coming soon</span>
         </li>
+
+
+
       </ul>
     </div>
 
@@ -137,9 +139,6 @@
         el.textContent = '0';
         document.querySelector('.countdown-bar').innerHTML =
           '<span class="countdown-label" style="font-size:15px">🦀 Si parte oggi!</span>';
-      } else {
-        document.querySelector('.countdown-bar').innerHTML =
-          '<span class="countdown-label" style="font-size:15px">🦀 Il Favollo è stato!</span>';
       }
     </script>
   </body>

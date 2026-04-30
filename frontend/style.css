@@ -1118,3 +1118,161 @@ tr.bought td {
 .clear-note-btn {
   width: 40%;
 }
+
+/*GALLERIES*/
+.ss-wrap {
+    position: relative;
+    width: 100%;
+    user-select: none;
+  }
+ 
+  .ss-track {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--surface-card, #f0f4f8);
+    border-radius: var(--radius-md, 14px);
+    margin-bottom: 10px;
+  }
+ 
+  .ss-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+ 
+  .ss-slide.active {
+    opacity: 1;
+  }
+ 
+  .ss-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--radius-md, 14px);
+  }
+ 
+  /* frecce */
+  .ss-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: background 0.15s;
+  }
+ 
+  .ss-btn:hover { background: #ffffff; }
+ 
+  .ss-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: #0a1e3d;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+ 
+  .ss-prev { left: 10px; }
+  .ss-next { right: 10px; }
+ 
+  /* contatore */
+  .ss-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    pointer-events: none;
+    letter-spacing: 0.03em;
+  }
+ 
+  /* dots */
+  .ss-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+ 
+  .ss-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(10, 30, 61, 0.2);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    transition: background 0.2s;
+  }
+ 
+  .ss-dot.active {
+    background: #0a1e3d;
+  }
+ 
+  /* controlli play/speed */
+  .ss-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 8px;
+  }
+ 
+  .ss-play {
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(10, 30, 61, 0.15);
+    background: transparent;
+    color: #0a1e3d;
+    cursor: pointer;
+    width: auto;
+    transition: background 0.15s;
+  }
+ 
+  .ss-play:hover { background: rgba(10, 30, 61, 0.06); }
+ 
+  .ss-speed-label {
+    font-size: 13px;
+    color: #4b6080;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .ss-speed-label input[type=range] {
+    width: 80px;
+    margin: 0;
+    padding: 0;
+  }
+ 
+  .ss-speed-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0a1e3d;
+    min-width: 24px;
+    text-align: right;
+  }
