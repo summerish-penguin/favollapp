@@ -10,8 +10,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise Exception("DATABASE_URL non configurata")
 
-print("Db url" + DATABASE_URL)
-
 # Fix compatibilità Render
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
