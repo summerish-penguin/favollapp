@@ -31,6 +31,9 @@
       href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
     />
 
+    <!-- SDK Supabase per bucket -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <script src="galleries.js" defer></script>
   </head>
 
@@ -55,12 +58,11 @@
         <div class="ss-wrap">
           <div class="ss-box" id="user-ss-box">
             <!-- UPLOAD -->
-            <div style="text-align: center; margin-bottom: 10px">
+            <div class="gallery-actions">
               <input type="file" id="user-upload" accept="image/*" multiple />
+              <button id="user-manage-btn" class="take-btn">Gestisci gallery</button>
             </div>
-            
-            <button id="user-manage-btn">Gestisci gallery</button>
-            
+
             <div class="ss-dots" id="user-ss-dots"></div>
             
             <div class="ss-track" id="user-ss-track">
@@ -73,7 +75,7 @@
             
             <!-- controlli automatici -->
             <div class="ss-controls">
-              <button class="ss-play" id="user-ss-play">⏸ Slideshow</button>
+              <button class="take-btn" id="user-ss-play">⏸ Slideshow</button>
               <label class="ss-speed-label">
                 Velocità
                 <input
@@ -121,7 +123,7 @@
             
             <!-- controlli automatici -->
             <div class="ss-controls">
-              <button class="ss-play" id="ss-play">⏸ Slideshow</button>
+              <button class="take-btn" id="ss-play">⏸ Slideshow</button>
               <label class="ss-speed-label">
                 Velocità
                 <input

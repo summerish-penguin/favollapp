@@ -1,3 +1,8 @@
+/*BUCKET DI FOTO*/
+const SUPABASE_URL = "https://mmaitmbnqxyhgqxqgemc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_EgtesJLpewnm1C2qfE2v3A_5xESFLJA";
+const sbInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 /* =====================================================================
    CONFIGURAZIONE — modifica qui le tue foto
    ===================================================================== */
@@ -184,36 +189,86 @@ startAuto();
 let USER_PHOTOS = [];
 let userCurrent = 0;
 let userTimer = null;
+let userDelay = 4000;
 
 const userTrack = document.getElementById("user-ss-track");
 const userDots = document.getElementById("user-ss-dots");
 const userCounter = document.getElementById("user-ss-counter");
 const userPlay = document.getElementById("user-ss-play");
 const userUpload = document.getElementById("user-upload");
+const userSpeedIn = document.querySelector("#user-ss-speed");
+const userSpeedOut = document.querySelector("#user-ss-speed-out");
 
-/* LOAD da localStorage */
-const saved = localStorage.getItem("user_photos");
-if (saved) {
-  USER_PHOTOS = JSON.parse(saved);
-  USER_PHOTOS.forEach(addUserSlide);
-  updateUserUI();
+/*link bottone play*/
+userPlay.onclick = () => {
+  userTimer ? stopUserAuto() : startUserAuto();
+};
+
+if (userSpeedIn) {
+  userSpeedIn.oninput = () => {
+    userDelay = parseInt(userSpeedIn.value) * 1000;
+
+    if (userSpeedOut) {
+      userSpeedOut.textContent = userSpeedIn.value + "s";
+    }
+
+    if (userTimer) startUserAuto();
+  };
 }
 
+/* LOAD da localStorage */
+async function loadFromSupabase() {
+  const { data, error } = await sbInstance
+    .storage
+    .from("gallery")
+    .list("", { limit: 100 });
+
+  if (error) return;
+
+  USER_PHOTOS = data.map(file => {
+    const { data: urlData } = sbInstance
+      .storage
+      .from("gallery")
+      .getPublicUrl(file.name);
+
+    return { src: urlData.publicUrl };
+  });
+
+  rebuildUserGallery();
+}
+
+loadFromSupabase().then(() => {
+  startUserAuto();
+});
+
 /* UPLOAD */
-userUpload.addEventListener("change", (e) => {
+userUpload.addEventListener("change", async (e) => {
   const files = Array.from(e.target.files);
 
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const photo = { src: ev.target.result, desc: "Caricata" };
-      USER_PHOTOS.push(photo);
-      addUserSlide(photo, USER_PHOTOS.length - 1);
-      localStorage.setItem("user_photos", JSON.stringify(USER_PHOTOS));
-      updateUserUI();
-    };
-    reader.readAsDataURL(file);
-  });
+for (const file of files) {
+  const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
+  const fileName = Date.now() + "_" + cleanName;
+
+  const { error } = await sbInstance.storage
+    .from("gallery")
+    .upload(fileName, file, {
+      contentType: file.type,
+      upsert: true
+    });
+
+  if (error) {
+    console.error("UPLOAD ERROR:", error);
+    continue;
+  }
+
+  const { data } = sbInstance.storage
+    .from("gallery")
+    .getPublicUrl(fileName);
+
+  USER_PHOTOS.push({ src: data.publicUrl });
+}
+
+  rebuildUserGallery();
 });
 
 /* CREA SLIDE */
@@ -250,6 +305,7 @@ function userGoTo(n) {
   dots[userCurrent].classList.add("active");
 
   updateUserUI();
+  if (userTimer) startUserAuto();
 }
 
 function updateUserUI() {
@@ -276,6 +332,24 @@ userTrack.addEventListener("touchend", e => {
   else userGoTo(userCurrent - 1);
 });
 
+/*funzioni slideshow auto*/
+function startUserAuto() {
+  stopUserAuto();
+  if (USER_PHOTOS.length <= 1) return;
+
+  userTimer = setInterval(() => {
+    userGoTo(userCurrent + 1);
+  }, userDelay);
+
+  userPlay.textContent = "⏸ Slideshow";
+}
+
+function stopUserAuto() {
+  clearInterval(userTimer);
+  userTimer = null;
+  userPlay.textContent = "▶ Slideshow";
+}
+
 /* =====================================================================
    MODAL GESTIONE FOTO
    ===================================================================== */
@@ -300,6 +374,15 @@ closeModal.onclick = () => {
 function renderPhotoList() {
   listEl.innerHTML = "";
 
+  // gestione lista vuota
+  if (!USER_PHOTOS.length) {
+    const emptyMsg = document.createElement("p");
+    emptyMsg.textContent = "Non ci sono foto da mostrare.";
+    emptyMsg.className = "user-empty-message"; // opzionale per styling
+    listEl.appendChild(emptyMsg);
+    return;
+  }
+
   USER_PHOTOS.forEach((photo, index) => {
     const row = document.createElement("div");
     row.className = "user-photo-item";
@@ -319,11 +402,13 @@ function renderPhotoList() {
 }
 
 /* DELETE */
-function deletePhoto(index) {
+async function deletePhoto(index) {
+  const url = USER_PHOTOS[index].src;
+  const fileName = url.split("/").pop();
+
+  await sbInstance.storage.from("gallery").remove([fileName]);
+
   USER_PHOTOS.splice(index, 1);
-
-  localStorage.setItem("user_photos", JSON.stringify(USER_PHOTOS));
-
   rebuildUserGallery();
   renderPhotoList();
 }
@@ -333,11 +418,32 @@ function rebuildUserGallery() {
   userTrack.querySelectorAll(".ss-slide").forEach(el => el.remove());
   userDots.innerHTML = "";
 
+  // caso nessuna foto
+  if (!USER_PHOTOS.length) {
+    const slide = document.createElement("div");
+    slide.className = "ss-slide active user-empty-slide";
+
+    const msg = document.createElement("p");
+    msg.textContent = "Non ci sono foto da mostrare.";
+    msg. className = "user-empty-message"
+    
+    slide.appendChild(msg);
+
+    userTrack.insertBefore(slide, document.getElementById("user-ss-prev"));
+
+    userCounter.textContent = "0 / 0";
+
+    stopUserAuto(); // importante: ferma autoplay
+    return;
+  }
+
+  // CASO NORMALE
   USER_PHOTOS.forEach((photo, i) => {
     addUserSlide(photo, i);
   });
 
   userCurrent = Math.min(userCurrent, USER_PHOTOS.length - 1);
   if (userCurrent < 0) userCurrent = 0;
+
   updateUserUI();
 }

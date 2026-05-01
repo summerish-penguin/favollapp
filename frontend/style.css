@@ -15,6 +15,7 @@
   /* Brand */
   --brand-dark: #0a1e3d;
   --brand-mid: #1a5fa8;
+  --brand-mid2: #4a8fd8;
   --brand-pale: #dbeeff;
 
   /* Testo */
@@ -337,8 +338,8 @@ button {
   background: var(--brand-dark);
   background-image: linear-gradient(
     to bottom right,
-    var(--brand-dark),
-    var(--brand-mid)
+    var(--brand-mid),
+    var(--brand-mid2)
   );
   color: #ffffff;
   cursor: pointer;
@@ -413,7 +414,7 @@ select {
 }
 
 .take-btn {
-  padding: 9px;
+  padding: 6px 10px;
   border-radius: var(--radius-pill);
   border: none;
   color: #ffffff;
@@ -1243,22 +1244,6 @@ tr.bought td {
     gap: 8px;
   }
  
-  .ss-play {
-    font-family: "Nunito", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 7px 16px;
-    border-radius: 100px;
-    border: 1.5px solid rgba(10, 30, 61, 0.15);
-    background: transparent;
-    color: #0a1e3d;
-    cursor: pointer;
-    width: auto;
-    transition: background 0.15s;
-  }
- 
-  .ss-play:hover { background: rgba(10, 30, 61, 0.06); }
- 
   .ss-speed-label {
     font-size: 13px;
     color: #4b6080;
@@ -1325,13 +1310,29 @@ tr.bought td {
   border-radius: 8px;
 }
 
+.gallery-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+/*Input user upload*/
+#user-upload {
+  width: 57%;
+  margin-bottom: 0px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+}
+
 /* Bottone "Gestisci gallery" */
 #user-manage-btn {
-  display: block;
-  margin: 10px auto;   /* centrato */
-  width: auto;         /* non full width */
-  padding: 8px 14px;
-  font-size: 14px;
+  padding: 6px 12px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 0px;
+  margin-top: 4px;
 }
 
 /* Bottoni nel modal (Elimina) */
@@ -1355,4 +1356,19 @@ tr.bought td {
   padding: 4px 8px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.user-empty-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.user-empty-message{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  opacity: 0.7;
 }
