@@ -36,8 +36,8 @@ const track   = document.getElementById("ss-track");
 const dotsEl  = document.getElementById("ss-dots");
 const counter = document.getElementById("ss-counter");
 const playBtn = document.getElementById("ss-play");
-const speedIn = document.getElementById("ss-speed");
-const speedOut = document.getElementById("ss-speed-out");
+const speedIn = document.querySelector("#ss-box #ss-speed");
+const speedOut = document.querySelector("#ss-box #ss-speed-out");
 
 let current  = 0;
 let delay    = 4000;
@@ -56,7 +56,7 @@ PHOTOS.forEach((photo, i) => {
 
   const img = document.createElement("img");
   img.src = photo.src;
-  img.alt = photo.alt;
+  img.alt = photo.desc || "";
 
   slide.appendChild(img);
 
@@ -76,8 +76,8 @@ updateDesc();
    NAVIGAZIONE
    ===================================================================== */
 function goTo(n) {
-  const slides = document.querySelectorAll(".ss-slide");
-  const dots   = document.querySelectorAll(".ss-dot");
+  const slides = track.querySelectorAll(".ss-slide");
+  const dots   = dotsEl.querySelectorAll(".ss-dot");
 
   slides[current].classList.remove("active");
   dots[current].classList.remove("active");
@@ -100,12 +100,15 @@ function updateDesc() {
   if (el) el.textContent = PHOTOS[current].desc ?? "";
 }
 
-document.getElementById("ss-prev").onclick = () => {
+const prevBtn = document.getElementById("ss-prev");
+const nextBtn = document.getElementById("ss-next");
+
+prevBtn.onclick = () => {
   goTo(current - 1);
   if (timer) startAuto();
 };
 
-document.getElementById("ss-next").onclick = () => {
+nextBtn.onclick = () => {
   goTo(current + 1);
   if (timer) startAuto();
 };
@@ -172,3 +175,169 @@ track.addEventListener("mouseenter", stopAuto);
 track.addEventListener("mouseleave", () => startAuto());
 
 startAuto();
+
+
+/* =====================================================================
+   USER GALLERY (solo frontend)
+   ===================================================================== */
+
+let USER_PHOTOS = [];
+let userCurrent = 0;
+let userTimer = null;
+
+const userTrack = document.getElementById("user-ss-track");
+const userDots = document.getElementById("user-ss-dots");
+const userCounter = document.getElementById("user-ss-counter");
+const userPlay = document.getElementById("user-ss-play");
+const userUpload = document.getElementById("user-upload");
+
+/* LOAD da localStorage */
+const saved = localStorage.getItem("user_photos");
+if (saved) {
+  USER_PHOTOS = JSON.parse(saved);
+  USER_PHOTOS.forEach(addUserSlide);
+  updateUserUI();
+}
+
+/* UPLOAD */
+userUpload.addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const photo = { src: ev.target.result, desc: "Caricata" };
+      USER_PHOTOS.push(photo);
+      addUserSlide(photo, USER_PHOTOS.length - 1);
+      localStorage.setItem("user_photos", JSON.stringify(USER_PHOTOS));
+      updateUserUI();
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+/* CREA SLIDE */
+function addUserSlide(photo, i = 0) {
+  const slide = document.createElement("div");
+  slide.className = "ss-slide" + (i === 0 ? " active" : "");
+
+  const img = document.createElement("img");
+  img.src = photo.src;
+
+  slide.appendChild(img);
+  userTrack.insertBefore(slide, document.getElementById("user-ss-prev"));
+
+  const dot = document.createElement("button");
+  dot.className = "ss-dot" + (i === 0 ? " active" : "");
+  dot.onclick = () => userGoTo(i);
+
+  userDots.appendChild(dot);
+}
+
+/* NAV */
+function userGoTo(n) {
+  const slides = userTrack.querySelectorAll(".ss-slide");
+  const dots = userDots.querySelectorAll(".ss-dot");
+
+  if (!slides.length) return;
+
+  slides[userCurrent]?.classList.remove("active");
+  dots[userCurrent]?.classList.remove("active");
+
+  userCurrent = ((n % slides.length) + slides.length) % slides.length;
+
+  slides[userCurrent].classList.add("active");
+  dots[userCurrent].classList.add("active");
+
+  updateUserUI();
+}
+
+function updateUserUI() {
+  userCounter.textContent = `${userCurrent + 1} / ${USER_PHOTOS.length}`;
+}
+
+/* BOTTONI */
+document.getElementById("user-ss-prev").onclick = () => userGoTo(userCurrent - 1);
+document.getElementById("user-ss-next").onclick = () => userGoTo(userCurrent + 1);
+
+/* SWIPE */
+let uStartX = 0;
+
+userTrack.addEventListener("touchstart", e => {
+  uStartX = e.changedTouches[0].screenX;
+});
+
+userTrack.addEventListener("touchend", e => {
+  let diff = uStartX - e.changedTouches[0].screenX;
+
+  if (Math.abs(diff) < 50) return;
+
+  if (diff > 0) userGoTo(userCurrent + 1);
+  else userGoTo(userCurrent - 1);
+});
+
+/* =====================================================================
+   MODAL GESTIONE FOTO
+   ===================================================================== */
+
+const manageBtn = document.getElementById("user-manage-btn");
+const modal = document.getElementById("user-modal");
+const closeModal = document.getElementById("user-close-modal");
+const listEl = document.getElementById("user-photo-list");
+
+/* APRI */
+manageBtn.onclick = () => {
+  renderPhotoList();
+  modal.classList.remove("hidden");
+};
+
+/* CHIUDI */
+closeModal.onclick = () => {
+  modal.classList.add("hidden");
+};
+
+/* RENDER LISTA */
+function renderPhotoList() {
+  listEl.innerHTML = "";
+
+  USER_PHOTOS.forEach((photo, index) => {
+    const row = document.createElement("div");
+    row.className = "user-photo-item";
+
+    const img = document.createElement("img");
+    img.src = photo.src;
+
+    const btn = document.createElement("button");
+    btn.textContent = "Elimina";
+    btn.onclick = () => deletePhoto(index);
+
+    row.appendChild(img);
+    row.appendChild(btn);
+
+    listEl.appendChild(row);
+  });
+}
+
+/* DELETE */
+function deletePhoto(index) {
+  USER_PHOTOS.splice(index, 1);
+
+  localStorage.setItem("user_photos", JSON.stringify(USER_PHOTOS));
+
+  rebuildUserGallery();
+  renderPhotoList();
+}
+
+/* RICOSTRUISCE SLIDER */
+function rebuildUserGallery() {
+  userTrack.querySelectorAll(".ss-slide").forEach(el => el.remove());
+  userDots.innerHTML = "";
+
+  USER_PHOTOS.forEach((photo, i) => {
+    addUserSlide(photo, i);
+  });
+
+  userCurrent = Math.min(userCurrent, USER_PHOTOS.length - 1);
+  if (userCurrent < 0) userCurrent = 0;
+  updateUserUI();
+}

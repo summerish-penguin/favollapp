@@ -48,47 +48,83 @@
     </div>
 
     <div class="container">
-
-        <div class="title">
-        <h1>La tana del Favollo</h1>
-        <h3>Foto della nostra casa</h3>
+      <div class="title" id="user-gallery">
+        <h1>Le nostre foto 🎞️</h2>
+        <h3>Carica le foto della vacanza e aggiungile alle slide</h4>
+        
+        <div class="ss-wrap">
+          <div class="ss-box" id="user-ss-box">
+            <!-- UPLOAD -->
+            <div style="text-align: center; margin-bottom: 10px">
+              <input type="file" id="user-upload" accept="image/*" multiple />
+            </div>
+            
+            <button id="user-manage-btn">Gestisci gallery</button>
+            
+            <div class="ss-dots" id="user-ss-dots"></div>
+            
+            <div class="ss-track" id="user-ss-track">
+              <button class="ss-btn ss-prev" id="user-ss-prev">‹</button>
+              
+              <button class="ss-btn ss-next" id="user-ss-next">›</button>
+              
+              <div class="ss-counter" id="user-ss-counter">0 / 0</div>
+            </div>
+            
+            <!-- controlli automatici -->
+            <div class="ss-controls">
+              <button class="ss-play" id="user-ss-play">⏸ Slideshow</button>
+              <label class="ss-speed-label">
+                Velocità
+                <input
+                type="range"
+                id="user-ss-speed"
+                min="1"
+                max="10"
+                step="1"
+                value="4"
+                />
+                <span class="ss-speed-val" id="user-ss-speed-out">4s</span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="ss-wrap">
-        <!-- traccia slide -->
-        <div class="ss-box" id="ss-box">
+      <br />
 
-          <!-- indicatori dot -->
-          <div class="ss-dots" id="ss-dots"></div>
+      <!-- seconda gallery-->
 
-          <div class="ss-track" id="ss-track">
-            <!-- le slide vengono generate da JS — vedi array PHOTOS sotto -->
+      <div class="title" id="house-gallery">
+        <h1>La tana del Favollo 🏡</h1>
+        <h3>le foto della nostra casa</h3>
+        
+        <div class="ss-wrap">
+          <!-- traccia slide -->
+          <div class="ss-box" id="ss-box">
+            <!-- indicatori dot -->
+            <div class="ss-dots" id="ss-dots"></div>
 
-            <button class="ss-btn ss-prev" id="ss-prev" aria-label="Precedente">
-              <svg viewBox="0 0 24 24">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-
-            <button class="ss-btn ss-next" id="ss-next" aria-label="Successiva">
-              <svg viewBox="0 0 24 24">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-
-            <div class="ss-counter" id="ss-counter">1 / 1</div>
-          </div>
-
-          <div class="meta-pills"> 
-            <div class="meta-pill" id="ss-desc"></div>
-          </div>
-
-          <!-- controlli automatici -->
-          <div class="ss-controls">
-            <button class="ss-play" id="ss-play">⏸ Pausa</button>
-            <label class="ss-speed-label">
-              Velocità
-              <input
+            <div class="ss-track" id="ss-track">
+              <!-- le slide vengono generate da JS — vedi array PHOTOS sotto -->
+              
+              <button class="ss-btn ss-prev" id="ss-prev">‹</button>
+              
+              <button class="ss-btn ss-next" id="ss-next">›</button>
+              
+              <div class="ss-counter" id="ss-counter">1 / 1</div>
+            </div>
+            
+            <div class="meta-pills">
+              <div class="meta-pill" id="ss-desc"></div>
+            </div>
+            
+            <!-- controlli automatici -->
+            <div class="ss-controls">
+              <button class="ss-play" id="ss-play">⏸ Slideshow</button>
+              <label class="ss-speed-label">
+                Velocità
+                <input
                 type="range"
                 id="ss-speed"
                 min="1"
@@ -99,10 +135,17 @@
               <span class="ss-speed-val" id="ss-speed-out">4s</span>
             </label>
           </div>
-
         </div>
+      </div>
+      </div>
+    </div>
 
+    <div id="user-modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="user-close-modal" class="modal-close">✕</button>
 
+        <h3>Gestione foto</h3>
+        <div id="user-photo-list"></div>
       </div>
     </div>
   </body>
