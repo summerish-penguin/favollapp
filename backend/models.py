@@ -1,5 +1,8 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
+import uuid
 
 Base = declarative_base()
 
@@ -39,4 +42,14 @@ class Location(Base):
     lng        = Column(Float)
     category   = Column(String)
     mins_away  = Column(Integer, nullable=True) 
+    
+class AccessLog(Base):
+    __tablename__ = "access_logs"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    ip = Column(String)
+    user_agent = Column(String)
+    path = Column(String)
+    method = Column(String)
     
