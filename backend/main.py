@@ -3,11 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+from datetime import datetime
+
 import os
 import requests
 
 from db import engine, SessionLocal
-from models import Base, User, Item, Contribution, ShoppingItem, Location
+from models import Base, User, Item, Contribution, ShoppingItem, Location, AccessLog
 
 app = FastAPI()
 
@@ -30,6 +32,40 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# =========================
+# LOGGING AUTO
+# =========================
+
+EXCLUDED_PATHS = ["/health"]
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    response = await call_next(request)
+
+    if request.url.path in EXCLUDED_PATHS:
+        return response
+
+    try:
+        db = SessionLocal()
+
+        log = AccessLog(
+            ip = request.headers.get("x-forwarded-for", request.client.host),
+            user_agent=request.headers.get("user-agent"),
+            path=request.url.path,
+            method=request.method
+        )
+
+        db.add(log)
+        db.commit()
+
+    except Exception as e:
+        print("LOG ERROR:", e)
+
+    finally:
+        db.close()
+
+    return response
 
 # =========================
 # DB INIT
