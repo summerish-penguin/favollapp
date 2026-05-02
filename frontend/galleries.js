@@ -199,6 +199,17 @@ const userUpload = document.getElementById("user-upload");
 const userSpeedIn = document.querySelector("#user-ss-speed");
 const userSpeedOut = document.querySelector("#user-ss-speed-out");
 
+/*loading spinner init*/
+const loader = document.getElementById("global-loader");
+
+function showLoader() {
+  loader.classList.remove("hidden");
+}
+
+function hideLoader() {
+  loader.classList.add("hidden");
+}
+
 /*link bottone play*/
 userPlay.onclick = () => {
   userTimer ? stopUserAuto() : startUserAuto();
@@ -218,23 +229,27 @@ if (userSpeedIn) {
 
 /* LOAD da localStorage */
 async function loadFromSupabase() {
+  showLoader();
+
   const { data, error } = await sbInstance
     .storage
     .from("gallery")
     .list("", { limit: 100 });
 
-  if (error) return;
+  if (!error && data) {
+    USER_PHOTOS = data.map(file => {
+      const { data: urlData } = sbInstance
+        .storage
+        .from("gallery")
+        .getPublicUrl(file.name);
 
-  USER_PHOTOS = data.map(file => {
-    const { data: urlData } = sbInstance
-      .storage
-      .from("gallery")
-      .getPublicUrl(file.name);
+      return { src: urlData.publicUrl };
+    });
 
-    return { src: urlData.publicUrl };
-  });
+    rebuildUserGallery();
+  }
 
-  rebuildUserGallery();
+  hideLoader();
 }
 
 loadFromSupabase().then(() => {
@@ -243,32 +258,32 @@ loadFromSupabase().then(() => {
 
 /* UPLOAD */
 userUpload.addEventListener("change", async (e) => {
+  showLoader();
+
   const files = Array.from(e.target.files);
 
-for (const file of files) {
-  const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
-  const fileName = Date.now() + "_" + cleanName;
+  for (const file of files) {
+    const cleanName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
+    const fileName = Date.now() + "_" + cleanName;
 
-  const { error } = await sbInstance.storage
-    .from("gallery")
-    .upload(fileName, file, {
-      contentType: file.type,
-      upsert: true
-    });
+    const { error } = await sbInstance.storage
+      .from("gallery")
+      .upload(fileName, file, {
+        contentType: file.type,
+        upsert: true
+      });
 
-  if (error) {
-    console.error("UPLOAD ERROR:", error);
-    continue;
+    if (error) continue;
+
+    const { data } = sbInstance.storage
+      .from("gallery")
+      .getPublicUrl(fileName);
+
+    USER_PHOTOS.push({ src: data.publicUrl });
   }
 
-  const { data } = sbInstance.storage
-    .from("gallery")
-    .getPublicUrl(fileName);
-
-  USER_PHOTOS.push({ src: data.publicUrl });
-}
-
   rebuildUserGallery();
+  hideLoader();
 });
 
 /* CREA SLIDE */
@@ -403,6 +418,8 @@ function renderPhotoList() {
 
 /* DELETE */
 async function deletePhoto(index) {
+  showLoader();
+
   const url = USER_PHOTOS[index].src;
   const fileName = url.split("/").pop();
 
@@ -411,6 +428,8 @@ async function deletePhoto(index) {
   USER_PHOTOS.splice(index, 1);
   rebuildUserGallery();
   renderPhotoList();
+
+  hideLoader();
 }
 
 /* RICOSTRUISCE SLIDER */
