@@ -14,6 +14,7 @@
 
   /* Brand */
   --brand-dark: #0a1e3d;
+  --brand-dark2: #2a3e5d;
   --brand-mid: #1a5fa8;
   --brand-mid2: #4a8fd8;
   --brand-pale: #dbeeff;
@@ -916,7 +917,7 @@ select {
 .notebook table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Rock Salt', cursive;
+  font-family: 'Schoolbell', cursive;
   table-layout: fixed;
   width: 100%;
 }
@@ -936,12 +937,12 @@ select {
 }
 
 .qty-col {
-  width: 20%;
+  width: 17%;
 }
 
 .notebook th {
-  font-family: 'Rock Salt', cursive;
-  font-size: 12px;
+  font-family: 'Schoolbell', cursive;
+  font-size: 16px;
   font-weight: 400;
   color: #3a5a8a;
   border-bottom: 2px solid rgba(100, 140, 200, 0.5);
@@ -951,8 +952,8 @@ select {
 }
 
 .notebook td {
-  font-family: 'Rock Salt', cursive;
-  font-size: 8px;
+  font-family: 'Schoolbell', cursive;
+  font-size: 12px;
   font-weight: 300;
   color: #2a2a3a;
   padding: 2px;
@@ -1010,7 +1011,7 @@ select {
 }
 
 .notebook-title {
-  font-family: 'Rock Salt', cursive;
+  font-family: 'Schoolbell', cursive;
   font-size: 20px;
 }
 
