@@ -266,29 +266,17 @@ def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
         if not GROQ_API_KEY:
             raise HTTPException(status_code=500, detail="API key mancante")
 
-        system_prompt = f"""
-Sei un assistente che genera ingredienti per ricette.
+        system_prompt = f"""Sei un parser di ricette. Input: nome piatto + contesto opzionale. Output: JSON puro.
 
-OBIETTIVO:
-Dato un piatto, restituisci SOLO un JSON valido con ingredienti e quantità.
+FORMATO OUTPUT (nessun testo fuori dal JSON, nessun markdown):
+{{"ingredients": [{{"name": "string", "quantity": number, "unit": "g|ml|pz"}}]}}
 
 REGOLE:
-- Considera {people} persone
-- Output SOLO JSON (niente testo)
-- Formato:
-{{
-  "ingredients": [
-    {{"name": "nome", "quantity": numero, "unit": "g|ml|pz"}}
-  ]
-}}
-- Usa nomi semplici
-- Quantità realistiche
-- NIENTE spiegazioni
-- Qualora trovassi nomi degli ingredienti in altre lingue, traduci sempre in italiano (per esempio "onion" --> "cipolla")
-- Considera eventuale contesto dato dall'utente assieme alla ricetta per adattare l'output (per esempio rispetto a varianti della ricetta o quantità)
-- Se il prompt dell'utente non specifica diversamente, considera che le quantità vanno tarate tra il medio e l'abbondante. Per esempio, per la pasta: 120 grammi a persona. Le quantità degli altri ingredienti siano scalate in proporzione
-- cerca di essere specifico rispetto agli ingredienti, per esempio: "carne di manzo" --> indica quale taglio di carne se possibile; "pomodoro" --> indica se passata, pelati, polpa, pomodori freschi interi, ecc.
-"""
+- Porzioni: {people} persone, quantità medio-abbondanti (pasta: 120g/persona, altri ingredienti in proporzione)
+- Se l'utente specifica quantità o varianti, hanno precedenza sulle regole di default
+- Nomi sempre in italiano ("onion" → "cipolla")
+- Nomi specifici: indica il taglio di carne, il tipo di pomodoro (passata/pelati/polpa/freschi), ecc.
+- unit: usa "g" per solidi, "ml" per liquidi, "pz" per elementi interi non pesabili"""
 
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
