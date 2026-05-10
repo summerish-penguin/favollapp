@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FavollApp – Agent</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:wght@300;400;500;700&family=Leckerli+One&family=Momo+Signature&family=Nunito:wght@200..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome -->
+    <script
+      src="https://kit.fontawesome.com/de9ea88d4a.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+    />
+
+    <!-- JS -->
+    <script src="agent.js" defer></script>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <a href="index.html" class="header-title">FavollApp</a>
+
+      <a href="index.html">
+        <img
+          id="favollo-img"
+          src="assets/Orange-Crab-Clipart-Transparent-PNG.png"
+          alt="Logo Favollo"
+        />
+      </a>
+    </div>
+
+    <!-- PAGE -->
+    <div class="container">
+      <!-- TITLE -->
+      <div class="title">
+        <h1>FavollAgent</h1>
+        <h3>Chiedimi quello che vuoi!</h3>
+      </div>
+
+      <br />
+
+      <!-- CHAT CARD -->
+      <div class="warehouse-card">
+        <!-- FEED -->
+        <div class="agent-chat-wrapper">
+          <div id="agent-chat-messages" class="agent-chat-messages">
+            <!-- Messaggio agente -->
+            <div class="agent-row">
+              <div class="agent-bubble">Ciao! Come posso aiutarti?</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INPUT AREA -->
+        <div class="chatbot-prompt-row">
+          <input
+            id="agent-input"
+            type="text"
+            class="modal-input"
+            placeholder="Scrivi un messaggio..."
+          />
+
+          <button id="agent-send">➤</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

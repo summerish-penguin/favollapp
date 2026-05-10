@@ -6,11 +6,11 @@
 #   schemas.py               ← Pydantic models
 #   helpers.py               ← funzioni db condivise
 #   seed.py                  ← dati iniziali
-#   routers/
-#     warehouse.py           ← /warehouse, /items
-#     shopping.py            ← /shopping
-#     ai.py                  ← /ai/recipe
-#     misc.py                ← /users, /locations, /health
+#   
+#   routers_warehouse.py           ← /warehouse, /items
+#   routers_shopping.py            ← /shopping
+#   routers_ai_recipe.py                  ← /ai/recipe
+#   routers_misc.py                ← /users, /locations, /health
 # =============================================================================
 
 from fastapi import FastAPI, Request
@@ -23,8 +23,9 @@ from models import Base, AccessLog
 # Router
 from routers_warehouse import router as warehouse_router
 from routers_shopping   import router as shopping_router
-from routers_ai         import router as ai_router
+from routers_ai_recipe         import router as ai_router_receipe
 from routers_misc       import router as misc_router
+from routers_ai_agent import router as ai_agent_router
 
 from seed import seed
 
@@ -96,8 +97,9 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(warehouse_router)
 app.include_router(shopping_router)
-app.include_router(ai_router)
+app.include_router(ai_router_receipe)
 app.include_router(misc_router)
+app.include_router(ai_agent_router)
 
 
 # =============================================================================

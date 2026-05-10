@@ -867,7 +867,7 @@ select {
 /* ------------------------------------------------------------------
    MENU
 ------------------------------------------------------------------ */
-#prompt-textarea {
+.prompt-textarea {
   width: 100%;
   border-radius: var(--radius-sm);
   border: var(--border-medium);
@@ -1404,4 +1404,117 @@ tr.bought td {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+
+/* ------------------------------------------------------------------
+   AGENT
+------------------------------------------------------------------ */
+.chatbot-prompt-row{
+  display: flex;
+  align-content: space-between;
+  height: 60px;
+  gap: 10px;
+}
+
+#agent-send{
+  height: 65%;
+  margin-top: 4px;
+  width: 12%;
+  font-size: 20px;
+}
+
+.agent-chat-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.agent-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* righe */
+
+.agent-row,
+.user-row {
+  display: flex;
+  width: 100%;
+}
+
+.agent-row {
+  justify-content: flex-start;
+}
+
+.user-row {
+  justify-content: flex-end;
+}
+
+/* bubble comuni */
+
+.agent-bubble,
+.user-bubble {
+  max-width: 75%;
+  padding: 14px 18px;
+  border-radius: 20px;
+  line-height: 1.5;
+  word-break: break-word;
+  font-size: 1rem;
+}
+
+/* agente */
+
+.agent-bubble {
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(0,0,0,0.06);
+  color: #1f2937;
+  border-bottom-left-radius: 6px;
+}
+
+/* utente */
+
+.user-bubble {
+  background: rgba(44, 92, 197, 0.14);
+  border: 1px solid rgba(44, 92, 197, 0.2);
+  color: #102048;
+  border-bottom-right-radius: 6px;
+}
+
+/* input */
+
+.agent-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.agent-input {
+  flex: 1;
+  border-radius: 18px;
+  border: 2px solid #2c5cc5;
+  padding: 14px 16px;
+  font-size: 1rem;
+  background: white;
+}
+
+.agent-input:focus {
+  outline: none;
+}
+
+.agent-send-btn {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: #2c5cc5;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
