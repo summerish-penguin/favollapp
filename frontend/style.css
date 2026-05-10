@@ -1518,3 +1518,15 @@ tr.bought td {
   align-items: center;
   justify-content: center;
 }
+
+
+.agent-bubble p        { margin: 0 0 6px; }
+.agent-bubble p:last-child { margin-bottom: 0; }
+.agent-bubble ul,
+.agent-bubble ol       { padding-left: 18px; margin: 4px 0; }
+.agent-bubble li       { margin-bottom: 2px; }
+.agent-bubble strong   { font-weight: 700; }
+.agent-bubble em       { font-style: italic; }
+.agent-bubble code     { font-family: monospace; font-size: 0.9em;
+                         background: rgba(10,30,61,0.07);
+                         padding: 1px 5px; border-radius: 4px; }

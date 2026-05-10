@@ -93,7 +93,7 @@ function addMessage(text, sender = "agent") {
 }
 
 function updateBubble(bubble, text) {
-  bubble.textContent = text;
+  bubble.innerHTML = marked.parse(text);
   scrollChat();
 }
 

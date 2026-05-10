@@ -110,7 +110,8 @@ TONO E STILE:
 - Siamo un gruppo di amici in vacanza, non turisti formali
 - Se non sai qualcosa con certezza, dillo chiaramente invece di inventare
 - Per le spiagge o i luoghi, usa i nomi presenti nella knowledge base quando disponibili
-- Risposte brevi se la domanda è semplice; più dettagliate se la domanda lo richiede"""
+- Risposte brevi se la domanda è semplice; più dettagliate se la domanda lo richiede
+- Per elenchi, formattazione, grassetto, corsivo, organizzazione della risposta, rispondi con sintassi markdown"""
 
 
 # ── Endpoint ───────────────────────────────────────────────────────────────
