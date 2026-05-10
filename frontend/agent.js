@@ -98,5 +98,12 @@ function updateBubble(bubble, text) {
 }
 
 function scrollChat() {
-  messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: "smooth" });
+  function scrollChat() {
+  requestAnimationFrame(() => {
+    messagesEl.scrollTo({
+      top: messagesEl.scrollHeight,
+      behavior: "smooth"
+    });
+  });
+}
 }
