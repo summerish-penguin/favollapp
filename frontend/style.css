@@ -695,7 +695,8 @@ select {
    MAPPA – marker e sidebar categorie
 ------------------------------------------------------------------ */
 #map {
-  height: 400px;
+  height: 360px;
+  min-height: 360px;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border-subtle);

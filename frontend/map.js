@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gas: makeIcon('⛽'),
     pharmacy: makeIcon('💊'),
     atm: makeIcon('🏧'),
+    park_barcelona: makeIcon('🅿️'),
   };
 
   /* Label leggibili per la sidebar categorie */
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gas: '⛽ Benzinai',
     pharmacy: '💊 Farmacie',
     atm: '🏧 Bancomat',
+    park_barcelona: '🅿️ Parcheggi a Barcellona e stazioni',
   };
 
   /* ------------------------------------------------------------------
