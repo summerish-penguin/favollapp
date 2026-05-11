@@ -82,14 +82,25 @@ function addMessage(text, sender = "agent") {
   row.className = sender === "user" ? "user-row" : "agent-row";
 
   const bubble = document.createElement("div");
-  bubble.className  = sender === "user" ? "user-bubble" : "agent-bubble";
+  bubble.className   = sender === "user" ? "user-bubble" : "agent-bubble";
   bubble.textContent = text;
 
   row.appendChild(bubble);
   messagesEl.appendChild(row);
-  scrollChat();
+
+  if (sender === "user") {
+    scrollToMessage(row);   // ← porta il messaggio utente in cima
+  } else {
+    scrollChat();           // ← per i messaggi agente scrolla normalmente
+  }
 
   return bubble;
+}
+
+function scrollToMessage(row) {
+  requestAnimationFrame(() => {
+    row.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 function updateBubble(bubble, text) {
@@ -98,12 +109,10 @@ function updateBubble(bubble, text) {
 }
 
 function scrollChat() {
-  function scrollChat() {
   requestAnimationFrame(() => {
     messagesEl.scrollTo({
       top: messagesEl.scrollHeight,
       behavior: "smooth"
     });
   });
-}
 }

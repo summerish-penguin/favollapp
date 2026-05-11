@@ -1565,9 +1565,19 @@ tr.bought td {
 .agent-bubble ol {
   padding-left: 18px;
   margin: 4px 0;
+  margin-bottom: 20px;
 }
 .agent-bubble li {
-  margin-bottom: 2px;
+  background: none;
+  padding: 2px;
+  border-radius: none;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  box-shadow: none;
+  transition: none;
+  touch-action: none;
+  margin-bottom: none;
 }
 .agent-bubble strong {
   font-weight: 700;
