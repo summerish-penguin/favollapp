@@ -84,7 +84,8 @@ def build_system_prompt(locations: list, items: list, users: list) -> str:
         
     users_block = "PERSONE DEL GRUPPO:\n"
     for u in users:
-        users_block += f"  - {u.name}\n"        
+        desc = f" — {u.desc}" if hasattr(u, "desc") and u.desc else ""
+        users_block += f"  - {u.name}{desc}\n"        
     
     return f"""Sei un assistente AI integrato in FavollApp, un'applicazione di gruppo per organizzare una vacanza insieme.
 
