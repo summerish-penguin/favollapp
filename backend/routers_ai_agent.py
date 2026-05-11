@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from db import SessionLocal
-from models import Location, Item
+from models import Location, Item, User
 
 router = APIRouter()
 
@@ -48,10 +48,10 @@ def get_db():
 
 # ── System prompt ──────────────────────────────────────────────────────────
 
-def build_system_prompt(locations: list, items: list) -> str:
+def build_system_prompt(locations: list, items: list, users: list) -> str:
     """
     Costruisce il system prompt iniettando i dati dinamici dal db
-    (luoghi vicini, distanze, oggetti in comune) e il contesto fisso della vacanza.
+    (luoghi vicini, distanze, oggetti in comune, utenti) e il contesto fisso della vacanza.
     """
 
     # Formatta i luoghi per categoria
@@ -80,7 +80,11 @@ def build_system_prompt(locations: list, items: list) -> str:
     warehouse_block = "OGGETTI IN COMUNE CHE ABBIAMO PORTATO:\n"
     for i in items:
         qty = f" (x{i.quantity})" if hasattr(i, "quantity") and i.quantity else ""
-        warehouse_block += f"  - {i.name}{qty}\n"        
+        warehouse_block += f"  - {i.name}{qty}\n"
+        
+    users_block = "PERSONE DEL GRUPPO:\n"
+    for u in users:
+        users_block += f"  - {u.name}\n"        
     
     return f"""Sei un assistente AI integrato in FavollApp, un'applicazione di gruppo per organizzare una vacanza insieme.
 
@@ -100,10 +104,12 @@ Gli utenti ti faranno domande pratiche e spontanee legate alla vacanza, per esem
 - Attività alternative in caso di pioggia
 
 KNOWLEDGE BASE:
--LUOGHI VICINI ALLA CASA:
+- LUOGHI VICINI ALLA CASA:
 {locations_block}
--OGGETTI IN COMUNE CHE ABBIAMO PORTATO:
+- OGGETTI IN COMUNE CHE ABBIAMO PORTATO:
 {warehouse_block}
+- PERSONE DEL GRUPPO:
+{users_block}
 
 TONO E STILE:
 - Rispondi in italiano, in modo amichevole, diretto e conciso
@@ -126,10 +132,11 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
     if not GROQ_API_KEY:
         raise HTTPException(status_code=500, detail="API key mancante")
 
-    # Carica i luoghi e gli oggetti in comune dal db per il system prompt
+    # Carica i luoghi, gli oggetti in comune e gli utenti dal db per il system prompt
     locations = db.query(Location).all()
     items = db.query(Item).all()
-    system_prompt = build_system_prompt(locations, items)
+    users = db.quer(User).all()
+    system_prompt = build_system_prompt(locations, items, users)
 
     # Costruisce i messaggi: system + history + nuovo messaggio
     messages = [{"role": "system", "content": system_prompt}]
