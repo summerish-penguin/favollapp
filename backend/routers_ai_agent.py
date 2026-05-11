@@ -154,8 +154,8 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
             json={
                 "model":       "meta-llama/llama-4-scout-17b-16e-instruct",
                 "messages":    messages,
-                "temperature": 0.7,    # un po' più creativo rispetto al parser ricette
-                "max_tokens":  512
+                "temperature": 0.6,    # un po' più creativo rispetto al parser ricette
+                "max_tokens":  1024
             }
         )
 
