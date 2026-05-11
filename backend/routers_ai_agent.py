@@ -135,7 +135,7 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
     # Carica i luoghi, gli oggetti in comune e gli utenti dal db per il system prompt
     locations = db.query(Location).all()
     items = db.query(Item).all()
-    users = db.quer(User).all()
+    users = db.query(User).all()
     system_prompt = build_system_prompt(locations, items, users)
 
     # Costruisce i messaggi: system + history + nuovo messaggio
