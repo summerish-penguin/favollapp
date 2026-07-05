@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FavollApp – Menù</title>
 
+    <!-- Applica subito il tema salvato (o quello di sistema) prima del paint, per evitare un flash -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('favollapp-theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <!-- Stile -->
     <link rel="stylesheet" href="style.css" />
 
     <!-- Font Google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Momo+Signature&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Rock+Salt&family=Schoolbell&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Momo+Signature&display=swap" rel="stylesheet">
 
     <!-- Icone FontAwesome -->
     <script
@@ -30,6 +39,7 @@
 
     <!-- Logica menu -->
     <script src="config.js" defer></script>
+    <script src="theme-toggle.js" defer></script>
     <script src="menu.js" defer></script>
   </head>
   <body>
@@ -43,6 +53,10 @@
           alt="Logo Favollo"
         />
       </a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Passa a modalità scura" aria-pressed="false">
+        <span class="icons" aria-hidden="true"><span>☀️</span><span>🌙</span></span>
+        <span class="thumb"></span>
+      </button>
     </div>
 
     <div class="container">

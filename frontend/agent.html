@@ -5,16 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FavollApp – Agent</title>
 
+    <!-- Applica subito il tema salvato (o quello di sistema) prima del paint, per evitare un flash -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('favollapp-theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <link rel="stylesheet" href="style.css" />
 
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Iosevka+Charon:wght@300;400;500;700&family=Leckerli+One&family=Momo+Signature&family=Nunito:wght@200..1000&display=swap"
-      rel="stylesheet"
-    />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Momo+Signature&display=swap" rel="stylesheet">
 
     <!-- FontAwesome -->
     <script
@@ -33,6 +41,7 @@
 
     <!-- JS -->
     <script src="config.js" defer></script>
+    <script src="theme-toggle.js" defer></script>
     <script src="agent.js" defer></script>
 
     <!-- Markdown -->
@@ -51,6 +60,10 @@
           alt="Logo Favollo"
         />
       </a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Passa a modalità scura" aria-pressed="false">
+        <span class="icons" aria-hidden="true"><span>☀️</span><span>🌙</span></span>
+        <span class="thumb"></span>
+      </button>
     </div>
 
     <!-- PAGE -->
