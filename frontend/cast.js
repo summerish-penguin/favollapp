@@ -1,6 +1,7 @@
-// cast.js — genera le card utente della pagina "Cast"
+// cast.js — genera il roster della pagina "Cast"
 
-const container = document.getElementById('cast-container');
+const col1 = document.getElementById('cast-col-1');
+const col2 = document.getElementById('cast-col-2');
 
 init();
 
@@ -21,76 +22,58 @@ async function loadUsers() {
   }
 }
 
-// Svuota il container e ricrea una card per ogni utente
+// Svuota le due colonne e ridistribuisce i membri alternandoli (pari/dispari)
+// per bilanciarne l'altezza indipendentemente dal numero di persone
 function renderUsers(users) {
-  container.innerHTML = '';
+  col1.innerHTML = '';
+  col2.innerHTML = '';
 
-  users.forEach((user) => {
-    container.appendChild(createUserCard(user));
+  users.forEach((user, i) => {
+    const target = i % 2 === 0 ? col1 : col2;
+    target.appendChild(createMemberCard(user));
   });
 }
 
-// Genera un colore HSL deterministico da una stringa (non ancora usata in UI)
-function stringToColor(str) {
-  if (!str) return '#ccc';
+// Ricava una tinta HSL deterministica dal nome: stessa persona, stesso colore ad ogni apertura
+function hueFromName(str) {
+  if (!str) return 210;
 
   let hash = 0;
-
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  const h = hash % 360;
-
-  const s = 60;
-
-  const l = 65;
-
-  return `hsl(${h}, ${s}, ${l})`;
+  return Math.abs(hash) % 360;
 }
 
-// Costruisce il DOM della card utente (header, body, footer)
-function createUserCard(user) {
+// Costruisce il DOM di un membro: avatar colorato, nome, ruolo
+function createMemberCard(user) {
   const card = document.createElement('div');
-  card.classList.add('user-card');
+  card.classList.add('member');
+  card.style.setProperty('--hue', hueFromName(user.name));
 
-  // HEADER
-  const header = document.createElement('div');
-  header.classList.add('user-header');
-
-  // Avatar placeholder (future-proof)
   const avatar = document.createElement('div');
-  avatar.classList.add('user-avatar');
-  avatar.innerText = user.icon;
+  avatar.classList.add('avatar');
+  avatar.innerText = user.icon || getInitials(user.name);
 
-  // Nome
+  const info = document.createElement('div');
+  info.classList.add('info');
+
   const name = document.createElement('div');
-  name.classList.add('user-name');
+  name.classList.add('name');
   name.innerText = user.name;
 
-  header.append(name, avatar);
+  const role = document.createElement('div');
+  role.classList.add('role');
+  role.innerText = user.desc || 'Nessuna informazione';
 
-  // BODY (placeholder per future info)
-  const body = document.createElement('div');
-  body.classList.add('user-body');
-
-  const placeholder = document.createElement('div');
-  placeholder.classList.add('user-placeholder');
-  placeholder.innerText = user.desc || 'Nessuna informazione';
-
-  body.append(placeholder);
-
-  // FOOTER (espandibile in futuro)
-  const footer = document.createElement('div');
-  footer.classList.add('user-footer');
-
-  // composizione card
-  card.append(header, body, footer);
+  info.append(name, role);
+  card.append(avatar, info);
 
   return card;
 }
 
-// Estrae le iniziali da un nome (non ancora usata in UI)
+// Estrae le iniziali da un nome, usate come avatar quando manca l'icona
 function getInitials(name) {
   if (!name || typeof name !== 'string') return '';
 

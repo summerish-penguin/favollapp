@@ -59,6 +59,11 @@
   --font-title: 'Fraunces', serif;
   --font-body: 'Source Sans 3', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
 
+  /* Badge colorati per persona (cast): saturazione/luminosità, la tinta arriva da --hue inline */
+  --badge-s: 74%;
+  --badge-l: 88%;
+  --badge-text-l: 32%;
+
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -92,6 +97,10 @@
     --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.4);
     --shadow-2: 0 10px 24px -10px rgba(0, 0, 0, 0.55);
     --shadow-3: 0 26px 52px -16px rgba(0, 0, 0, 0.6);
+
+    --badge-s: 42%;
+    --badge-l: 24%;
+    --badge-text-l: 82%;
   }
 }
 
@@ -125,6 +134,10 @@
   --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.4);
   --shadow-2: 0 10px 24px -10px rgba(0, 0, 0, 0.55);
   --shadow-3: 0 26px 52px -16px rgba(0, 0, 0, 0.6);
+
+  --badge-s: 42%;
+  --badge-l: 24%;
+  --badge-text-l: 82%;
 }
 
 :root[data-theme='light'] {
@@ -156,6 +169,10 @@
   --shadow-1: 0 1px 2px rgba(10, 25, 45, 0.05), 0 1px 1px rgba(10, 25, 45, 0.04);
   --shadow-2: 0 10px 24px -8px rgba(10, 25, 45, 0.16), 0 2px 6px rgba(10, 25, 45, 0.07);
   --shadow-3: 0 26px 52px -16px rgba(10, 25, 45, 0.3);
+
+  --badge-s: 74%;
+  --badge-l: 88%;
+  --badge-text-l: 32%;
 }
 
 /* ------------------------------------------------------------------
@@ -230,6 +247,7 @@ h3 {
 ------------------------------------------------------------------ */
 .container {
   padding: 20px 16px;
+  width: 100%;
   max-width: 400px;
   margin: auto;
   height: 100vh;
@@ -297,6 +315,7 @@ ul {
   background: var(--brand-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
+  width: auto;
 }
 
 .header-title {
@@ -371,36 +390,75 @@ ul {
 }
 
 /* ------------------------------------------------------------------
-   COUNTDOWN BAR
-   Fascia sotto l'header: mostra i giorni mancanti alla vacanza
+   HOME HERO
+   Fascia sotto l'header nella home: titolo vacanza, luogo/data, countdown.
 ------------------------------------------------------------------ */
-.countdown-bar {
-  background: var(--brand-mid);
+.home-hero {
+  position: relative;
+  background: var(--surface-card);
+  padding: 22px 20px;
+  overflow: hidden;
+}
+
+.home-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 30%, transparent), transparent 65%);
+}
+
+.home-hero h1 {
+  position: relative;
+  color: var(--text-primary);
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.hero-eyebrow {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-  padding: 9px 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.countdown-label {
-  font-size: 11px;
+.hero-pill {
+  font-size: 11.5px;
   font-weight: 700;
-  color: var(--brand-pale);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-pale);
+  color: var(--brand-on-pale);
 }
 
-.countdown-days {
-  font-size: 18px;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1;
+.hero-countdown {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.hero-countdown .num {
+  font-family: var(--font-title);
+  font-size: 42px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.hero-countdown .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
 }
 
 /* ------------------------------------------------------------------
-   META-PILLS (luogo e data nel titolo)
+   META-PILLS (luogo e data nel titolo delle altre pagine)
 ------------------------------------------------------------------ */
 .meta-pills {
   display: flex;
@@ -448,7 +506,78 @@ li:active:not(.dragging) {
 }
 
 /* ------------------------------------------------------------------
-   HOME TILES (griglia 2 colonne)
+   SPOTLIGHT — tile in evidenza sopra la griglia (FavollAgent)
+------------------------------------------------------------------ */
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.spotlight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(140% 160% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 16%, transparent), transparent 60%),
+    var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-1);
+  text-decoration: none;
+  color: inherit;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 0.5s var(--ease) forwards;
+  transition: box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.spotlight:hover {
+  box-shadow: var(--shadow-2);
+  border-color: var(--border-medium);
+}
+
+.spotlight .icon {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--brand-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.spotlight .body {
+  flex: 1;
+  min-width: 0;
+}
+
+.spotlight h3 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 16.5px;
+  text-align: left;
+}
+
+.spotlight p {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.spotlight .arrow {
+  flex: 0 0 auto;
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------
+   HOME TILES (griglia 2 colonne, con ingresso a cascata)
 ------------------------------------------------------------------ */
 #home-tiles {
   display: grid;
@@ -462,12 +591,18 @@ li:active:not(.dragging) {
   cursor: pointer;
   position: relative; /* necessario per posizionare .tile-badge */
   background: var(--surface-card);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 0.5s var(--ease) forwards;
 }
 
 .home-tile:hover {
-  transform: translateY(-3px);
   box-shadow: var(--shadow-2);
   border-color: var(--border-medium);
+}
+
+.home-tile:hover .home-tile-icon {
+  transform: rotate(8deg);
 }
 
 .home-tile .item-content {
@@ -503,6 +638,7 @@ li:active:not(.dragging) {
   border-radius: 12px;
   background: var(--brand-pale);
   font-size: 20px;
+  transition: transform 0.2s var(--ease);
 }
 
 /* Tile non ancora collegate: opacità ridotta, nessun hover lift */
@@ -596,13 +732,18 @@ select {
 .item-name-div {
   display: flex;
   align-content: flex-start;
-  width: 200px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .item-name {
+  display: block;
   font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .space-div {
@@ -809,7 +950,7 @@ select {
 }
 
 .modal-title {
-  font-family: var(--font-display);
+  font-family: var(--font-title);
   font-size: 18px;
   font-weight: 400;
   color: var(--text-primary);
@@ -993,68 +1134,89 @@ select {
 }
 
 /* ------------------------------------------------------------------
-   CAST
+   CAST — roster a due colonne sfalsate, card compatte a riga orizzontale
+   Ogni membro ha una tinta calcolata dal nome (vedi cast.js hueFromName),
+   usata sia per l'avatar che per il testo del ruolo.
 ------------------------------------------------------------------ */
 #cast-container {
   display: grid;
-  grid-template-columns: 50% 50%;
-  gap: 12px 6px;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
-.user-card {
+#cast-container .col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#cast-container .col:last-child {
+  margin-top: 18px;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
   border-radius: var(--radius-md);
-  padding: 12px;
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-1);
   transition:
-    transform 0.15s var(--ease),
-    box-shadow 0.15s var(--ease);
-  width: 95%;
-  height: 120px;
+    transform 0.2s var(--ease),
+    box-shadow 0.2s var(--ease),
+    border-color 0.2s var(--ease);
 }
 
-.user-card:hover {
-  transform: translateY(-3px);
+.member:hover {
+  transform: rotate(var(--tilt, 0deg)) translateY(-2px);
   box-shadow: var(--shadow-2);
+  border-color: var(--border-medium);
 }
 
-.user-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+#cast-container .col:first-child .member {
+  --tilt: -1deg;
 }
 
-.user-avatar {
-  width: 20px;
-  height: 20px;
+#cast-container .col:last-child .member {
+  --tilt: 1deg;
+}
+
+.member .avatar {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: x-large;
-  margin-right: 4px;
+  font-size: 16px;
+  background: hsl(var(--hue), var(--badge-s), var(--badge-l));
 }
 
-.user-name {
-  font-size: 16px;
-  font-weight: 700;
+.member .info {
+  min-width: 0;
   text-align: left;
 }
 
-.user-body {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  color: var(--text-secondary);
+.member .name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.user-placeholder {
-  padding-top: 15px;
-  padding-bottom: 10px;
-  padding-right: 15px;
+.member .role {
+  display: block;
+  margin-top: 2px;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: hsl(var(--hue), 45%, var(--badge-text-l));
 }
 
 /* ------------------------------------------------------------------
@@ -1207,7 +1369,7 @@ select {
 }
 
 .notebook-title {
-  font-family: var(--font-display);
+  font-family: var(--font-title);
   font-size: 18px;
   font-weight: 400;
   padding: 8px 8px 2px;

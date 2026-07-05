@@ -20,7 +20,7 @@
     <!-- Font Google -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Momo+Signature&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Momo+Signature&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <!-- Icone FontAwesome -->
     <script
@@ -39,84 +39,80 @@
 
     <!-- Toggle chiaro/scuro -->
     <script src="theme-toggle.js" defer></script>
+    <script src="index.js" defer></script>
   </head>
   <body>
     <!-- Header con logo -->
     <div class="header">
-      <a href="index.html" class="header-title">FavollApp</a>&ensp;
+      <a href="index.html" class="header-title">FavollApp</a>
       <a href="index.html">
         <img
           id="favollo-img"
           src="assets/Orange-Crab-Clipart-Transparent-PNG.png"
           alt="Logo Favollo"
         />
-      </a>
+      </a>&ensp;
       <button class="theme-toggle" id="theme-toggle" aria-label="Passa a modalità scura" aria-pressed="false">
         <span class="icons" aria-hidden="true"><span>☀️</span><span>🌙</span></span>
         <span class="thumb"></span>
       </button>
     </div>
 
-    <!-- Barra countdown: giorni mancanti alla vacanza (popolata da JS) -->
-    <div class="countdown-bar">
-      <span class="countdown-label">-</span>
-      <span class="countdown-days" id="countdown-days">—</span>
-      <span class="countdown-label">giorni alla partenza</span>
-    </div>
+    <!-- Hero: titolo vacanza, luogo/data, countdown -->
+    <section class="home-hero">
+      <div class="hero-eyebrow">
+        <span class="hero-pill">📍 Montbarbat, Catalogna</span>
+        <span class="hero-pill">🗓️ 13–20 ago</span>
+      </div>
+      <h1>Favollo 2026</h1>
+      <div class="hero-countdown">
+        <span class="num" id="countdown-days">0</span>
+        <span class="lbl" id="countdown-label">giorni alla<br />partenza</span>
+      </div>
+    </section>
 
     <div class="container">
-      <!-- Titolo vacanza con meta-pill per luogo e data -->
-      <div class="title">
-        <h1>Favollo 2026</h1>
-        <div class="meta-pills">
-          <span class="meta-pill">📍 Montbarbat, Catalogna</span>
-          <span class="meta-pill">🗓️ 13–20 ago</span>
-        </div>
-      </div>
+      <!-- Tile in evidenza: FavollAgent -->
+      <a href="agent.html" class="spotlight">
+        <span class="icon">🤖</span>
+        <span class="body">
+          <h3>FavollAgent</h3>
+          <p>Chiedi consigli su spiagge, ricette, programma della giornata.</p>
+        </span>
+        <span class="arrow">›</span>
+      </a>
 
-      <br />
-
-      <!-- Griglia di navigazione principale -->
+      <!-- Griglia di navigazione -->
       <ul id="home-tiles">
-
-        <!-- Tile: Agent -->
-        <li class="item home-tile">
-          <a href="agent.html" class="item-content">
-            <h3>FavollAgent</h3>
-            <span class="home-tile-icon">🤖</span>
-            <span>Chatbot AI ✨</span>
-          </a>
-        </li>
-
         <!-- Tile: Cast -->
-        <li class="item home-tile">
+        <li class="item home-tile" style="animation-delay: 0.05s">
           <a href="cast.html" class="item-content">
             <h3>Il cast della vacanza</h3>
             <span class="home-tile-icon">😎</span>
             <span>Né pochi né buoni</span>
           </a>
         </li>
-        
+
         <!-- Tile: gallery -->
-        <li class="item home-tile">
+        <li class="item home-tile" style="animation-delay: 0.1s">
           <a href="galleries.html" class="item-content">
             <h3>Gallery</h3>
             <span class="home-tile-icon">📷</span>
             <span>Gallerie di foto</span>
           </a>
         </li>
-        
-        <!-- Tile: Il Menù - non ancora collegata -->
-        <li class="item home-tile">
+
+        <!-- Tile: Il Menù -->
+        <li class="item home-tile" style="animation-delay: 0.15s">
           <a href="menu.html" class="item-content">
             <h3>La lista della spesa</h3>
             <span class="home-tile-icon">🍝</span>
             <span>Con supporto AI ✨</span>
           </a>
         </li>
-        
+
         <!-- Tile: Bagaglio -->
-        <li class="item home-tile">
+        <li class="item home-tile" style="animation-delay: 0.2s">
           <a href="warehouse.html" class="item-content">
             <h3>Lo zaino del favollo</h3>
             <span class="home-tile-icon">🎒</span>
@@ -125,7 +121,7 @@
         </li>
 
         <!-- Tile: Mappa -->
-        <li class="item home-tile">
+        <li class="item home-tile" style="animation-delay: 0.25s">
           <a href="map.html" class="item-content">
             <h3>La mappa del favollo</h3>
             <span class="home-tile-icon">🗺️</span>
@@ -133,9 +129,8 @@
           </a>
         </li>
 
-
         <!-- Tile: Carpooling - non ancora collegata -->
-        <li class="item home-tile tile-disabled">
+        <li class="item home-tile tile-disabled" style="animation-delay: 0.3s">
           <div class="item-content">
             <h3>Carpooling</h3>
             <span class="home-tile-icon">🚗</span>
@@ -145,22 +140,5 @@
         </li>
       </ul>
     </div>
-
-    <script>
-      // Calcola i giorni mancanti alla data di inizio vacanza
-      const vacanza = new Date('2026-08-13');
-      const oggi = new Date();
-      oggi.setHours(0, 0, 0, 0);
-      const diff = Math.ceil((vacanza - oggi) / (1000 * 60 * 60 * 24));
-      const el = document.getElementById('countdown-days');
-
-      if (diff > 0) {
-        el.textContent = diff;
-      } else if (diff === 0) {
-        el.textContent = '0';
-        document.querySelector('.countdown-bar').innerHTML =
-          '<span class="countdown-label" style="font-size:15px">🦀 Si parte oggi!</span>';
-      }
-    </script>
   </body>
 </html>
