@@ -1272,10 +1272,11 @@ select {
   width: 100%;
   max-width: 560px;
   overflow-x: auto;
+  max-width: 100%;
 }
 
 .notebook table {
-  width: 100%;
+  width: 95%;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -1289,11 +1290,11 @@ select {
 }
 
 .ingredient-col {
-  width: 45%;
+  width: 42%;
 }
 
 .qty-col {
-  width: 17%;
+  width: 20%;
 }
 
 .notebook th {
