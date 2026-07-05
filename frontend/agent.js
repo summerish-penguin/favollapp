@@ -1,10 +1,5 @@
-/* ==========================================================================
-   AGENT.JS — Chatbot FavollApp
-   Comunica con POST /ai/agent.
-   Mantiene la history della conversazione in memoria per il multi-turno.
-   ========================================================================== */
-
-const API_BASE = "https://favollapp.onrender.com";
+// agent.js — chatbot FavollApp, comunica con POST /ai/agent
+// Mantiene la history della conversazione in memoria per il multi-turno
 
 const messagesEl = document.getElementById("agent-chat-messages");
 const inputEl    = document.getElementById("agent-input");
@@ -15,9 +10,7 @@ const sendBtn    = document.getElementById("agent-send");
 const history = [];
 
 
-/* =========================================================
-   EVENTS
-========================================================= */
+// ---- Events ----
 
 sendBtn.onclick = sendMessage;
 
@@ -29,9 +22,7 @@ inputEl.addEventListener("keydown", (e) => {
 });
 
 
-/* =========================================================
-   SEND
-========================================================= */
+// ---- Send: invia il messaggio e aggiorna la history ----
 
 async function sendMessage() {
   const text = inputEl.value.trim();
@@ -73,9 +64,7 @@ async function sendMessage() {
 }
 
 
-/* =========================================================
-   CHAT UI
-========================================================= */
+// ---- Chat UI: render dei messaggi e scroll ----
 
 function addMessage(text, sender = "agent") {
   const row = document.createElement("div");

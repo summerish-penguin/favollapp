@@ -1,27 +1,14 @@
-# =============================================================================
-# ROUTERS/SHOPPING.PY
-# Endpoint: /shopping (GET, POST, PUT, DELETE singolo, DELETE bulk)
-# =============================================================================
+# routers_shopping.py — endpoint /shopping (GET, POST, PUT, DELETE singolo, DELETE bulk)
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
+from db import get_db
 from models import ShoppingItem
 from schemas import ShoppingItemRequest, ShoppingItemUpdate
 
 router = APIRouter()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# ── GET /shopping ──────────────────────────────────────────────────────────
 
 @router.get("/shopping")
 def get_shopping_items(db: Session = Depends(get_db)):
@@ -32,8 +19,6 @@ def get_shopping_items(db: Session = Depends(get_db)):
         for item in items
     ]
 
-
-# ── POST /shopping ─────────────────────────────────────────────────────────
 
 @router.post("/shopping")
 def save_shopping_item(req: ShoppingItemRequest, db: Session = Depends(get_db)):
@@ -47,8 +32,6 @@ def save_shopping_item(req: ShoppingItemRequest, db: Session = Depends(get_db)):
     db.refresh(item)
     return {"ok": True, "id": item.id}
 
-
-# ── PUT /shopping/{id} ─────────────────────────────────────────────────────
 
 @router.put("/shopping/{id}")
 def update_shopping_item(id: int, req: ShoppingItemUpdate, db: Session = Depends(get_db)):
@@ -64,8 +47,6 @@ def update_shopping_item(id: int, req: ShoppingItemUpdate, db: Session = Depends
     return {"ok": True}
 
 
-# ── DELETE /shopping/{id} ──────────────────────────────────────────────────
-
 @router.delete("/shopping/{id}")
 def delete_shopping_item(id: int, db: Session = Depends(get_db)):
     """Elimina una singola riga dalla lista della spesa."""
@@ -77,8 +58,6 @@ def delete_shopping_item(id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"ok": True}
 
-
-# ── DELETE /shopping ───────────────────────────────────────────────────────
 
 @router.delete("/shopping")
 def clear_shopping(db: Session = Depends(get_db)):

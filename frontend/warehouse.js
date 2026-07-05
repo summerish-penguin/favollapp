@@ -1,10 +1,4 @@
-/* ==========================================================================
-   WAREHOUSE.JS
-   Gestisce la lista oggetti da portare in vacanza.
-   Comunica con il backend FastAPI su API_BASE.
-   ========================================================================== */
-
-const API_BASE = 'https://favollapp.onrender.com';
+// warehouse.js — gestisce la lista oggetti da portare in vacanza (chi porta cosa)
 
 const usernameInput = document.getElementById('username');
 const container = document.getElementById('warehouse-container');
@@ -25,9 +19,7 @@ const DEFAULT_ITEMS = [
   'Bocce spiaggia',
 ];
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
+// ---- Init ----
 
 init();
 
@@ -42,9 +34,7 @@ async function init() {
   if (addBtn) addBtn.addEventListener('click', openAddItemModal);
 }
 
-/* ==========================================================================
-   STATO INIZIALE (fallback locale)
-   ========================================================================== */
+// ---- Stato iniziale (fallback locale prima della risposta del backend) ----
 
 function initEmptyState(items) {
   items.forEach((name) => {
@@ -52,9 +42,7 @@ function initEmptyState(items) {
   });
 }
 
-/* ==========================================================================
-   CARICAMENTO DAL BACKEND
-   ========================================================================== */
+// ---- Caricamento dal backend ----
 
 async function loadWarehouse() {
   try {
@@ -115,9 +103,7 @@ async function loadUsersDropdown() {
   }
 }
 
-/* ==========================================================================
-   MODAL — AGGIUNGI OGGETTO
-   ========================================================================== */
+// ---- Modal: aggiungi oggetto ----
 
 function openAddItemModal() {
   if (document.getElementById('add-item-modal')) return;
@@ -130,11 +116,7 @@ function openAddItemModal() {
   });
 }
 
-/* ==========================================================================
-   MODAL — MODIFICA OGGETTO
-   Riusa la stessa struttura del modal di creazione, con testo "Salva"
-   e i campi pre-compilati con nome e target attuali.
-   ========================================================================== */
+// ---- Modal: modifica oggetto (stessa struttura del modal di creazione, campi pre-compilati) ----
 
 function openEditItemModal(oldName, oldTarget) {
   if (document.getElementById('add-item-modal')) return;
@@ -148,10 +130,7 @@ function openEditItemModal(oldName, oldTarget) {
   });
 }
 
-/* ==========================================================================
-   MODAL — COSTRUTTORE GENERICO
-   Usato sia da openAddItemModal che da openEditItemModal.
-   ========================================================================== */
+// ---- Modal: costruttore generico, usato sia da openAddItemModal che da openEditItemModal ----
 
 function openItemModal({ titleText, confirmText, nameValue, targetValue, onConfirm }) {
   const overlay = document.createElement('div');
@@ -285,9 +264,7 @@ function showModalError(el, message) {
   el.style.display = 'block';
 }
 
-/* ==========================================================================
-   HELPERS
-   ========================================================================== */
+// ---- Helpers ----
 
 function getTotal(itemName) {
   const users = state[itemName]?.users ?? {};
@@ -304,9 +281,7 @@ function spawnBuffon(x, y) {
   setTimeout(() => img.remove(), 1000);
 }
 
-/* ==========================================================================
-   RENDER
-   ========================================================================== */
+// ---- Render ----
 
 function renderAll() {
   container.innerHTML = '';
@@ -420,9 +395,7 @@ function renderPeople(container, people, itemName, target) {
   });
 }
 
-/* ==========================================================================
-   OPTIMISTIC UPDATE
-   ========================================================================== */
+// ---- Optimistic update: aggiorna subito la UI, poi conferma/rollback col backend ----
 
 async function optimisticUpdate(user, item, delta) {
   const target = state[item]?.target ?? 1;
@@ -454,9 +427,7 @@ async function optimisticUpdate(user, item, delta) {
   }
 }
 
-/* ==========================================================================
-   REMOVE
-   ========================================================================== */
+// ---- Remove ----
 
 async function optimisticRemove(user, item) {
   const prev = JSON.parse(JSON.stringify(state));

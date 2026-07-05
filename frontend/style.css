@@ -1140,7 +1140,9 @@ tr.bought td {
   width: 40%;
 }
 
-/*GALLERIES*/
+/* ------------------------------------------------------------------
+   GALLERIES – slideshow casa e foto utenti
+------------------------------------------------------------------ */
 
 .ss-wrap {
   position: relative;
@@ -1177,7 +1179,7 @@ tr.bought td {
   border-radius: var(--radius-md, 14px);
 }
 
-/* frecce */
+/* Frecce prev/next */
 .ss-btn {
   position: absolute;
   top: 50%;
@@ -1218,7 +1220,7 @@ tr.bought td {
   right: 10px;
 }
 
-/* contatore */
+/* Contatore "n / totale" */
 .ss-counter {
   position: absolute;
   bottom: 10px;
@@ -1233,7 +1235,7 @@ tr.bought td {
   letter-spacing: 0.03em;
 }
 
-/* dots */
+/* Indicatori a pallini sotto lo slideshow */
 .ss-dots {
   display: flex;
   justify-content: center;
@@ -1258,7 +1260,7 @@ tr.bought td {
   background: #0a1e3d;
 }
 
-/* controlli play/speed */
+/* Controlli play/speed dello slideshow */
 .ss-controls {
   display: flex;
   align-items: center;
@@ -1289,7 +1291,7 @@ tr.bought td {
   text-align: right;
 }
 
-/*modal*/
+/* Overlay modale generico (gestione foto, conferme) */
 
 .modal {
   position: fixed;

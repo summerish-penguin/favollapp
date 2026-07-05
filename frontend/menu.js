@@ -1,17 +1,13 @@
-/* ==========================================================================
-   MENU.JS
-   ========================================================================== */
+// menu.js — lista della spesa: tabella editabile + generazione ingredienti via AI
 
-const API_BASE = 'https://favollapp.onrender.com';
+// ---- Costanti e helper di formattazione ----
 
 function todayLabel() {
   const d = new Date();
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
+// ---- Init: carica la lista e registra tutti gli event listener ----
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadShoppingItems();
@@ -21,44 +17,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     .getElementById('send-prompt-btn')
     .addEventListener('click', handlePrompt);
 
-  document
-    .getElementById('prompt-textarea')
-    .addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.ctrlKey) handlePrompt();
-    });
+  const textarea = document.getElementById('prompt-textarea');
+  const submitBtn = document.getElementById('send-prompt-btn');
 
-  document.getElementById('add-row').addEventListener('click', addEmptyRow);
-});
+  // Ctrl+Enter invia il prompt AI
+  textarea.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) handlePrompt();
+  });
 
-document.getElementById('clear-note').addEventListener('click', async () => {
-  if (!confirm('Sei sicuro di voler svuotare tutta la lista?')) return;
-
-  try {
-    const res = await fetch(`${API_BASE}/shopping`, { method: 'DELETE' });
-    const data = await res.json();
-    if (data.ok) {
-      document.querySelector('#sketch-tbody').innerHTML = '';
-      addEmptyRow();
+  // Enter (senza shift) equivale a cliccare il bottone di invio
+  textarea.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      submitBtn.click();
     }
-  } catch (e) {
-    console.error('CLEAR ERROR:', e);
-    alert('Errore di rete. Riprova.');
-  }
+  });
+
+  // Svuota l'intera lista della spesa, previa conferma
+  document.getElementById('clear-note').addEventListener('click', async () => {
+    if (!confirm('Sei sicuro di voler svuotare tutta la lista?')) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/shopping`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.ok) {
+        document.querySelector('#sketch-tbody').innerHTML = '';
+        addEmptyRow();
+      }
+    } catch (e) {
+      console.error('CLEAR ERROR:', e);
+      alert('Errore di rete. Riprova.');
+    }
+  });
 });
 
-const textarea = document.getElementById('prompt-textarea');
-const submitBtn = document.getElementById('send-prompt-btn');
-
-textarea.addEventListener('keydown', function (event) {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    submitBtn.click();
-  }
-});
-
-/* ==========================================================================
-   LOADING OVERLAY
-   ========================================================================== */
+// ---- Overlay di caricamento durante le chiamate AI ----
 
 function showLoading() {
   if (document.getElementById('loading-overlay')) return;
@@ -73,12 +66,11 @@ function hideLoading() {
   if (el) el.remove();
 }
 
-/* ==========================================================================
-   PROMPT AI → TABELLA
-   ========================================================================== */
+// ---- Prompt AI: genera ingredienti e li inserisce in tabella ----
 
 async function handlePrompt() {
-  const prompt = document.getElementById('prompt-textarea').value.trim();
+  const textarea = document.getElementById('prompt-textarea');
+  const prompt = textarea.value.trim();
   if (!prompt) return;
 
   showLoading();
@@ -112,10 +104,9 @@ async function handlePrompt() {
   textarea.value = '';
 }
 
-/* ==========================================================================
-   RIGA VUOTA — editabile, con bottone +
-   ========================================================================== */
+// ---- Costruzione righe della tabella (vuota / salvata) ----
 
+// Riga vuota, editabile, con bottone + per salvarla
 function addEmptyRow() {
   const tbody = document.querySelector('#sketch-tbody');
   const tr = document.createElement('tr');
@@ -167,12 +158,9 @@ function addEmptyRow() {
   tbody.appendChild(tr);
 }
 
-/* ==========================================================================
-   RIGA SALVATA — editabile, checkbox comprato + bottone elimina
-   Le celle sono contenteditable; ogni modifica trigghera un PUT /shopping/{id}
-   con debounce da 600ms per non spammare il backend ad ogni tasto.
-   ========================================================================== */
-
+// Riga salvata, editabile, con checkbox comprato + bottone elimina.
+// Le celle sono contenteditable; ogni modifica trigghera un PUT /shopping/{id}
+// con debounce da 600ms per non spammare il backend ad ogni tasto.
 function buildSavedRow(id, day, ingredient, qty, bought = false) {
   const tr = document.createElement('tr');
   tr.dataset.id = id;
@@ -240,7 +228,7 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   return tr;
 }
 
-/* Inserisce una riga salvata prima della riga vuota in fondo */
+// Inserisce una riga salvata prima della riga vuota in fondo
 function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
   const tbody = document.querySelector('#sketch-tbody');
   const emptyRow = tbody.querySelector('.empty-row');
@@ -252,15 +240,13 @@ function insertSavedRowBeforeEmpty(id, day, ingredient, qty) {
   }
 }
 
-/* Aggiunge una riga salvata in fondo — usata al caricamento da backend */
+// Aggiunge una riga salvata in fondo — usata al caricamento da backend
 function appendSavedRow(id, day, ingredient, qty, bought = false) {
   const tbody = document.querySelector('#sketch-tbody');
   tbody.appendChild(buildSavedRow(id, day, ingredient, qty, bought));
 }
 
-/* ==========================================================================
-   API
-   ========================================================================== */
+// ---- Chiamate API verso /shopping ----
 
 async function saveRow(day, ingredient, qty) {
   try {
@@ -278,7 +264,7 @@ async function saveRow(day, ingredient, qty) {
   }
 }
 
-/* Aggiorna una riga salvata — chiamata dal debounce onEdit */
+// Aggiorna una riga salvata — chiamata dal debounce onEdit
 async function updateRow(id, day, ingredient, qty) {
   try {
     await fetch(`${API_BASE}/shopping/${id}`, {

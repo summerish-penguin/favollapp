@@ -1,52 +1,18 @@
-# =============================================================================
-# ROUTERS_AI_AGENT.PY
-# Endpoint: POST /ai/agent
-#
-# Riceve:
-#   - message  : str          — messaggio corrente dell'utente
-#   - history  : list[dict]   — cronologia della conversazione
-#                               formato: [{"role": "user"|"assistant", "content": "..."}]
-#
-# Restituisce:
-#   - reply    : str          — risposta del modello
-# =============================================================================
+# routers_ai_agent.py — endpoint POST /ai/agent: chatbot con memoria di conversazione
+# Riceve message (str) + history (lista di {"role", "content"}), restituisce reply (str)
 
-import os
 import requests
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from typing import List
 
-from db import SessionLocal
+from db import get_db
 from models import Location, Item, User
+from schemas import AgentRequest
+from helpers import require_groq_key, GROQ_URL, GROQ_MODEL
 
 router = APIRouter()
 
-
-# ── Schema ─────────────────────────────────────────────────────────────────
-
-class ChatMessage(BaseModel):
-    role: str       # "user" | "assistant"
-    content: str
-
-class AgentRequest(BaseModel):
-    message: str
-    history: List[ChatMessage] = []
-
-
-# ── DB ─────────────────────────────────────────────────────────────────────
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# ── System prompt ──────────────────────────────────────────────────────────
 
 def build_system_prompt(locations: list, items: list, users: list) -> str:
     """
@@ -79,8 +45,7 @@ def build_system_prompt(locations: list, items: list, users: list) -> str:
             
     warehouse_block = "OGGETTI IN COMUNE CHE ABBIAMO PORTATO:\n"
     for i in items:
-        qty = f" (x{i.quantity})" if hasattr(i, "quantity") and i.quantity else ""
-        warehouse_block += f"  - {i.name}{qty}\n"
+        warehouse_block += f"  - {i.name}\n"
         
     users_block = "PERSONE DEL GRUPPO:\n"
     for u in users:
@@ -121,17 +86,13 @@ TONO E STILE:
 - Per elenchi, formattazione, grassetto, corsivo, organizzazione della risposta, rispondi con sintassi markdown"""
 
 
-# ── Endpoint ───────────────────────────────────────────────────────────────
-
 @router.post("/ai/agent")
 def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
     """
     Chatbot conversazionale con memoria della sessione.
     Il frontend passa l'intera history ad ogni messaggio.
     """
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    if not GROQ_API_KEY:
-        raise HTTPException(status_code=500, detail="API key mancante")
+    GROQ_API_KEY = require_groq_key()
 
     # Carica i luoghi, gli oggetti in comune e gli utenti dal db per il system prompt
     locations = db.query(Location).all()
@@ -146,13 +107,13 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
 
     try:
         response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
+            GROQ_URL,
             headers={
                 "Authorization": f"Bearer {GROQ_API_KEY}",
                 "Content-Type":  "application/json"
             },
             json={
-                "model":       "meta-llama/llama-4-scout-17b-16e-instruct",
+                "model":       GROQ_MODEL,
                 "messages":    messages,
                 "temperature": 0.6,    # un po' più creativo rispetto al parser ricette
                 "max_tokens":  1024

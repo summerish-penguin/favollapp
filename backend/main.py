@@ -1,17 +1,4 @@
-# =============================================================================
-# MAIN.PY — Entry point FastAPI
-#
-# Struttura del progetto:
-#   main.py                  ← questo file
-#   schemas.py               ← Pydantic models
-#   helpers.py               ← funzioni db condivise
-#   seed.py                  ← dati iniziali
-#   
-#   routers_warehouse.py           ← /warehouse, /items
-#   routers_shopping.py            ← /shopping
-#   routers_ai_recipe.py                  ← /ai/recipe
-#   routers_misc.py                ← /users, /locations, /health
-# =============================================================================
+# main.py — entry point FastAPI: crea l'app, monta CORS/logging/router, esegue il seed all'avvio
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,10 +21,7 @@ load_dotenv()
 app = FastAPI()
 
 
-# =============================================================================
-# CORS
-# =============================================================================
-
+# Abilita le chiamate dal frontend statico (GitHub Pages + sviluppo locale)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -52,11 +36,7 @@ app.add_middleware(
 )
 
 
-# =============================================================================
-# MIDDLEWARE — logging automatico delle richieste
-# Salva ip, user-agent, path e metodo per ogni chiamata (escluso /health).
-# =============================================================================
-
+# Logga ip, user-agent, path e metodo di ogni richiesta (esclude /health)
 EXCLUDED_PATHS = ["/health"]
 
 @app.middleware("http")
@@ -84,17 +64,10 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-# =============================================================================
-# DB — crea le tabelle se non esistono
-# =============================================================================
-
+# Crea le tabelle nel database se non esistono già
 Base.metadata.create_all(bind=engine)
 
-
-# =============================================================================
-# ROUTER REGISTRATION
-# =============================================================================
-
+# Monta i router di ogni area funzionale
 app.include_router(warehouse_router)
 app.include_router(shopping_router)
 app.include_router(ai_router_receipe)
@@ -102,10 +75,7 @@ app.include_router(misc_router)
 app.include_router(ai_agent_router)
 
 
-# =============================================================================
-# STARTUP
-# =============================================================================
-
+# Popola item e utenti di default all'avvio dell'app
 @app.on_event("startup")
 def startup():
     seed()

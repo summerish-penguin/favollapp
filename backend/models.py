@@ -6,6 +6,7 @@ import uuid
 
 Base = declarative_base()
 
+# Persona del gruppo (nome, descrizione, icona)
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
@@ -13,6 +14,7 @@ class User(Base):
     desc = Column(String, nullable=True)
     icon = Column(String, nullable=True)
 
+# Oggetto condiviso da portare in vacanza, con quantità target
 class Item(Base):
     __tablename__ = "items"
     id = Column(Integer, primary_key=True)
@@ -20,6 +22,7 @@ class Item(Base):
     category = Column(String, nullable=True)
     target = Column(Integer, nullable=False, default=1)   # quante unità totali si vogliono portare
 
+# Quantità di un item che un utente si è impegnato a portare
 class Contribution(Base):
     __tablename__ = "contributions"
     id = Column(Integer, primary_key=True)
@@ -27,13 +30,15 @@ class Contribution(Base):
     item_id = Column(Integer, ForeignKey("items.id"))
     quantity = Column(Integer, default=1)
 
+# Riga della lista della spesa
 class ShoppingItem(Base):
     __tablename__ = "shopping_items"
     id         = Column(Integer, primary_key=True)
     day        = Column(String, nullable=True)
     ingredient = Column(String, nullable=False)
     qty        = Column(String, nullable=True)
-    
+
+# Punto di interesse mostrato sulla mappa (casa, spiagge, servizi...)
 class Location(Base):
     __tablename__ = "locations"
     id         = Column(Integer, primary_key=True)
@@ -41,8 +46,9 @@ class Location(Base):
     lat        = Column(Float)
     lng        = Column(Float)
     category   = Column(String)
-    mins_away  = Column(Integer, nullable=True) 
-    
+    mins_away  = Column(Integer, nullable=True)
+
+# Log tecnico delle richieste HTTP (ip, user-agent, path, metodo) per monitoring
 class AccessLog(Base):
     __tablename__ = "access_logs"
 
@@ -52,4 +58,3 @@ class AccessLog(Base):
     user_agent = Column(String)
     path = Column(String)
     method = Column(String)
-    

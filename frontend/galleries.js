@@ -1,11 +1,11 @@
-/*BUCKET DI FOTO*/
+// Client Supabase per il bucket di foto condivise
 const SUPABASE_URL = "https://mmaitmbnqxyhgqxqgemc.supabase.co";
 const SUPABASE_KEY = "sb_publishable_EgtesJLpewnm1C2qfE2v3A_5xESFLJA";
 const sbInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =====================================================================
-   CONFIGURAZIONE — modifica qui le tue foto
-   ===================================================================== */
+// ==== HOUSE GALLERY (foto statiche fisse, definite in PHOTOS) ====
+
+// Elenco foto della casa — modifica qui per aggiungerne/rimuoverne
 const PHOTOS = [
   { src: "assets/casa/piscina.jpg", desc: "Piscina" },
   { src: "assets/casa/piscina2.jpg", desc: "Piscina" },
@@ -33,9 +33,7 @@ const PHOTOS = [
   { src: "assets/casa/balcone2.jpg", desc: "Balcone" },
 ];
 
-/* =====================================================================
-   INIT
-   ===================================================================== */
+// Riferimenti DOM e stato dello slideshow
 const box     = document.getElementById("ss-box");
 const track   = document.getElementById("ss-track");
 const dotsEl  = document.getElementById("ss-dots");
@@ -48,12 +46,11 @@ let current  = 0;
 let delay    = 4000;
 let timer    = null;
 
-/* SWIPE VARS */
 let touchStartX = 0;
 let touchEndX = 0;
 const SWIPE_THRESHOLD = 50; // px minimi per considerarlo swipe
 
-/* Crea le slide dinamicamente */
+// Crea le slide e i relativi dot indicatori, uno per foto
 PHOTOS.forEach((photo, i) => {
   const slide = document.createElement("div");
   slide.className = "ss-slide" + (i === 0 ? " active" : "");
@@ -77,9 +74,7 @@ PHOTOS.forEach((photo, i) => {
 updateCounter();
 updateDesc();
 
-/* =====================================================================
-   NAVIGAZIONE
-   ===================================================================== */
+// Naviga alla slide n, con wraparound
 function goTo(n) {
   const slides = track.querySelectorAll(".ss-slide");
   const dots   = dotsEl.querySelectorAll(".ss-dot");
@@ -118,15 +113,13 @@ nextBtn.onclick = () => {
   if (timer) startAuto();
 };
 
-/* Tastiera */
+// Frecce da tastiera
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft")  { goTo(current - 1); if (timer) startAuto(); }
   if (e.key === "ArrowRight") { goTo(current + 1); if (timer) startAuto(); }
 });
 
-/* =====================================================================
-   SWIPE TOUCH
-   ===================================================================== */
+// Gestisce lo swipe touch orizzontale
 track.addEventListener("touchstart", (e) => {
   touchStartX = e.changedTouches[0].screenX;
 });
@@ -152,9 +145,7 @@ function handleSwipe() {
   if (timer) startAuto();
 }
 
-/* =====================================================================
-   AUTOPLAY
-   ===================================================================== */
+// Avvia/ferma lo slideshow automatico
 function startAuto() {
   clearInterval(timer);
   timer = setInterval(() => goTo(current + 1), delay);
@@ -175,16 +166,14 @@ speedIn.oninput = () => {
   if (timer) startAuto();
 };
 
-/* Hover */
+// Pausa lo slideshow al passaggio del mouse, riparte all'uscita
 track.addEventListener("mouseenter", stopAuto);
 track.addEventListener("mouseleave", () => startAuto());
 
 startAuto();
 
 
-/* =====================================================================
-   USER GALLERY (solo frontend)
-   ===================================================================== */
+// ==== USER GALLERY (foto caricate dagli utenti via Supabase) ====
 
 let USER_PHOTOS = [];
 let userCurrent = 0;
@@ -199,7 +188,7 @@ const userUpload = document.getElementById("user-upload");
 const userSpeedIn = document.querySelector("#user-ss-speed");
 const userSpeedOut = document.querySelector("#user-ss-speed-out");
 
-/*loading spinner init*/
+// Spinner globale mostrato durante le operazioni Supabase (upload, delete, load)
 const loader = document.getElementById("global-loader");
 
 function showLoader() {
@@ -210,7 +199,7 @@ function hideLoader() {
   loader.classList.add("hidden");
 }
 
-/*link bottone play*/
+// Avvia/ferma lo slideshow automatico della gallery utenti
 userPlay.onclick = () => {
   userTimer ? stopUserAuto() : startUserAuto();
 };
@@ -227,7 +216,7 @@ if (userSpeedIn) {
   };
 }
 
-/* LOAD da localStorage */
+// Carica le foto caricate dagli utenti dal bucket Supabase
 async function loadFromSupabase() {
   showLoader();
 
@@ -256,7 +245,7 @@ loadFromSupabase().then(() => {
   startUserAuto();
 });
 
-/* UPLOAD */
+// Carica su Supabase le foto selezionate dall'utente e le aggiunge alla gallery
 userUpload.addEventListener("change", async (e) => {
   showLoader();
 
@@ -286,7 +275,7 @@ userUpload.addEventListener("change", async (e) => {
   hideLoader();
 });
 
-/* CREA SLIDE */
+// Crea una slide + il relativo dot per una foto utente
 function addUserSlide(photo, i = 0) {
   const slide = document.createElement("div");
   slide.className = "ss-slide" + (i === 0 ? " active" : "");
@@ -304,7 +293,7 @@ function addUserSlide(photo, i = 0) {
   userDots.appendChild(dot);
 }
 
-/* NAV */
+// Naviga alla slide n della gallery utenti, con wraparound
 function userGoTo(n) {
   const slides = userTrack.querySelectorAll(".ss-slide");
   const dots = userDots.querySelectorAll(".ss-dot");
@@ -327,11 +316,11 @@ function updateUserUI() {
   userCounter.textContent = `${userCurrent + 1} / ${USER_PHOTOS.length}`;
 }
 
-/* BOTTONI */
+// Frecce prev/next della gallery utenti
 document.getElementById("user-ss-prev").onclick = () => userGoTo(userCurrent - 1);
 document.getElementById("user-ss-next").onclick = () => userGoTo(userCurrent + 1);
 
-/* SWIPE */
+// Gestisce lo swipe touch orizzontale sulla gallery utenti
 let uStartX = 0;
 
 userTrack.addEventListener("touchstart", e => {
@@ -347,7 +336,7 @@ userTrack.addEventListener("touchend", e => {
   else userGoTo(userCurrent - 1);
 });
 
-/*funzioni slideshow auto*/
+// Avvia/ferma lo slideshow automatico della gallery utenti
 function startUserAuto() {
   stopUserAuto();
   if (USER_PHOTOS.length <= 1) return;
@@ -365,27 +354,23 @@ function stopUserAuto() {
   userPlay.textContent = "▶ Slideshow";
 }
 
-/* =====================================================================
-   MODAL GESTIONE FOTO
-   ===================================================================== */
+// ---- Modal gestione foto: apri/chiudi, lista foto con eliminazione ----
 
 const manageBtn = document.getElementById("user-manage-btn");
 const modal = document.getElementById("user-modal");
 const closeModal = document.getElementById("user-close-modal");
 const listEl = document.getElementById("user-photo-list");
 
-/* APRI */
 manageBtn.onclick = () => {
   renderPhotoList();
   modal.classList.remove("hidden");
 };
 
-/* CHIUDI */
 closeModal.onclick = () => {
   modal.classList.add("hidden");
 };
 
-/* RENDER LISTA */
+// Ricostruisce la lista foto del modal (o un messaggio se vuota)
 function renderPhotoList() {
   listEl.innerHTML = "";
 
@@ -416,7 +401,7 @@ function renderPhotoList() {
   });
 }
 
-/* DELETE */
+// Elimina una foto da Supabase e ricostruisce slider + lista modal
 async function deletePhoto(index) {
   showLoader();
 
@@ -432,7 +417,7 @@ async function deletePhoto(index) {
   hideLoader();
 }
 
-/* RICOSTRUISCE SLIDER */
+// Ricostruisce lo slider utenti da zero a partire da USER_PHOTOS
 function rebuildUserGallery() {
   userTrack.querySelectorAll(".ss-slide").forEach(el => el.remove());
   userDots.innerHTML = "";

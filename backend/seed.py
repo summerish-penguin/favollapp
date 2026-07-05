@@ -1,11 +1,10 @@
-# =============================================================================
-# SEED.PY — Dati iniziali e funzione di seeding del database
-# =============================================================================
+# seed.py — dati iniziali e funzione di popolamento del database
 
 from db import SessionLocal
 from models import Item, User
 
 
+# Item di default con relativo target
 SEED_ITEMS = [
     ("Ombrellone",        6),
     ("Gazebo",            1),
@@ -18,6 +17,7 @@ SEED_ITEMS = [
     ("Bocce spiaggia",    1),
 ]
 
+# Persone di default con descrizione e icona
 SEED_USERS = [
     ("Bea",        "Ministro dei Rapporti con il Parlamento", "🏠"),
     ("Cassi",      "Ministro dei Beni Culturali",             "🎨"),

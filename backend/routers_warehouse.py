@@ -1,12 +1,9 @@
-# =============================================================================
-# ROUTERS/WAREHOUSE.PY
-# Endpoint: /warehouse, /warehouse/update, /warehouse/remove, /items
-# =============================================================================
+# routers_warehouse.py — endpoint /warehouse, /warehouse/update, /warehouse/remove, /items
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
+from db import get_db
 from models import Item, User, Contribution
 from schemas import UpdateRequest, RemoveRequest, CreateItemRequest, UpdateItemRequest
 from helpers import get_or_create_user, get_or_create_item
@@ -14,51 +11,34 @@ from helpers import get_or_create_user, get_or_create_item
 router = APIRouter()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# ── GET /warehouse ─────────────────────────────────────────────────────────
-
 @router.api_route("/warehouse", methods=["GET", "HEAD"])
-def get_warehouse(request: Request):
+def get_warehouse(request: Request, db: Session = Depends(get_db)):
     """Restituisce tutti gli item con i relativi contributi e target."""
     if request.method == "HEAD":
         return
 
-    db = SessionLocal()
-    try:
-        items = db.query(Item).all()
-        result = []
+    items = db.query(Item).all()
+    result = []
 
-        for item in items:
-            contributions = db.query(Contribution).filter_by(item_id=item.id).all()
-            users = []
-            total = 0
+    for item in items:
+        contributions = db.query(Contribution).filter_by(item_id=item.id).all()
+        users = []
+        total = 0
 
-            for c in contributions:
-                user = db.get(User, c.user_id)
-                users.append({"name": user.name, "qty": c.quantity})
-                total += c.quantity
+        for c in contributions:
+            user = db.get(User, c.user_id)
+            users.append({"name": user.name, "qty": c.quantity})
+            total += c.quantity
 
-            result.append({
-                "name":   item.name,
-                "target": item.target,
-                "total":  total,
-                "users":  users
-            })
+        result.append({
+            "name":   item.name,
+            "target": item.target,
+            "total":  total,
+            "users":  users
+        })
 
-        return result
+    return result
 
-    finally:
-        db.close()
-
-
-# ── POST /warehouse/update ─────────────────────────────────────────────────
 
 @router.post("/warehouse/update")
 def update(data: UpdateRequest, db: Session = Depends(get_db)):
@@ -84,35 +64,26 @@ def update(data: UpdateRequest, db: Session = Depends(get_db)):
     return {"ok": True, "target": item.target}
 
 
-# ── POST /warehouse/remove ─────────────────────────────────────────────────
-
 @router.post("/warehouse/remove")
-def remove(req: RemoveRequest):
+def remove(req: RemoveRequest, db: Session = Depends(get_db)):
     """Rimuove completamente il contributo di un utente per un item."""
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter_by(name=req.user).first()
-        item = db.query(Item).filter_by(name=req.item).first()
+    user = db.query(User).filter_by(name=req.user).first()
+    item = db.query(Item).filter_by(name=req.item).first()
 
-        if not user or not item:
-            return {"ok": True}
-
-        contrib = db.query(Contribution).filter_by(
-            user_id=user.id,
-            item_id=item.id
-        ).first()
-
-        if contrib:
-            db.delete(contrib)
-            db.commit()
-
+    if not user or not item:
         return {"ok": True}
 
-    finally:
-        db.close()
+    contrib = db.query(Contribution).filter_by(
+        user_id=user.id,
+        item_id=item.id
+    ).first()
 
+    if contrib:
+        db.delete(contrib)
+        db.commit()
 
-# ── POST /items ────────────────────────────────────────────────────────────
+    return {"ok": True}
+
 
 @router.post("/items")
 def create_item(req: CreateItemRequest, db: Session = Depends(get_db)):
@@ -131,8 +102,6 @@ def create_item(req: CreateItemRequest, db: Session = Depends(get_db)):
     return {"ok": True, "name": new_item.name, "target": new_item.target}
 
 
-# ── PUT /items/{old_name} ──────────────────────────────────────────────────
-
 @router.put("/items/{old_name}")
 def update_item(old_name: str, req: UpdateItemRequest, db: Session = Depends(get_db)):
     """Modifica nome e/o target di un item esistente."""
@@ -150,8 +119,6 @@ def update_item(old_name: str, req: UpdateItemRequest, db: Session = Depends(get
     db.commit()
     return {"ok": True, "name": item.name, "target": item.target}
 
-
-# ── DELETE /items/{name} ───────────────────────────────────────────────────
 
 @router.delete("/items/{name}")
 def delete_item(name: str, db: Session = Depends(get_db)):

@@ -1,19 +1,15 @@
-/* ==========================================================================
-   CAST.JS – USER CARDS
-   ========================================================================== */
-
-const API_BASE = 'https://favollapp.onrender.com';
+// cast.js — genera le card utente della pagina "Cast"
 
 const container = document.getElementById('cast-container');
 
 init();
 
+// Avvia il caricamento degli utenti all'apertura pagina
 async function init() {
   await loadUsers();
 }
 
-/* ========================= */
-
+// Recupera la lista utenti dal backend e la passa al render
 async function loadUsers() {
   try {
     const res = await fetch(`${API_BASE}/users`);
@@ -25,8 +21,7 @@ async function loadUsers() {
   }
 }
 
-/* ========================= */
-
+// Svuota il container e ricrea una card per ogni utente
 function renderUsers(users) {
   container.innerHTML = '';
 
@@ -35,8 +30,7 @@ function renderUsers(users) {
   });
 }
 
-/* ========================= */
-
+// Genera un colore HSL deterministico da una stringa (non ancora usata in UI)
 function stringToColor(str) {
   if (!str) return '#ccc';
 
@@ -55,8 +49,7 @@ function stringToColor(str) {
   return `hsl(${h}, ${s}, ${l})`;
 }
 
-/* ========================= */
-
+// Costruisce il DOM della card utente (header, body, footer)
 function createUserCard(user) {
   const card = document.createElement('div');
   card.classList.add('user-card');
@@ -97,8 +90,7 @@ function createUserCard(user) {
   return card;
 }
 
-/* ========================= */
-
+// Estrae le iniziali da un nome (non ancora usata in UI)
 function getInitials(name) {
   if (!name || typeof name !== 'string') return '';
 

@@ -1,26 +1,13 @@
-# =============================================================================
-# ROUTERS/MISC.PY
-# Endpoint: /users, /locations, /health
-# =============================================================================
+# routers_misc.py — endpoint /users, /locations, /health
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
+from db import get_db
 from models import User, Location
 
 router = APIRouter()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# ── GET /users ─────────────────────────────────────────────────────────────
 
 @router.get("/users")
 def get_users(db: Session = Depends(get_db)):
@@ -28,8 +15,6 @@ def get_users(db: Session = Depends(get_db)):
     users = db.query(User).order_by(User.name).all()
     return [{"name": u.name, "desc": u.desc, "icon": u.icon} for u in users]
 
-
-# ── GET /locations ─────────────────────────────────────────────────────────
 
 @router.get("/locations")
 def get_locations(db: Session = Depends(get_db)):
@@ -46,8 +31,6 @@ def get_locations(db: Session = Depends(get_db)):
         for loc in locations
     ]
 
-
-# ── GET /health ────────────────────────────────────────────────────────────
 
 @router.get("/health")
 def health():

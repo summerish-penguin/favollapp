@@ -1,9 +1,21 @@
-# =============================================================================
-# HELPERS.PY — Funzioni di utilità condivise tra i router
-# =============================================================================
+# helpers.py — funzioni di utilità condivise tra i router
 
+import os
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import User, Item
+
+# Config condivisa per le chiamate al LLM Groq (usata da routers_ai_recipe.py e routers_ai_agent.py)
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+GROQ_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
+
+
+def require_groq_key() -> str:
+    """Legge la API key Groq dall'env; solleva 500 se non configurata."""
+    key = os.getenv("GROQ_API_KEY")
+    if not key:
+        raise HTTPException(status_code=500, detail="API key mancante")
+    return key
 
 
 def get_or_create_user(db: Session, name: str) -> User:

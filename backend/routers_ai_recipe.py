@@ -1,30 +1,17 @@
-# =============================================================================
-# Endpoint: /ai/recipe — genera ingredienti via Groq LLM
-# =============================================================================
+# routers_ai_recipe.py — endpoint /ai/recipe: genera ingredienti via Groq LLM
 
-import os
 import json
 import requests
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from db import SessionLocal
+from db import get_db
 from schemas import RecipeRequest
-from helpers import get_user_count
+from helpers import get_user_count, require_groq_key, GROQ_URL, GROQ_MODEL
 
 router = APIRouter()
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# ── POST /ai/recipe ────────────────────────────────────────────────────────
 
 @router.post("/ai/recipe")
 def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
@@ -32,10 +19,7 @@ def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
     Riceve un prompt (nome piatto + contesto opzionale) e restituisce
     un JSON con la lista degli ingredienti calibrata sul numero di persone.
     """
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    if not GROQ_API_KEY:
-        raise HTTPException(status_code=500, detail="API key mancante")
-
+    GROQ_API_KEY = require_groq_key()
     people = get_user_count(db)
 
     system_prompt = f"""Sei un parser di ricette. Input: nome piatto + contesto opzionale. Output: JSON puro.
@@ -52,13 +36,13 @@ REGOLE:
 
     try:
         response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
+            GROQ_URL,
             headers={
                 "Authorization": f"Bearer {GROQ_API_KEY}",
                 "Content-Type": "application/json"
             },
             json={
-                "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+                "model": GROQ_MODEL,
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user",   "content": req.prompt}

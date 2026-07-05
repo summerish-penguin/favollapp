@@ -1,22 +1,14 @@
-/* ==========================================================================
-   MAP.JS – Logica mappa Leaflet + sidebar categorie
-   Dipendenze: Leaflet (caricato in map.html), data/locations.json
-   ========================================================================== */
+// map.js — mappa Leaflet + sidebar categorie, dati da GET /locations
 
 document.addEventListener('DOMContentLoaded', () => {
-  /* ------------------------------------------------------------------
-     INIZIALIZZAZIONE MAPPA
-     Centrata sulla zona di Lloret de Mar / Montbarbat
-  ------------------------------------------------------------------ */
+  // Inizializza la mappa centrata sulla zona di Lloret de Mar / Montbarbat
   const map = L.map('map').setView([41.74067, 2.7795], 11);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &amp; Carto',
   }).addTo(map);
 
-  /* ------------------------------------------------------------------
-     ICONE MARKER (emoji come divIcon)
-  ------------------------------------------------------------------ */
+  // Crea un'icona marker a partire da un emoji
   function makeIcon(emoji) {
     return L.divIcon({
       className: '',
@@ -46,12 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     park_barcelona: '🅿️ Parcheggi a Barcellona e stazioni',
   };
 
-  /* ------------------------------------------------------------------
-     CARICAMENTO DATI E RENDER
-  ------------------------------------------------------------------ */
-const API_BASE = 'https://favollapp.onrender.com';
-
-fetch(`${API_BASE}/locations`)
+  // Carica i punti di interesse dal backend e disegna marker + sidebar
+  fetch(`${API_BASE}/locations`)
   .then((res) => {
     if (!res.ok) throw new Error('Errore nel caricamento delle locations dal DB');
     return res.json();
@@ -62,12 +50,7 @@ fetch(`${API_BASE}/locations`)
   })
   .catch((err) => console.error('Errore durante il fetch delle locations:', err));
 
-  /* ------------------------------------------------------------------
-     MARKER SU MAPPA
-     - Usa l'icona corrispondente alla categoria
-     - Popup con nome, distanza e link Google Maps
-     - Il marker "home" si apre automaticamente
-  ------------------------------------------------------------------ */
+  // Disegna i marker sulla mappa: icona per categoria, popup con nome/distanza/link Maps, "home" si apre da subito
   function renderMarkers(data) {
     data.forEach((loc) => {
       const { Lat, Lng, LocationName, LocCategory, MinsAway } = loc;
@@ -90,12 +73,7 @@ fetch(`${API_BASE}/locations`)
     });
   }
 
-  /* ------------------------------------------------------------------
-     SIDEBAR CATEGORIE (accordion)
-     - Raggruppa i luoghi per categoria
-     - Click sull'header espande/chiude la lista
-     - Click su un luogo centra la mappa su di esso
-  ------------------------------------------------------------------ */
+  // Sidebar categorie ad accordion: raggruppa per categoria, click header apre/chiude, click luogo centra la mappa
   function renderSidebar(data) {
     const container = document.getElementById('categories');
 

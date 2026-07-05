@@ -1,11 +1,10 @@
-# =============================================================================
-# SCHEMAS.PY — Pydantic models per validazione request/response
-# =============================================================================
+# schemas.py — modelli Pydantic per validazione request/response
 
+from typing import List
 from pydantic import BaseModel
 
 
-# ── Warehouse ────────────────────────────────────────────────────────────────
+# ---- Warehouse ----
 
 class UpdateRequest(BaseModel):
     user: str
@@ -25,13 +24,24 @@ class UpdateItemRequest(BaseModel):
     target: int
 
 
-# ── AI ────────────────────────────────────────────────────────────────────────
+# ---- AI Recipe ----
 
 class RecipeRequest(BaseModel):
     prompt: str
 
 
-# ── Shopping ──────────────────────────────────────────────────────────────────
+# ---- AI Agent ----
+
+class ChatMessage(BaseModel):
+    role: str       # "user" | "assistant"
+    content: str
+
+class AgentRequest(BaseModel):
+    message: str
+    history: List[ChatMessage] = []
+
+
+# ---- Shopping ----
 
 class ShoppingItemRequest(BaseModel):
     day:        str = ""
