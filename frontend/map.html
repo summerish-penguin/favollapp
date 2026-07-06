@@ -72,10 +72,14 @@
 
       <br />
 
-      <!-- Mappa Leaflet (altezza fissa, popolata da map.js) -->
-      <div id="map"></div>
+      <!-- Mappa Leaflet con chip categoria flottanti e bottone "centra sulla casa" -->
+      <div class="map-card">
+        <div id="map"></div>
+        <div class="chip-strip" id="chip-strip"></div>
+        <button class="locate-btn" id="locate-btn" aria-label="Centra sulla casa" title="Centra sulla casa">◎</button>
+      </div>
 
-      <!-- Sidebar categorie luoghi (popolata da map.js) -->
+      <!-- Directory categorie luoghi (popolata da map.js) -->
       <div id="categories"></div>
     </div>
   </body>
