@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Svuota l'intera lista della spesa, previa conferma
   document.getElementById('clear-note').addEventListener('click', async () => {
-    if (!confirm('Sei sicuro di voler svuotare tutta la lista?')) return;
+    if (!(await showConfirm('Sei sicuro di voler svuotare tutta la lista?'))) return;
 
     try {
       const res = await fetch(`${API_BASE}/shopping`, { method: 'DELETE' });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     } catch (e) {
       console.error('CLEAR ERROR:', e);
-      alert('Errore di rete. Riprova.');
+      showToast('Errore di rete. Riprova.');
     }
   });
 });
@@ -96,7 +96,7 @@ async function handlePrompt() {
     }
   } catch (e) {
     console.error('PROMPT ERROR:', e);
-    alert('Errore nella generazione. Riprova.');
+    showToast('Errore nella generazione. Riprova.');
   } finally {
     hideLoading();
   }
@@ -259,7 +259,7 @@ async function saveRow(day, ingredient, qty) {
     return data.ok ? data.id : null;
   } catch (e) {
     console.error('SAVE ROW ERROR:', e);
-    alert('Errore di rete nel salvataggio. Riprova.');
+    showToast('Errore di rete nel salvataggio. Riprova.');
     return null;
   }
 }
@@ -284,7 +284,7 @@ async function deleteRow(id) {
     return !!data.ok;
   } catch (e) {
     console.error('DELETE ROW ERROR:', e);
-    alert("Errore di rete nell'eliminazione. Riprova.");
+    showToast("Errore di rete nell'eliminazione. Riprova.");
     return false;
   }
 }

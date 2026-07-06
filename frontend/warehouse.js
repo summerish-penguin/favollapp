@@ -324,7 +324,7 @@ function createItemElement(itemName, people, target) {
 
   btn.onclick = async () => {
     const user = usernameInput.value.trim();
-    if (!user) return alert('Seleziona il tuo nome');
+    if (!user) return showToast('Seleziona il tuo nome');
     const rect = btn.getBoundingClientRect();
     spawnBuffon(rect.left + rect.width / 2, rect.top);
     await optimisticUpdate(user, itemName, +1);
@@ -346,7 +346,7 @@ function createItemElement(itemName, people, target) {
   deleteBtn.textContent = '🗑';
   deleteBtn.classList.add('delete-item-btn');
   deleteBtn.onclick = async () => {
-    if (!confirm(`Eliminare "${itemName}" dalla lista?`)) return;
+    if (!(await showConfirm(`Eliminare "${itemName}" dalla lista?`))) return;
     await deleteItem(itemName);
   };
 
@@ -417,13 +417,13 @@ async function optimisticUpdate(user, item, delta) {
     });
     const data = await res.json();
 
-    if (!data.ok) alert('Errore backend: ' + data.reason);
+    if (!data.ok) showToast('Errore backend: ' + data.reason);
     if (state[item]) state[item].target = data.target ?? state[item].target;
   } catch (e) {
     console.error('UPDATE ERROR:', e);
     Object.assign(state, prev);
     renderAll();
-    alert('Errore di rete. Riprova.');
+    showToast('Errore di rete. Riprova.');
   }
 }
 
@@ -460,6 +460,6 @@ async function deleteItem(itemName) {
     console.error('DELETE ITEM ERROR:', e);
     Object.assign(state, prev);
     renderAll();
-    alert('Errore eliminazione. Riprova.');
+    showToast('Errore eliminazione. Riprova.');
   }
 }

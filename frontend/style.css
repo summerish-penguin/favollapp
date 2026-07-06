@@ -968,6 +968,14 @@ select {
   margin-top: -4px;
 }
 
+/* Testo del dialog di conferma (showConfirm, al posto di confirm()) */
+.modal-message {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
 /* Riga bottoni */
 .modal-btn-row {
   display: flex;
@@ -1532,6 +1540,41 @@ select {
 
 .hidden {
   display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   TOAST (ui-feedback.js, al posto di alert())
+------------------------------------------------------------------ */
+.ui-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 3000;
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
+  box-shadow: var(--shadow-3);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.ui-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.ui-toast[data-type='success'] {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 25%, transparent);
 }
 
 /* ------------------------------------------------------------------
