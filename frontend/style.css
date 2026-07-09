@@ -413,6 +413,8 @@ ul {
   color: var(--text-primary);
   text-align: left;
   margin-bottom: 0;
+  margin: 0 auto;
+  width: 400px;
 }
 
 .hero-eyebrow {
@@ -420,7 +422,9 @@ ul {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
+  margin: 0 auto;
+  width: 400px
 }
 
 .hero-pill {
@@ -438,7 +442,9 @@ ul {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 18px !important;
+  margin: 0 auto;
+  width: 400px
 }
 
 .hero-countdown .num {
