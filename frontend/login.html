@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FavollApp – Bagaglio</title>
+    <title>FavollApp – Accedi</title>
 
     <!-- Applica subito il tema salvato (o quello di sistema) prima del paint, per evitare un flash -->
     <script>
@@ -14,11 +14,11 @@
       })();
     </script>
 
-    <!-- Gating: se non loggato vai al login prima del paint -->
+    <!-- Se sei già loggato salti direttamente alla home -->
     <script>
       (function () {
         try {
-          if (!localStorage.getItem('favollapp-user')) window.location.replace('login.html');
+          if (localStorage.getItem('favollapp-user')) window.location.replace('index.html');
         } catch (e) {}
       })();
     </script>
@@ -34,13 +34,6 @@
       rel="stylesheet"
     />
 
-    <!-- Icone FontAwesome -->
-    <script
-      src="https://kit.fontawesome.com/de9ea88d4a.js"
-      crossorigin="anonymous"
-      defer
-    ></script>
-
     <!-- Favicon -->
     <link
       rel="icon"
@@ -49,12 +42,11 @@
       href="assets/Orange-Crab-Clipart-Transparent-PNG.png"
     />
 
-    <!-- Logica warehouse -->
     <script src="config.js" defer></script>
     <script src="theme-toggle.js" defer></script>
     <script src="ui-feedback.js" defer></script>
     <script src="auth.js" defer></script>
-    <script src="warehouse.js" defer></script>
+    <script src="login.js" defer></script>
   </head>
   <body>
     <!-- Header con logo -->
@@ -74,22 +66,35 @@
     </div>
 
     <div class="container">
-      <!-- Titolo pagina -->
       <div class="title">
-        <h1>Lo zaino del Favollo</h1>
-        <h3>Chi porta cosa?</h3>
+        <h1>Accedi a Favollapp</h1>
+        <h3>Scegli chi sei e la tua password</h3>
       </div>
 
       <br />
 
-      <!-- L'utente corrente arriva dal login (auth.js): niente più menu "chi sei" -->
+      <form class="login-card" id="login-form" autocomplete="off">
+        <label class="login-label" for="login-user">Chi sei</label>
+        <select class="modal-input" id="login-user" required>
+          <option value="" disabled selected>Seleziona il tuo nome…</option>
+        </select>
 
-      <!-- Lista oggetti: generata dinamicamente dal JS -->
-      <div id="warehouse-container"></div>
+        <label class="login-label" for="login-password">Password</label>
+        <input
+          class="modal-input"
+          id="login-password"
+          type="password"
+          placeholder="La tua password"
+          autocomplete="current-password"
+          required
+        />
 
-      <div id="add-item-cnt">
-        <button id="add-item-btn">Aggiungi un oggetto</button>
-      </div>
+        <p class="login-hint" id="login-hint">
+          Primo accesso? La password che scegli ora diventa la tua.
+        </p>
+
+        <button class="modal-create-btn login-submit" type="submit" id="login-submit">Entra</button>
+      </form>
     </div>
   </body>
 </html>

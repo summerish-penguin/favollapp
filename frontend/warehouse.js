@@ -1,6 +1,7 @@
 // warehouse.js — gestisce la lista oggetti da portare in vacanza (chi porta cosa)
 
-const usernameInput = document.getElementById('username');
+// La personH corrente arriva dal login (auth.js), non più da un menu a tendina
+const currentUser = getCurrentUser();
 const container = document.getElementById('warehouse-container');
 
 /* Stato locale: { itemName: { users: { userName: qty }, target: N } }
@@ -24,11 +25,9 @@ const DEFAULT_ITEMS = [
 init();
 
 async function init() {
-  await loadUsersDropdown();
   initEmptyState(DEFAULT_ITEMS);
   renderAll();
   loadWarehouse();
-  loadUsers();
 
   const addBtn = document.getElementById('add-item-btn');
   if (addBtn) addBtn.addEventListener('click', openAddItemModal);
@@ -63,43 +62,6 @@ async function loadWarehouse() {
     renderAll();
   } catch (e) {
     console.error('LOAD ERROR:', e);
-  }
-}
-
-async function loadUsers() {
-  try {
-    const res = await fetch(`${API_BASE}/users`);
-    const users = await res.json();
-    populateUserInput(users);
-  } catch (e) {
-    console.error('USERS LOAD ERROR:', e);
-  }
-}
-
-function populateUserInput(users) {
-  const datalist = document.getElementById('users-list');
-  if (!datalist) return;
-  datalist.innerHTML = '';
-  users.forEach((u) => {
-    const option = document.createElement('option');
-    option.value = u.name;
-    datalist.appendChild(option);
-  });
-}
-
-async function loadUsersDropdown() {
-  const select = document.getElementById('username');
-  try {
-    const res = await fetch(`${API_BASE}/users`);
-    const users = await res.json();
-    users.forEach((u) => {
-      const option = document.createElement('option');
-      option.value = u.name;
-      option.textContent = u.name;
-      select.appendChild(option);
-    });
-  } catch (e) {
-    console.error('LOAD USERS DROPDOWN ERROR:', e);
   }
 }
 
@@ -323,8 +285,8 @@ function createItemElement(itemName, people, target) {
   btn.disabled = total >= target;
 
   btn.onclick = async () => {
-    const user = usernameInput.value.trim();
-    if (!user) return showToast('Seleziona il tuo nome');
+    const user = currentUser?.name;
+    if (!user) return showToast('Sessione scaduta: rifai il login');
     const rect = btn.getBoundingClientRect();
     spawnBuffon(rect.left + rect.width / 2, rect.top);
     await optimisticUpdate(user, itemName, +1);

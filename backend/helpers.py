@@ -1,6 +1,7 @@
 # helpers.py — funzioni di utilità condivise tra i router
 
 import os
+import bcrypt
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import User, Item
@@ -8,6 +9,23 @@ from models import User, Item
 # Config condivisa per le chiamate al LLM Groq (usata da routers_ai_recipe.py e routers_ai_agent.py)
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
+
+
+# Hashing password per il login "rivendica una personH" (vedi routers_auth.py).
+# bcrypt lavora su max 72 byte: tronchiamo lì, come da prassi, così anche
+# password lunghe non sollevano errori.
+def _pw_bytes(password: str) -> bytes:
+    return password.encode("utf-8")[:72]
+
+
+def hash_password(password: str) -> str:
+    """Restituisce l'hash bcrypt della password in chiaro."""
+    return bcrypt.hashpw(_pw_bytes(password), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    """Verifica una password in chiaro contro il suo hash bcrypt."""
+    return bcrypt.checkpw(_pw_bytes(password), password_hash.encode("utf-8"))
 
 
 def require_groq_key() -> str:

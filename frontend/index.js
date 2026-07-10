@@ -1,6 +1,6 @@
 // index.js — home page: calcola i giorni alla partenza e anima il countdown
 
-const VACANZA = new Date('2026-08-13');
+const VACANZA = new Date('2026-08-12');
 
 document.addEventListener('DOMContentLoaded', () => {
   const numEl = document.getElementById('countdown-days');

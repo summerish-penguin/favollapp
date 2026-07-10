@@ -4,6 +4,13 @@ from typing import List
 from pydantic import BaseModel
 
 
+# ---- Auth ----
+
+class LoginRequest(BaseModel):
+    name: str
+    password: str
+
+
 # ---- Warehouse ----
 
 class UpdateRequest(BaseModel):

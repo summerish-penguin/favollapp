@@ -13,6 +13,8 @@ class User(Base):
     name = Column(String, unique=True, index=True)
     desc = Column(String, nullable=True)
     icon = Column(String, nullable=True)
+    # Hash della password: nullo finché la personH non viene "rivendicata" al primo accesso
+    password_hash = Column(String, nullable=True)
 
 # Oggetto condiviso da portare in vacanza, con quantità target
 class Item(Base):
