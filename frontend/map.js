@@ -4,12 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const HOME_VIEW = [41.74067, 2.7795];
   const HOME_ZOOM = 11;
 
-  // Inizializza la mappa centrata sulla zona di Lloret de Mar / Montbarbat
-  const map = L.map('map').setView(HOME_VIEW, HOME_ZOOM);
+  // Due set di tile Carto, uno per tema
+  const TILE_URLS = {
+    light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  };
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &amp; Carto',
-  }).addTo(map);
+  const currentTheme = () =>
+    document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+  // Inizializza la mappa centrata sulla zona di Lloret de Mar / Montbarbat.
+  // Zoom in basso a sinistra: in alto ci sono le chip categoria, a destra il bottone "centra".
+  const map = L.map('map', {
+    attributionControl: false,
+    zoomControl: false,
+  }).setView(HOME_VIEW, HOME_ZOOM);
+
+  L.control.zoom({ position: 'bottomleft' }).addTo(map);
+
+  const tiles = L.tileLayer(TILE_URLS[currentTheme()]).addTo(map);
+
+  // Il toggle del tema emette 'themechange' (vedi theme-toggle.js): scambia i tile a caldo
+  document.addEventListener('themechange', () => tiles.setUrl(TILE_URLS[currentTheme()]));
 
   // Ricalcola le dimensioni: Leaflet misura il contenitore all'avvio e non si
   // ridisegna da solo se il layout intorno cambia subito dopo l'inizializzazione
@@ -57,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const markerLayers = []; // { category, marker }
+  const categoryRows = {}; // categoria -> .cat-row, per aprirla dalla chip corrispondente
   let homeCoords = null;
 
   // Carica i punti di interesse dal backend e disegna marker, chip e directory
@@ -128,6 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (visible) marker.addTo(map);
       else map.removeLayer(marker);
     });
+
+    // Nella directory apre solo la riga della categoria scelta ("Tutti" le chiude tutte)
+    Object.entries(categoryRows).forEach(([cat, row]) => {
+      row.classList.toggle('open', cat === category);
+    });
   }
 
   // Bottone "centra sulla casa"
@@ -147,14 +169,16 @@ document.addEventListener('DOMContentLoaded', () => {
       grouped[loc.LocCategory].push(loc);
     });
 
-    Object.keys(grouped).forEach((category, index) => {
+    Object.keys(grouped).forEach((category) => {
       const places = grouped[category];
       const label = categoryLabels[category] || category;
       const [emoji, ...nameParts] = label.split(' ');
 
+      // Tutte le righe partono chiuse: si aprono col click sull'intestazione o sulla chip
       const row = document.createElement('div');
-      row.className = 'cat-row' + (index === 0 ? ' open' : '');
+      row.className = 'cat-row';
       row.style.setProperty('--hue', categoryHues[category] ?? 210);
+      categoryRows[category] = row;
 
       const head = document.createElement('div');
       head.className = 'cat-head';

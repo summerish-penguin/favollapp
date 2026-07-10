@@ -6,6 +6,10 @@ const THEME_KEY = 'favollapp-theme';
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
+
+  // Notifica chi deve reagire al tema oltre al CSS (es. i tile della mappa)
+  document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
   btn.setAttribute('aria-pressed', String(theme === 'dark'));

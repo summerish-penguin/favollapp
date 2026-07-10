@@ -14,6 +14,9 @@
       })();
     </script>
 
+    <!-- Leaflet: prima dello stile app, così style.css può sovrascriverne i colori -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
     <!-- Stile app -->
     <link rel="stylesheet" href="style.css" />
 
@@ -29,8 +32,7 @@
       defer
     ></script>
 
-    <!-- Leaflet (mappa interattiva) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet (mappa interattiva) — il foglio di stile è caricato più in alto -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
 
     <!-- Favicon -->

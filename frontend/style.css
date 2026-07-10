@@ -437,6 +437,10 @@ ul {
   color: var(--brand-on-pale);
 }
 
+.pill-link{
+  text-decoration: none;
+}
+
 .hero-countdown {
   position: relative;
   display: flex;
@@ -569,6 +573,7 @@ li:active:not(.dragging) {
   font-weight: 600;
   font-size: 16.5px;
   text-align: left;
+  color: var(--text-primary);
 }
 
 .spotlight p {
@@ -1050,6 +1055,54 @@ select {
   width: 100%;
 }
 
+/* Controlli e popup di Leaflet: hanno colori fissi chiari nel loro CSS, li
+   riportiamo sulle variabili di tema così seguono il toggle come il resto
+   dell'app. I selettori sono più specifici di quelli di leaflet.css. */
+.leaflet-container {
+  background: var(--surface-card); /* visibile mentre i tile caricano */
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-2);
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--text-muted);
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: var(--text-primary);
+}
+
+.leaflet-popup-content a {
+  color: var(--brand-on-pale);
+}
+
+/* .leaflet-container per battere il .leaflet-touch .leaflet-bar di leaflet.css */
+.leaflet-container .leaflet-bar {
+  border: 2px solid var(--border-medium);
+}
+
+.leaflet-bar a {
+  background-color: var(--surface-card);
+  color: var(--text-primary);
+  border-bottom-color: var(--border-subtle);
+}
+
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+  background-color: var(--surface-card-hover);
+  color: var(--text-primary);
+}
+
+.leaflet-bar a.leaflet-disabled {
+  background-color: var(--surface-card);
+  color: var(--text-muted);
+}
+
 .marker-icon {
   font-size: 28px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -1070,6 +1123,10 @@ select {
   gap: 6px;
   overflow-x: auto;
   padding-bottom: 2px;
+}
+
+.chip-strip::-webkit-scrollbar {
+  display: none;
 }
 
 .map-chip {
@@ -1225,8 +1282,8 @@ select {
   align-items: center;
   justify-content: center;
   background: var(--surface-card-hover);
-  color: var(--brand-mid);
-  font-size: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
   text-decoration: none;
   box-shadow: none;
 }
@@ -1944,6 +2001,8 @@ tr.bought td {
   margin-top: 4px;
   width: 12%;
   font-size: 20px;
+  justify-content: center;
+  padding: 0 10px
 }
 
 .agent-chat-messages {
