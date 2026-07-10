@@ -2,7 +2,12 @@
 
 // La personH corrente arriva dal login (auth.js), non più da un menu a tendina
 const currentUser = getCurrentUser();
+const isAdmin = !!currentUser?.is_admin;
+const myName = currentUser?.name;
 const container = document.getElementById('warehouse-container');
+
+// Elenco di tutte le personH: serve solo all'admin per il menu "aggiungi per conto di…"
+let allUsers = [];
 
 /* Stato locale: { itemName: { users: { userName: qty }, target: N } }
    Viene inizializzato con i DEFAULT_ITEMS e poi sovrascritto dal backend. */
@@ -26,11 +31,22 @@ init();
 
 async function init() {
   initEmptyState(DEFAULT_ITEMS);
+  if (isAdmin) await loadAllUsers();
   renderAll();
   loadWarehouse();
 
   const addBtn = document.getElementById('add-item-btn');
   if (addBtn) addBtn.addEventListener('click', openAddItemModal);
+}
+
+// Carica l'elenco delle personH per il menu admin "aggiungi per conto di…"
+async function loadAllUsers() {
+  try {
+    const res = await fetch(`${API_BASE}/users`);
+    allUsers = await res.json();
+  } catch (e) {
+    console.error('LOAD USERS ERROR:', e);
+  }
 }
 
 // ---- Stato iniziale (fallback locale prima della risposta del backend) ----
@@ -279,18 +295,11 @@ function createItemElement(itemName, people, target) {
 
   targetLabel.textContent = `${total} / ${target}`;
 
-  const btn = document.createElement('button');
-  btn.innerText = 'Lo porto io';
-  btn.classList.add('take-btn');
-  btn.disabled = total >= target;
-
-  btn.onclick = async () => {
-    const user = currentUser?.name;
-    if (!user) return showToast('Sessione scaduta: rifai il login');
-    const rect = btn.getBoundingClientRect();
-    spawnBuffon(rect.left + rect.width / 2, rect.top);
-    await optimisticUpdate(user, itemName, +1);
-  };
+  // Controllo di aggiunta: per l'admin un menu persona + "Aggiungi" (per conto di
+  // chiunque), per tutti gli altri il classico "Lo porto io" (aggiunge a sé stessi).
+  const addControl = isAdmin
+    ? createAdminAddControl(itemName, total, target)
+    : createTakeButton(itemName, total, target);
 
   /*Div padre dei bottoni modifica ed elimina*/
   const actionsDiv = document.createElement('div');
@@ -303,11 +312,19 @@ function createItemElement(itemName, people, target) {
   editBtn.title = 'Modifica';
   editBtn.onclick = () => openEditItemModal(itemName, target);
 
-  /* Bottone elimina */
+  /* Bottone elimina: bloccato se altri hanno contribuito (l'admin può sempre) */
+  const others = Object.keys(people).filter((n) => n !== myName);
+  const canDelete = isAdmin || others.length === 0;
+
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = '🗑';
   deleteBtn.classList.add('delete-item-btn');
+  deleteBtn.disabled = !canDelete;
+  deleteBtn.title = canDelete
+    ? 'Elimina'
+    : 'Non puoi eliminarlo: altri hanno già contribuito';
   deleteBtn.onclick = async () => {
+    if (!canDelete) return;
     if (!(await showConfirm(`Eliminare "${itemName}" dalla lista?`))) return;
     await deleteItem(itemName);
   };
@@ -318,9 +335,56 @@ function createItemElement(itemName, people, target) {
 
   titleDiv.append(title);
   actionsDiv.append(editBtn, deleteBtn);
-  topRow.append(titleDiv, space, targetLabel, btn, actionsDiv);
+  topRow.append(titleDiv, space, targetLabel, addControl, actionsDiv);
   wrapper.append(topRow, peopleDiv);
   return wrapper;
+}
+
+// "Lo porto io": aggiunge un contributo a nome dell'utente loggato
+function createTakeButton(itemName, total, target) {
+  const btn = document.createElement('button');
+  btn.innerText = 'Lo porto io';
+  btn.classList.add('take-btn');
+  btn.disabled = total >= target;
+
+  btn.onclick = async () => {
+    if (!myName) return showToast('Sessione scaduta: rifai il login');
+    const rect = btn.getBoundingClientRect();
+    spawnBuffon(rect.left + rect.width / 2, rect.top);
+    await optimisticUpdate(myName, itemName, +1);
+  };
+  return btn;
+}
+
+// Menu admin: scegli la persona e aggiungi un contributo per suo conto
+function createAdminAddControl(itemName, total, target) {
+  const wrap = document.createElement('div');
+  wrap.classList.add('admin-add');
+
+  const select = document.createElement('select');
+  select.classList.add('admin-user-select');
+  allUsers.forEach((u) => {
+    const opt = document.createElement('option');
+    opt.value = u.name;
+    opt.textContent = u.name;
+    if (u.name === myName) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  const btn = document.createElement('button');
+  btn.innerText = 'Aggiungi';
+  btn.classList.add('take-btn');
+  btn.disabled = total >= target;
+
+  btn.onclick = async () => {
+    if (total >= target || !select.value) return;
+    const rect = btn.getBoundingClientRect();
+    spawnBuffon(rect.left + rect.width / 2, rect.top);
+    await optimisticUpdate(select.value, itemName, +1);
+  };
+
+  wrap.append(select, btn);
+  return wrap;
 }
 
 function renderPeople(container, people, itemName, target) {
@@ -334,6 +398,15 @@ function renderPeople(container, people, itemName, target) {
     const label = document.createElement('span');
     label.classList.add('person-name');
     label.innerText = `${name} (${qty})`;
+
+    // Ogni utente gestisce solo la propria riga; l'admin gestisce quelle di tutti
+    const canManage = isAdmin || name === myName;
+
+    if (!canManage) {
+      tag.append(label);
+      container.appendChild(tag);
+      return;
+    }
 
     const plus = document.createElement('button');
     plus.innerText = '▲';

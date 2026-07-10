@@ -38,6 +38,12 @@ function renderUserBadge() {
   badge.id = 'user-badge';
   badge.className = 'user-badge';
 
+  // Trigger (icona + nome): un tap mostra/nasconde il bottone "Esci"
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'user-badge-trigger';
+  trigger.setAttribute('aria-expanded', 'false');
+
   const icon = document.createElement('span');
   icon.className = 'user-badge-icon';
   icon.textContent = user.icon || '🦀';
@@ -46,14 +52,38 @@ function renderUserBadge() {
   name.className = 'user-badge-name';
   name.textContent = user.name;
 
+  trigger.append(icon, name);
+
+  // Popover che si apre sotto la pill, sovrapposto alla pagina
+  const menu = document.createElement('div');
+  menu.className = 'user-menu';
+  menu.setAttribute('role', 'menu');
+
   const logoutBtn = document.createElement('button');
   logoutBtn.className = 'user-logout';
   logoutBtn.type = 'button';
-  logoutBtn.textContent = 'Esci';
+  logoutBtn.textContent = '🚪 Esci';
   logoutBtn.title = 'Esci';
+  logoutBtn.setAttribute('role', 'menuitem');
   logoutBtn.addEventListener('click', logout);
+  menu.append(logoutBtn);
 
-  badge.append(icon, name, logoutBtn);
+  // Tap sulla pill: apre o chiude il popover
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = badge.classList.toggle('open');
+    trigger.setAttribute('aria-expanded', String(open));
+  });
+
+  // Tap fuori dal badge: richiude
+  document.addEventListener('click', (e) => {
+    if (!badge.contains(e.target)) {
+      badge.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  badge.append(trigger, menu);
   header.appendChild(badge);
 }
 

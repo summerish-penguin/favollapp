@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Boolean
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -15,6 +15,8 @@ class User(Base):
     icon = Column(String, nullable=True)
     # Hash della password: nullo finché la personH non viene "rivendicata" al primo accesso
     password_hash = Column(String, nullable=True)
+    # Admin: può gestire i contributi di chiunque e aggiungere per conto degli altri
+    is_admin = Column(Boolean, nullable=False, server_default="false", default=False)
 
 # Oggetto condiviso da portare in vacanza, con quantità target
 class Item(Base):

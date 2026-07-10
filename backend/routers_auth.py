@@ -18,7 +18,12 @@ MIN_PASSWORD_LEN = 4
 
 def _user_payload(user: User) -> dict:
     """Dati pubblici della personH restituiti al frontend (mai l'hash)."""
-    return {"name": user.name, "desc": user.desc, "icon": user.icon}
+    return {
+        "name": user.name,
+        "desc": user.desc,
+        "icon": user.icon,
+        "is_admin": bool(user.is_admin),
+    }
 
 
 @router.post("/login")

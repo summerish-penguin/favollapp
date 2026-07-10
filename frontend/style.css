@@ -316,6 +316,7 @@ ul {
   background: var(--brand-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
+  z-index: 100; /* tiene l'header (e il popover utente) sopra hero e contenuto sottostante */
   width: auto;
 }
 
@@ -787,6 +788,37 @@ select {
 }
 .take-btn:active {
   transform: scale(0.96);
+}
+
+.take-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Menu admin "aggiungi per conto di…" accanto al pulsante Aggiungi */
+.admin-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-user-select {
+  max-width: 96px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-medium);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* Bottone elimina disabilitato (altri hanno contribuito) */
+.delete-item-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 #add-item-cnt {
@@ -2181,7 +2213,6 @@ select.modal-input {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
   align-items: center;
   gap: 6px;
   max-width: 45%;
@@ -2201,21 +2232,92 @@ select.modal-input {
   text-overflow: ellipsis;
 }
 
-.user-logout {
-  flex: 0 0 auto;
-  font-size: 11px;
-  font-weight: 600;
-  color: #ffffff;
+/* Pill cliccabile con icona + nome */
+.user-badge-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-pill);
-  padding: 3px 9px;
+  padding: 5px 12px;
   cursor: pointer;
+  box-shadow: none;
   transition: background 0.2s var(--ease);
 }
 
-.user-logout:hover {
+.user-badge-trigger:hover,
+.user-badge.open .user-badge-trigger {
   background: rgba(255, 255, 255, 0.22);
+}
+
+/* Popover "menu utente": si apre sotto la pill, sovrapposto alla pagina */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 150px;
+  padding: 6px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+  z-index: 1000;
+  display: none;
+}
+
+.user-badge.open .user-menu {
+  display: block;
+  animation: user-menu-in 0.14s var(--ease);
+}
+
+/* Codina che aggancia il popover alla pill */
+.user-menu::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 18px;
+  width: 10px;
+  height: 10px;
+  background: var(--surface-card);
+  border-left: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-subtle);
+  transform: rotate(45deg);
+}
+
+@keyframes user-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.user-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: none;
+  transition: background 0.15s var(--ease);
+}
+
+.user-logout:hover {
+  background: var(--surface-card-hover);
 }
 
 /* Su schermi molto stretti il nome sparisce, restano icona + Esci */
