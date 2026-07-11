@@ -2217,6 +2217,14 @@ select.modal-input {
   line-height: 1.4;
 }
 
+/* Avviso sotto il menu del nome (es. "ha già effettuato il primo accesso") */
+.login-note {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 6px 0 4px;
+  line-height: 1.4;
+}
+
 /* Campo password con toggle occhio mostra/nascondi */
 .password-field {
   position: relative;

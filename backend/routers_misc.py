@@ -11,9 +11,20 @@ router = APIRouter()
 
 @router.get("/users")
 def get_users(db: Session = Depends(get_db)):
-    """Restituisce tutti gli utenti ordinati per nome."""
+    """Restituisce tutti gli utenti ordinati per nome.
+
+    `claimed` indica se la personH ha già impostato la password (primo accesso fatto).
+    """
     users = db.query(User).order_by(User.name).all()
-    return [{"name": u.name, "desc": u.desc, "icon": u.icon} for u in users]
+    return [
+        {
+            "name": u.name,
+            "desc": u.desc,
+            "icon": u.icon,
+            "claimed": u.password_hash is not None,
+        }
+        for u in users
+    ]
 
 
 @router.get("/locations")
