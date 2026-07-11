@@ -470,21 +470,19 @@ async function optimisticUpdate(user, item, delta) {
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ user, item, delta }),
     });
-    if (res.status === 401) return sessionExpired();
+    if (res.status === 401) { restoreState(prev); return sessionExpired(); }
     const data = await res.json().catch(() => ({}));
 
     // Su rifiuto del backend (es. 403 regole) ripristiniamo lo stato ottimistico
     if (!res.ok || !data.ok) {
-      Object.assign(state, prev);
-      renderAll();
+      restoreState(prev);
       showToast(data.detail ?? data.reason ?? 'Operazione non permessa.');
       return;
     }
     if (state[item]) state[item].target = data.target ?? state[item].target;
   } catch (e) {
     console.error('UPDATE ERROR:', e);
-    Object.assign(state, prev);
-    renderAll();
+    restoreState(prev);
     showToast('Errore di rete. Riprova.');
   }
 }
@@ -502,17 +500,15 @@ async function optimisticRemove(user, item) {
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ user, item }),
     });
-    if (res.status === 401) return sessionExpired();
+    if (res.status === 401) { restoreState(prev); return sessionExpired(); }
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      Object.assign(state, prev);
-      renderAll();
+      restoreState(prev);
       showToast(data.detail ?? 'Rimozione non permessa.');
     }
   } catch (e) {
     console.error('REMOVE ERROR:', e);
-    Object.assign(state, prev);
-    renderAll();
+    restoreState(prev);
   }
 }
 
@@ -526,19 +522,27 @@ async function deleteItem(itemName) {
       method:  'DELETE',
       headers: { ...authHeaders() },
     });
-    if (res.status === 401) return sessionExpired();
+    if (res.status === 401) { restoreState(prev); return sessionExpired(); }
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok) {
-      Object.assign(state, prev);
-      renderAll();
+      restoreState(prev);
       showToast(data.detail ?? 'Errore eliminazione. Riprova.');
     }
   } catch (e) {
     console.error('DELETE ITEM ERROR:', e);
-    Object.assign(state, prev);
-    renderAll();
+    restoreState(prev);
     showToast('Errore eliminazione. Riprova.');
   }
+}
+
+// Ripristina lo stato da uno snapshot: rimuove anche le chiavi aggiunte
+// dopo lo snapshot (Object.assign da solo non le toglierebbe), poi ridisegna.
+function restoreState(snapshot) {
+  Object.keys(state).forEach((k) => {
+    if (!(k in snapshot)) delete state[k];
+  });
+  Object.assign(state, snapshot);
+  renderAll();
 }
 
 // Sessione scaduta/non valida (401): avvisa e rimanda al login

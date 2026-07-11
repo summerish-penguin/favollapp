@@ -62,6 +62,14 @@ async function submitLogin(event) {
       return;
     }
 
+    // Senza token non potremmo autenticare le scritture (backend non aggiornato):
+    // meglio non creare una sessione monca che finirebbe in loop di 401.
+    if (!data.token) {
+      showToast('Servizio non ancora pronto. Riprova tra poco.');
+      submitBtn.disabled = false;
+      return;
+    }
+
     setSession(data.user, data.token);
     // Al primo accesso mostriamo la conferma e lasciamo il tempo di leggerla
     // prima di navigare (altrimenti il toast sparirebbe subito col replace).

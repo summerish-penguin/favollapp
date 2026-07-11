@@ -6,15 +6,17 @@ from sqlalchemy.orm import Session
 from db import get_db
 from models import Item, User, Contribution
 from schemas import UpdateRequest, RemoveRequest, CreateItemRequest, UpdateItemRequest
-from helpers import get_or_create_user, get_or_create_item
+from helpers import get_or_create_item
 from security import get_current_user
 
 router = APIRouter()
 
 
-def _same_person(a: str, b: str) -> bool:
-    """Confronto nomi personH case-insensitive (coerente col login)."""
-    return (a or "").strip().lower() == (b or "").strip().lower()
+def _resolve_person(db: Session, name: str) -> User | None:
+    """Trova una personH esistente per nome (case-insensitive), senza crearla."""
+    if not name:
+        return None
+    return db.query(User).filter(User.name.ilike(name.strip())).first()
 
 
 @router.api_route("/warehouse", methods=["GET", "HEAD"])
@@ -55,20 +57,23 @@ def update(
     """Aggiorna la quantità di un contributo (delta positivo o negativo).
 
     Ognuno può modificare solo i propri contributi; l'admin quelli di chiunque.
+    Il contributore target dev'essere una personH esistente (niente creazione al volo).
     """
-    if not caller.is_admin and not _same_person(data.user, caller.name):
+    target = _resolve_person(db, data.user)
+    if not target:
+        raise HTTPException(status_code=404, detail="PersonH non trovata.")
+    if not caller.is_admin and target.id != caller.id:
         raise HTTPException(status_code=403, detail="Puoi modificare solo i tuoi contributi.")
 
     item  = get_or_create_item(db, data.item)
-    user  = get_or_create_user(db, data.user)
 
     entry = db.query(Contribution).filter_by(
-        user_id=user.id,
+        user_id=target.id,
         item_id=item.id
     ).first()
 
     if not entry:
-        entry = Contribution(user_id=user.id, item_id=item.id, quantity=0)
+        entry = Contribution(user_id=target.id, item_id=item.id, quantity=0)
         db.add(entry)
 
     entry.quantity += data.delta
@@ -90,14 +95,14 @@ def remove(
 
     Ognuno può rimuovere solo i propri contributi; l'admin quelli di chiunque.
     """
-    if not caller.is_admin and not _same_person(req.user, caller.name):
-        raise HTTPException(status_code=403, detail="Puoi rimuovere solo i tuoi contributi.")
-
-    user = db.query(User).filter_by(name=req.user).first()
+    user = _resolve_person(db, req.user)
     item = db.query(Item).filter_by(name=req.item).first()
 
     if not user or not item:
         return {"ok": True}
+
+    if not caller.is_admin and user.id != caller.id:
+        raise HTTPException(status_code=403, detail="Puoi rimuovere solo i tuoi contributi.")
 
     contrib = db.query(Contribution).filter_by(
         user_id=user.id,
