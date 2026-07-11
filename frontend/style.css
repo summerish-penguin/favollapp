@@ -2219,9 +2219,9 @@ select.modal-input {
 
 /* Avviso sotto il menu del nome (es. "ha già effettuato il primo accesso") */
 .login-note {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 6px 0 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: -6px 0 6px 0;
   line-height: 1.4;
 }
 
