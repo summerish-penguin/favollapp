@@ -2229,7 +2229,7 @@ select.modal-input {
   transform: translateY(-50%);
   align-items: center;
   gap: 6px;
-  max-width: 9%;
+  max-width: 45%;
 }
 
 /* Icona utente: l'SVG fa da maschera, il colore arriva da background-color
