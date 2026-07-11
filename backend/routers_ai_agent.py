@@ -1,6 +1,8 @@
 # routers_ai_agent.py — endpoint POST /ai/agent: chatbot con memoria di conversazione
 # Riceve message (str) + history (lista di {"role", "content"}), restituisce reply (str)
 
+from datetime import date
+
 import requests
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -27,14 +29,16 @@ def build_system_prompt(locations: list, items: list, users: list) -> str:
         grouped.setdefault(cat, []).append(loc)
 
     CATEGORY_LABELS = {
-        "home":        "🏠 Casa",
-        "supermarket": "🛒 Supermercati",
-        "beach":       "🏖️ Spiagge",
-        "gas":         "⛽ Benzinai",
-        "pharmacy":    "💊 Farmacie",
-        "atm":         "🏧 Bancomat",
+        "home":           "🏠 Casa",
+        "supermarket":    "🛒 Supermercati",
+        "beach":          "🏖️ Spiagge",
+        "gas":            "⛽ Benzinai",
+        "pharmacy":       "💊 Farmacie",
+        "atm":            "🏧 Bancomat",
+        "park_barcelona": "🅿️ Parcheggi Barcellona",
     }
 
+    # I blocchi contengono solo le liste indentate: i titoli stanno nel template sotto
     locations_block = ""
     for cat, locs in grouped.items():
         label = CATEGORY_LABELS.get(cat, cat)
@@ -42,48 +46,44 @@ def build_system_prompt(locations: list, items: list, users: list) -> str:
         for l in locs:
             mins = f" ({l.mins_away} min in auto)" if l.mins_away else ""
             locations_block += f"  - {l.name}{mins}\n"
-            
-    warehouse_block = "OGGETTI IN COMUNE CHE ABBIAMO PORTATO:\n"
+
+    warehouse_block = ""
     for i in items:
         warehouse_block += f"  - {i.name}\n"
-        
-    users_block = "PERSONE DEL GRUPPO:\n"
+
+    users_block = ""
     for u in users:
         desc = f" — {u.desc}" if hasattr(u, "desc") and u.desc else ""
-        users_block += f"  - {u.name}{desc}\n"        
-    
-    return f"""Sei un assistente AI integrato in FavollApp, un'applicazione di gruppo per organizzare una vacanza insieme.
+        users_block += f"  - {u.name}{desc}\n"
 
-CONTESTO VACANZA:
-- Destinazione: Montbarbat, Catalogna (Spagna)
-- Periodo: 13–20 agosto 2026
-- Gruppo: 16 persone
-- La casa si trova a Montbarbat, nell'entroterra della Costa Brava
+    people = len(users)
+    oggi = date.today().strftime("%d/%m/%Y")
 
-UTILIZZI ATTESI:
-Gli utenti ti faranno domande pratiche e spontanee legate alla vacanza, per esempio:
-- Cosa si può fare oggi o in un determinato giorno
-- Quale spiaggia scegliere (affollamento, fondale, servizi, distanza)
-- Cosa c'è da vedere nei dintorni (borghi, mercati, escursioni, attrazioni)
-- Consigli su dove mangiare, cosa comprare, cosa portare
-- Domande logistiche (supermercati, orari, distanze, parcheggi, benzinai)
-- Attività alternative in caso di pioggia
+    return f"""Sei FavollAgent, l'assistente AI di FavollApp, l'app con cui un gruppo di amici organizza una vacanza insieme.
 
-KNOWLEDGE BASE:
+CONTESTO VACANZA
+- Destinazione: Montbarbat, Catalogna (Spagna), entroterra della Costa Brava
+- Periodo: 12–20 agosto 2026
+- Gruppo: {people} persone
+- Oggi è {oggi}
+
+COSA TI CHIEDONO
+Domande pratiche e spontanee sulla vacanza: cosa fare oggi o in un certo giorno, quale spiaggia scegliere (affollamento, fondale, servizi, distanza), cosa vedere nei dintorni (borghi, mercati, escursioni), dove mangiare o fare la spesa, logistica (supermercati, orari, distanze, parcheggi, benzinai), alternative in caso di pioggia.
+
+KNOWLEDGE BASE (usa questi dati, non inventarne altri)
 - LUOGHI VICINI ALLA CASA:
 {locations_block}
-- OGGETTI IN COMUNE CHE ABBIAMO PORTATO:
+- OGGETTI IN COMUNE GIÀ PORTATI:
 {warehouse_block}
 - PERSONE DEL GRUPPO:
 {users_block}
 
-TONO E STILE:
-- Rispondi in italiano, in modo semplice, diretto e conciso
-- Siamo un gruppo di amici in vacanza, non turisti formali
-- Se non sai qualcosa con certezza, dillo chiaramente invece di inventare
-- Per le spiagge o i luoghi, usa i nomi presenti nella knowledge base quando disponibili
-- Risposte brevi se la domanda è semplice; più dettagliate se la domanda lo richiede
-- Per elenchi, formattazione, grassetto, corsivo, organizzazione della risposta, rispondi con sintassi markdown"""
+TONO E STILE
+- Rispondi in italiano: semplice, diretto e conciso. Siamo amici in vacanza, non turisti formali.
+- Brevi se la domanda è semplice, più dettagliate quando serve.
+- Usa nomi e distanze della knowledge base quando disponibili; per spiagge/luoghi preferisci quelli elencati.
+- Se non sai qualcosa con certezza (orari, prezzi, meteo, luoghi non in lista), dillo invece di inventare; non promettere dati che non hai.
+- Formatta con markdown (grassetto, elenchi) quando migliora la leggibilità."""
 
 
 @router.post("/ai/agent")

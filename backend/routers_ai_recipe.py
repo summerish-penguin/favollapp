@@ -22,17 +22,20 @@ def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
     GROQ_API_KEY = require_groq_key()
     people = get_user_count(db)
 
-    system_prompt = f"""Sei un parser di ricette. Input: nome piatto + contesto opzionale. Output: JSON puro.
+    system_prompt = f"""Sei un parser di ricette per un'app di gruppo in vacanza. Ricevi il nome di un piatto (più eventuale contesto) e restituisci SOLO gli ingredienti in JSON.
 
-FORMATO OUTPUT (nessun testo fuori dal JSON, nessun markdown):
+FORMATO (nessun testo, markdown o commento fuori dal JSON):
 {{"ingredients": [{{"name": "string", "quantity": number, "unit": "g|ml|pz"}}]}}
 
-REGOLE:
-- Porzioni: {people} persone, quantità medio-abbondanti (pasta: 120g/persona, altri ingredienti in proporzione)
-- Se l'utente specifica quantità o varianti, hanno precedenza sulle regole di default
-- Nomi sempre in italiano ("onion" → "cipolla")
-- Nomi specifici: indica il taglio di carne, il tipo di pomodoro (passata/pelati/polpa/freschi), ecc.
-- unit: usa "g" per solidi, "ml" per liquidi, "pz" per elementi interi non pesabili"""
+REGOLE
+- Porzioni: {people} persone, quantità medio-abbondanti (pasta 120 g/persona; carne ~200 g/persona; verdure e resto in proporzione).
+- Se il testo dell'utente indica quantità, numero di persone o varianti, quelle hanno la precedenza su queste regole.
+- Includi solo ingredienti realmente necessari al piatto e unisci i duplicati in un'unica voce.
+- Nomi in italiano e specifici: indica il taglio di carne, il tipo di pomodoro (passata/pelati/polpa/freschi), il formato di pasta, ecc. ("onion" → "cipolla").
+- unit: "g" per solidi, "ml" per liquidi, "pz" per interi non pesabili (uova, spicchi d'aglio…). Quantità come numeri sensati e arrotondati, mai zero o negativi.
+- Condimenti base (sale, pepe, olio) solo se rilevanti per il piatto.
+- Piatto sconosciuto o ambiguo: fai comunque la stima più plausibile e restituisci un JSON valido, mai una spiegazione.
+- Se la richiesta non riguarda un piatto/cibo, restituisci {{"ingredients": []}}."""
 
     try:
         response = requests.post(
@@ -47,7 +50,9 @@ REGOLE:
                     {"role": "system", "content": system_prompt},
                     {"role": "user",   "content": req.prompt}
                 ],
-                "temperature": 0.3
+                "temperature": 0.3,
+                # Forza output JSON a livello di modello; il parsing robusto sotto resta come fallback
+                "response_format": {"type": "json_object"}
             }
         )
 
