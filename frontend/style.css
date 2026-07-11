@@ -2276,7 +2276,7 @@ select.modal-input {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-pill);
-  padding: 5px 12px;
+  padding: 5px 5px;
   cursor: pointer;
   box-shadow: none;
   transition: background 0.2s var(--ease);
