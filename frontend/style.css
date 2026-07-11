@@ -795,18 +795,32 @@ select {
   cursor: default;
 }
 
-/* Menu admin "aggiungi per conto di…" accanto al pulsante Aggiungi */
-.admin-add {
+/* Barra admin sopra la lista: sceglie il contributore per tutti gli "Aggiungi" */
+.admin-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+
+.admin-bar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
 .admin-user-select {
-  max-width: 96px;
-  padding: 6px 8px;
-  font-size: 12px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 13px;
   font-weight: 600;
   border-radius: var(--radius-pill);
   border: 1.5px solid var(--border-medium);
@@ -2215,12 +2229,32 @@ select.modal-input {
   transform: translateY(-50%);
   align-items: center;
   gap: 6px;
-  max-width: 45%;
+  max-width: 9%;
 }
 
+/* Icona utente: l'SVG fa da maschera, il colore arriva da background-color
+   (così segue il tema). Colore chiaro di default per stare sull'header scuro. */
 .user-badge-icon {
-  font-size: 16px;
-  line-height: 1;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  -webkit-mask: url('assets/user-regular-full.svg') no-repeat center / contain;
+  mask: url('assets/user-regular-full.svg') no-repeat center / contain;
+}
+
+/* Adatta il colore al tema, sia per preferenza di sistema che per toggle esplicito */
+@media (prefers-color-scheme: dark) {
+  .user-badge-icon {
+    background-color: #cfe0f2;
+  }
+}
+:root[data-theme='dark'] .user-badge-icon {
+  background-color: #cfe0f2;
+}
+:root[data-theme='light'] .user-badge-icon {
+  background-color: #ffffff;
 }
 
 .user-badge-name {

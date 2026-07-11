@@ -6,8 +6,10 @@ const isAdmin = !!currentUser?.is_admin;
 const myName = currentUser?.name;
 const container = document.getElementById('warehouse-container');
 
-// Elenco di tutte le personH: serve solo all'admin per il menu "aggiungi per conto di…"
+// Elenco di tutte le personH: serve solo all'admin per il selettore del contributore
 let allUsers = [];
+// Contributore a nome del quale l'admin aggiunge (scelto dalla barra sopra la lista)
+let selectedContributor = myName;
 
 /* Stato locale: { itemName: { users: { userName: qty }, target: N } }
    Viene inizializzato con i DEFAULT_ITEMS e poi sovrascritto dal backend. */
@@ -31,7 +33,10 @@ init();
 
 async function init() {
   initEmptyState(DEFAULT_ITEMS);
-  if (isAdmin) await loadAllUsers();
+  if (isAdmin) {
+    await loadAllUsers();
+    renderAdminBar();
+  }
   renderAll();
   loadWarehouse();
 
@@ -39,7 +44,7 @@ async function init() {
   if (addBtn) addBtn.addEventListener('click', openAddItemModal);
 }
 
-// Carica l'elenco delle personH per il menu admin "aggiungi per conto di…"
+// Carica l'elenco delle personH per il selettore admin del contributore
 async function loadAllUsers() {
   try {
     const res = await fetch(`${API_BASE}/users`);
@@ -47,6 +52,37 @@ async function loadAllUsers() {
   } catch (e) {
     console.error('LOAD USERS ERROR:', e);
   }
+}
+
+// Barra admin sopra la lista: sceglie una volta il contributore per tutti gli "Aggiungi".
+// Vive fuori da #warehouse-container, così renderAll() (che lo svuota) non la cancella.
+function renderAdminBar() {
+  const bar = document.createElement('div');
+  bar.className = 'admin-bar';
+
+  const label = document.createElement('label');
+  label.className = 'admin-bar-label';
+  label.setAttribute('for', 'admin-contributor');
+  label.textContent = 'Aggiungi a nome di';
+
+  const select = document.createElement('select');
+  select.id = 'admin-contributor';
+  select.className = 'admin-user-select';
+  allUsers.forEach((u) => {
+    const opt = document.createElement('option');
+    opt.value = u.name;
+    opt.textContent = u.name;
+    if (u.name === myName) opt.selected = true;
+    select.appendChild(opt);
+  });
+
+  selectedContributor = select.value || myName;
+  select.addEventListener('change', () => {
+    selectedContributor = select.value;
+  });
+
+  bar.append(label, select);
+  container.parentNode.insertBefore(bar, container);
 }
 
 // ---- Stato iniziale (fallback locale prima della risposta del backend) ----
@@ -295,11 +331,9 @@ function createItemElement(itemName, people, target) {
 
   targetLabel.textContent = `${total} / ${target}`;
 
-  // Controllo di aggiunta: per l'admin un menu persona + "Aggiungi" (per conto di
-  // chiunque), per tutti gli altri il classico "Lo porto io" (aggiunge a sé stessi).
-  const addControl = isAdmin
-    ? createAdminAddControl(itemName, total, target)
-    : createTakeButton(itemName, total, target);
+  // Pulsante di aggiunta: l'admin aggiunge al contributore scelto nella barra in alto,
+  // gli altri a sé stessi ("Lo porto io").
+  const addControl = createAddButton(itemName, total, target);
 
   /*Div padre dei bottoni modifica ed elimina*/
   const actionsDiv = document.createElement('div');
@@ -340,51 +374,24 @@ function createItemElement(itemName, people, target) {
   return wrapper;
 }
 
-// "Lo porto io": aggiunge un contributo a nome dell'utente loggato
-function createTakeButton(itemName, total, target) {
+// Pulsante di aggiunta: l'admin aggiunge al contributore scelto in alto, gli altri a sé
+function createAddButton(itemName, total, target) {
   const btn = document.createElement('button');
-  btn.innerText = 'Lo porto io';
+  btn.innerText = isAdmin ? 'Aggiungi' : 'Lo porto io';
   btn.classList.add('take-btn');
   btn.disabled = total >= target;
 
   btn.onclick = async () => {
-    if (!myName) return showToast('Sessione scaduta: rifai il login');
+    const user = isAdmin ? selectedContributor : myName;
+    if (!user) {
+      return showToast(isAdmin ? 'Seleziona un contributore' : 'Sessione scaduta: rifai il login');
+    }
+    if (total >= target) return;
     const rect = btn.getBoundingClientRect();
     spawnBuffon(rect.left + rect.width / 2, rect.top);
-    await optimisticUpdate(myName, itemName, +1);
+    await optimisticUpdate(user, itemName, +1);
   };
   return btn;
-}
-
-// Menu admin: scegli la persona e aggiungi un contributo per suo conto
-function createAdminAddControl(itemName, total, target) {
-  const wrap = document.createElement('div');
-  wrap.classList.add('admin-add');
-
-  const select = document.createElement('select');
-  select.classList.add('admin-user-select');
-  allUsers.forEach((u) => {
-    const opt = document.createElement('option');
-    opt.value = u.name;
-    opt.textContent = u.name;
-    if (u.name === myName) opt.selected = true;
-    select.appendChild(opt);
-  });
-
-  const btn = document.createElement('button');
-  btn.innerText = 'Aggiungi';
-  btn.classList.add('take-btn');
-  btn.disabled = total >= target;
-
-  btn.onclick = async () => {
-    if (total >= target || !select.value) return;
-    const rect = btn.getBoundingClientRect();
-    spawnBuffon(rect.left + rect.width / 2, rect.top);
-    await optimisticUpdate(select.value, itemName, +1);
-  };
-
-  wrap.append(select, btn);
-  return wrap;
 }
 
 function renderPeople(container, people, itemName, target) {

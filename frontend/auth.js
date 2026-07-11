@@ -38,21 +38,19 @@ function renderUserBadge() {
   badge.id = 'user-badge';
   badge.className = 'user-badge';
 
-  // Trigger (icona + nome): un tap mostra/nasconde il bottone "Esci"
+  // Trigger (icona): un tap mostra/nasconde il bottone "Esci"
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.className = 'user-badge-trigger';
   trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-label', `Utente: ${user.name}`);
 
+  // Icona utente (SVG in assets, colorata via CSS mask così segue il tema)
   const icon = document.createElement('span');
   icon.className = 'user-badge-icon';
-  icon.textContent = user.icon || '🦀';
+  icon.setAttribute('aria-hidden', 'true');
 
-  const name = document.createElement('span');
-  name.className = 'user-badge-name';
-  name.textContent = user.name;
-
-  trigger.append(icon, name);
+  trigger.append(icon);
 
   // Popover che si apre sotto la pill, sovrapposto alla pagina
   const menu = document.createElement('div');
