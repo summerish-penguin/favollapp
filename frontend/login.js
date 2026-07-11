@@ -6,6 +6,17 @@ const form = document.getElementById('login-form');
 const userSelect = document.getElementById('login-user');
 const passwordInput = document.getElementById('login-password');
 const submitBtn = document.getElementById('login-submit');
+const togglePasswordBtn = document.getElementById('toggle-password');
+
+// Occhio: mostra/nasconde la password (di default nascosta)
+togglePasswordBtn.addEventListener('click', () => {
+  const show = passwordInput.type === 'password';
+  passwordInput.type = show ? 'text' : 'password';
+  togglePasswordBtn.classList.toggle('revealed', show);
+  togglePasswordBtn.setAttribute('aria-pressed', String(show));
+  togglePasswordBtn.setAttribute('aria-label', show ? 'Nascondi password' : 'Mostra password');
+  passwordInput.focus();
+});
 
 // Popola il menu a tendina con le personH del gruppo
 async function loadUsers() {

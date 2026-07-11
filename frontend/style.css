@@ -2217,6 +2217,56 @@ select.modal-input {
   line-height: 1.4;
 }
 
+/* Campo password con toggle occhio mostra/nascondi */
+.password-field {
+  position: relative;
+  margin-bottom: 16px; /* spazio verso l'hint: l'input interno ha margine azzerato */
+}
+
+/* L'input dentro il wrapper: spazio a destra per l'occhio, margine sul wrapper */
+.password-field .modal-input {
+  margin: 0;
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s var(--ease);
+}
+
+.password-toggle:hover {
+  color: var(--text-secondary);
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Di default password nascosta: si vede l'occhio aperto ("mostra"). */
+.password-toggle .icon-eye-off {
+  display: none;
+}
+.password-toggle.revealed .icon-eye {
+  display: none;
+}
+.password-toggle.revealed .icon-eye-off {
+  display: block;
+}
+
 .login-submit {
   width: 100%;
 }
