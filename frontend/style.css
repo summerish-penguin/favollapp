@@ -65,6 +65,12 @@
   --badge-text-l: 32%;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Sfondo fotografico dietro il contenuto (vedi body::before) */
+  --bg-photo: url("assets/premium_vector-1721494020696-3329fda17bd4"); /* chiaro: spiaggia diurna */
+  /* Velo del colore di superficie: l'88% fa prevalere nettamente il colore sulla foto.
+     Deriva da --surface-body, quindi segue automaticamente il tema. */
+  --bg-wash: color-mix(in srgb, var(--surface-body) 80%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -101,6 +107,8 @@
     --badge-s: 42%;
     --badge-l: 24%;
     --badge-text-l: 82%;
+
+    --bg-photo: url("assets/premium_vector-1747646622850-5f994d0a471e"); /* scuro: tramonto */
   }
 }
 
@@ -138,6 +146,8 @@
   --badge-s: 42%;
   --badge-l: 24%;
   --badge-text-l: 82%;
+
+  --bg-photo: url("assets/premium_vector-1747646622850-5f994d0a471e"); /* scuro: tramonto */
 }
 
 :root[data-theme='light'] {
@@ -173,6 +183,8 @@
   --badge-s: 74%;
   --badge-l: 88%;
   --badge-text-l: 32%;
+
+  --bg-photo: url("assets/premium_vector-1721494020696-3329fda17bd4"); /* chiaro: spiaggia diurna */
 }
 
 /* ------------------------------------------------------------------
@@ -205,6 +217,39 @@ body {
   height: 100vh;
   margin: 0;
   transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+/* Sfondo fotografico: foto (per tema) + velo del colore di superficie ad alta opacità,
+   così il colore resta dominante. Sta sopra il background-color del body ma sotto il
+   contenuto: header e hero (opachi) lo mascherano → sulla home compare solo sotto la hero. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(var(--bg-wash), var(--bg-wash)), var(--bg-photo);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Velo del "tuffo scuro" durante il cambio tema (iniettato da theme-toggle.js).
+   Colore scuro fisso in entrambe le direzioni, sopra l'header (100) ma sotto i toast (9999). */
+#theme-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  pointer-events: none;
+  background: #070f1c;
+  opacity: 0;
+}
+#theme-veil.switching {
+  animation: theme-darkdip 0.5s var(--ease);
+}
+@keyframes theme-darkdip {
+  0% { opacity: 0; }
+  45%, 55% { opacity: 0.82; }
+  100% { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
