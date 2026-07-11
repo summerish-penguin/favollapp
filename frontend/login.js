@@ -7,20 +7,18 @@ const userSelect = document.getElementById('login-user');
 const passwordInput = document.getElementById('login-password');
 const submitBtn = document.getElementById('login-submit');
 const togglePasswordBtn = document.getElementById('toggle-password');
-const userNote = document.getElementById('login-user-note');
-
-// Chi ha già impostato la password (primo accesso fatto): nome -> claimed
-const claimedByName = {};
 
 // Occhio: mostra/nasconde la password (di default nascosta)
-togglePasswordBtn.addEventListener('click', () => {
-  const show = passwordInput.type === 'password';
-  passwordInput.type = show ? 'text' : 'password';
-  togglePasswordBtn.classList.toggle('revealed', show);
-  togglePasswordBtn.setAttribute('aria-pressed', String(show));
-  togglePasswordBtn.setAttribute('aria-label', show ? 'Nascondi password' : 'Mostra password');
-  passwordInput.focus();
-});
+if (togglePasswordBtn && passwordInput) {
+  togglePasswordBtn.addEventListener('click', () => {
+    const show = passwordInput.type === 'password';
+    passwordInput.type = show ? 'text' : 'password';
+    togglePasswordBtn.classList.toggle('revealed', show);
+    togglePasswordBtn.setAttribute('aria-pressed', String(show));
+    togglePasswordBtn.setAttribute('aria-label', show ? 'Nascondi password' : 'Mostra password');
+    passwordInput.focus();
+  });
+}
 
 // Popola il menu a tendina con le personH del gruppo
 async function loadUsers() {
@@ -28,7 +26,6 @@ async function loadUsers() {
     const res = await fetch(`${API_BASE}/users`);
     const users = await res.json();
     users.forEach((u) => {
-      claimedByName[u.name] = !!u.claimed;
       const option = document.createElement('option');
       option.value = u.name;
       option.textContent = `${u.name}`;
@@ -39,13 +36,6 @@ async function loadUsers() {
     showToast('Impossibile caricare la lista. Riprova.');
   }
 }
-
-// Mostra l'avviso solo se la personH scelta ha già fatto il primo accesso
-function updateUserNote() {
-  userNote.hidden = !claimedByName[userSelect.value];
-}
-
-userSelect.addEventListener('change', updateUserNote);
 
 async function submitLogin(event) {
   event.preventDefault();
@@ -72,9 +62,15 @@ async function submitLogin(event) {
       return;
     }
 
-    setCurrentUser(data.user);
-    if (data.claimed) showToast('BenvenutH! Password impostata.', 'success');
-    window.location.replace('index.html');
+    setSession(data.user, data.token);
+    // Al primo accesso mostriamo la conferma e lasciamo il tempo di leggerla
+    // prima di navigare (altrimenti il toast sparirebbe subito col replace).
+    if (data.claimed) {
+      showToast('BenvenutH! Password impostata.', 'success');
+      setTimeout(() => window.location.replace('index.html'), 1400);
+    } else {
+      window.location.replace('index.html');
+    }
   } catch (e) {
     console.error('LOGIN ERROR:', e);
     showToast('Errore di rete. Riprova.');
@@ -82,5 +78,5 @@ async function submitLogin(event) {
   }
 }
 
-form.addEventListener('submit', submitLogin);
+if (form) form.addEventListener('submit', submitLogin);
 loadUsers();

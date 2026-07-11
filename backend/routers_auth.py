@@ -10,6 +10,7 @@ from db import get_db
 from models import User
 from schemas import LoginRequest
 from helpers import hash_password, verify_password
+from security import create_access_token
 
 router = APIRouter(prefix="/auth")
 
@@ -48,10 +49,20 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     if not user.password_hash:
         user.password_hash = hash_password(password)
         db.commit()
-        return {"ok": True, "claimed": True, "user": _user_payload(user)}
+        return {
+            "ok": True,
+            "claimed": True,
+            "user": _user_payload(user),
+            "token": create_access_token(user),
+        }
 
     # Accessi successivi: verifica
     if not verify_password(password, user.password_hash):
         raise HTTPException(status_code=401, detail="Password errata.")
 
-    return {"ok": True, "claimed": False, "user": _user_payload(user)}
+    return {
+        "ok": True,
+        "claimed": False,
+        "user": _user_payload(user),
+        "token": create_access_token(user),
+    }

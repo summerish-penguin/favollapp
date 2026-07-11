@@ -35,7 +35,10 @@ async function init() {
   initEmptyState(DEFAULT_ITEMS);
   if (isAdmin) {
     await loadAllUsers();
-    renderAdminBar();
+    // Mostra la barra solo se abbiamo l'elenco; senza, l'admin aggiunge comunque
+    // a sé stesso (selectedContributor resta myName) invece di vedere un menu vuoto.
+    if (allUsers.length) renderAdminBar();
+    else showToast('Elenco utenti non disponibile: puoi aggiungere solo a te stesso.');
   }
   renderAll();
   loadWarehouse();
@@ -48,9 +51,11 @@ async function init() {
 async function loadAllUsers() {
   try {
     const res = await fetch(`${API_BASE}/users`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     allUsers = await res.json();
   } catch (e) {
     console.error('LOAD USERS ERROR:', e);
+    allUsers = [];
   }
 }
 
@@ -68,11 +73,17 @@ function renderAdminBar() {
   const select = document.createElement('select');
   select.id = 'admin-contributor';
   select.className = 'admin-user-select';
-  allUsers.forEach((u) => {
+
+  // Nomi disponibili; garantiamo che l'admin stesso sia sempre presente e preselezionato,
+  // così il default non finisce per sbaglio sul primo nome della lista.
+  const names = allUsers.map((u) => u.name);
+  if (myName && !names.includes(myName)) names.unshift(myName);
+
+  names.forEach((name) => {
     const opt = document.createElement('option');
-    opt.value = u.name;
-    opt.textContent = u.name;
-    if (u.name === myName) opt.selected = true;
+    opt.value = name;
+    opt.textContent = name;
+    if (name === myName) opt.selected = true;
     select.appendChild(opt);
   });
 
@@ -223,9 +234,10 @@ async function submitNewItem(nameInput, targetInput, errorMsg, overlay) {
   try {
     const res  = await fetch(`${API_BASE}/items`, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ name, target }),
     });
+    if (res.status === 401) return sessionExpired();
     const data = await res.json();
 
     if (!res.ok || !data.ok) { showModalError(errorMsg, data.detail ?? 'Errore nella creazione.'); return; }
@@ -253,9 +265,10 @@ async function submitEditItem(oldName, nameInput, targetInput, errorMsg, overlay
   try {
     const res  = await fetch(`${API_BASE}/items/${encodeURIComponent(oldName)}`, {
       method:  'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ name: newName, target: newTarget }),
     });
+    if (res.status === 401) return sessionExpired();
     const data = await res.json();
 
     if (!res.ok || !data.ok) { showModalError(errorMsg, data.detail ?? 'Errore nella modifica.'); return; }
@@ -454,12 +467,19 @@ async function optimisticUpdate(user, item, delta) {
   try {
     const res  = await fetch(`${API_BASE}/warehouse/update`, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ user, item, delta }),
     });
-    const data = await res.json();
+    if (res.status === 401) return sessionExpired();
+    const data = await res.json().catch(() => ({}));
 
-    if (!data.ok) showToast('Errore backend: ' + data.reason);
+    // Su rifiuto del backend (es. 403 regole) ripristiniamo lo stato ottimistico
+    if (!res.ok || !data.ok) {
+      Object.assign(state, prev);
+      renderAll();
+      showToast(data.detail ?? data.reason ?? 'Operazione non permessa.');
+      return;
+    }
     if (state[item]) state[item].target = data.target ?? state[item].target;
   } catch (e) {
     console.error('UPDATE ERROR:', e);
@@ -477,11 +497,18 @@ async function optimisticRemove(user, item) {
   renderAll();
 
   try {
-    await fetch(`${API_BASE}/warehouse/remove`, {
+    const res = await fetch(`${API_BASE}/warehouse/remove`, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body:    JSON.stringify({ user, item }),
     });
+    if (res.status === 401) return sessionExpired();
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      Object.assign(state, prev);
+      renderAll();
+      showToast(data.detail ?? 'Rimozione non permessa.');
+    }
   } catch (e) {
     console.error('REMOVE ERROR:', e);
     Object.assign(state, prev);
@@ -495,13 +522,27 @@ async function deleteItem(itemName) {
   renderAll();
 
   try {
-    const res  = await fetch(`${API_BASE}/items/${encodeURIComponent(itemName)}`, { method: 'DELETE' });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.detail);
+    const res  = await fetch(`${API_BASE}/items/${encodeURIComponent(itemName)}`, {
+      method:  'DELETE',
+      headers: { ...authHeaders() },
+    });
+    if (res.status === 401) return sessionExpired();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      Object.assign(state, prev);
+      renderAll();
+      showToast(data.detail ?? 'Errore eliminazione. Riprova.');
+    }
   } catch (e) {
     console.error('DELETE ITEM ERROR:', e);
     Object.assign(state, prev);
     renderAll();
     showToast('Errore eliminazione. Riprova.');
   }
+}
+
+// Sessione scaduta/non valida (401): avvisa e rimanda al login
+function sessionExpired() {
+  showToast('Sessione scaduta: rifai il login');
+  setTimeout(logout, 1200);
 }

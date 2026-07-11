@@ -7,8 +7,14 @@ from db import get_db
 from models import Item, User, Contribution
 from schemas import UpdateRequest, RemoveRequest, CreateItemRequest, UpdateItemRequest
 from helpers import get_or_create_user, get_or_create_item
+from security import get_current_user
 
 router = APIRouter()
+
+
+def _same_person(a: str, b: str) -> bool:
+    """Confronto nomi personH case-insensitive (coerente col login)."""
+    return (a or "").strip().lower() == (b or "").strip().lower()
 
 
 @router.api_route("/warehouse", methods=["GET", "HEAD"])
@@ -41,8 +47,18 @@ def get_warehouse(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/warehouse/update")
-def update(data: UpdateRequest, db: Session = Depends(get_db)):
-    """Aggiorna la quantità di un contributo (delta positivo o negativo)."""
+def update(
+    data: UpdateRequest,
+    caller: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Aggiorna la quantità di un contributo (delta positivo o negativo).
+
+    Ognuno può modificare solo i propri contributi; l'admin quelli di chiunque.
+    """
+    if not caller.is_admin and not _same_person(data.user, caller.name):
+        raise HTTPException(status_code=403, detail="Puoi modificare solo i tuoi contributi.")
+
     item  = get_or_create_item(db, data.item)
     user  = get_or_create_user(db, data.user)
 
@@ -65,8 +81,18 @@ def update(data: UpdateRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/warehouse/remove")
-def remove(req: RemoveRequest, db: Session = Depends(get_db)):
-    """Rimuove completamente il contributo di un utente per un item."""
+def remove(
+    req: RemoveRequest,
+    caller: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Rimuove completamente il contributo di un utente per un item.
+
+    Ognuno può rimuovere solo i propri contributi; l'admin quelli di chiunque.
+    """
+    if not caller.is_admin and not _same_person(req.user, caller.name):
+        raise HTTPException(status_code=403, detail="Puoi rimuovere solo i tuoi contributi.")
+
     user = db.query(User).filter_by(name=req.user).first()
     item = db.query(Item).filter_by(name=req.item).first()
 
@@ -86,7 +112,11 @@ def remove(req: RemoveRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/items")
-def create_item(req: CreateItemRequest, db: Session = Depends(get_db)):
+def create_item(
+    req: CreateItemRequest,
+    caller: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """Crea un nuovo item. Restituisce 409 se il nome esiste già."""
     existing = db.query(Item).filter_by(name=req.name).first()
     if existing:
@@ -103,7 +133,12 @@ def create_item(req: CreateItemRequest, db: Session = Depends(get_db)):
 
 
 @router.put("/items/{old_name}")
-def update_item(old_name: str, req: UpdateItemRequest, db: Session = Depends(get_db)):
+def update_item(
+    old_name: str,
+    req: UpdateItemRequest,
+    caller: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """Modifica nome e/o target di un item esistente."""
     item = db.query(Item).filter_by(name=old_name).first()
     if not item:
@@ -121,11 +156,26 @@ def update_item(old_name: str, req: UpdateItemRequest, db: Session = Depends(get
 
 
 @router.delete("/items/{name}")
-def delete_item(name: str, db: Session = Depends(get_db)):
-    """Elimina un item e tutti i suoi contributi."""
+def delete_item(
+    name: str,
+    caller: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Elimina un item e tutti i suoi contributi.
+
+    Un non-admin può eliminare solo se nessun altro ha contribuito (regola 3).
+    """
     item = db.query(Item).filter_by(name=name).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item non trovato.")
+
+    if not caller.is_admin:
+        contribs = db.query(Contribution).filter_by(item_id=item.id).all()
+        if any(c.user_id != caller.id for c in contribs):
+            raise HTTPException(
+                status_code=403,
+                detail="Non puoi eliminarlo: altri hanno già contribuito.",
+            )
 
     db.query(Contribution).filter_by(item_id=item.id).delete()
     db.delete(item)

@@ -7,8 +7,9 @@
 // di sicurezza (il backend resta aperto). Vedi routers_auth.py.
 
 const AUTH_KEY = 'favollapp-user';
+const TOKEN_KEY = 'favollapp-token';
 
-// Utente loggato ({ name, desc, icon }) o null
+// Utente loggato ({ name, desc, icon, is_admin }) o null
 function getCurrentUser() {
   try {
     const raw = localStorage.getItem(AUTH_KEY);
@@ -18,12 +19,26 @@ function getCurrentUser() {
   }
 }
 
-function setCurrentUser(user) {
+// Token JWT usato per autenticare le richieste di scrittura verso il backend
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+// Header Authorization da unire alle fetch di scrittura ({} se non loggato)
+function authHeaders() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+// Salva utente + token al login
+function setSession(user, token) {
   localStorage.setItem(AUTH_KEY, JSON.stringify(user));
+  if (token) localStorage.setItem(TOKEN_KEY, token);
 }
 
 function logout() {
   localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(TOKEN_KEY);
   window.location.replace('login.html');
 }
 
