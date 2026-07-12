@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ridisegna da solo se il layout intorno cambia subito dopo l'inizializzazione
   requestAnimationFrame(() => map.invalidateSize());
 
+  // Idem quando la finestra cambia dimensione/orientamento: la media query
+  // landscape ridimensiona la .map-card e Leaflet va avvisato
+  window.addEventListener('resize', () => map.invalidateSize());
+
   // Crea un'icona marker a partire da un emoji
   function makeIcon(emoji) {
     return L.divIcon({

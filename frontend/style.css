@@ -388,7 +388,7 @@ ul {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 50px;
+  width: 55px;
   height: 28px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -1774,6 +1774,14 @@ tr.bought td {
   border-color: color-mix(in srgb, var(--brand-mid) 40%, transparent);
 }
 
+/* Wrapper a due colonne della pagina spesa: su mobile è trasparente al layout
+   (i figli restano blocchi in colonna dentro .container), diventa una vera
+   flexbox solo in landscape (vedi sezione LAYOUT LANDSCAPE / DESKTOP) */
+.menu-columns,
+.menu-col {
+  display: contents;
+}
+
 /* Bottone elimina riga */
 .end-notebook {
   display: flex;
@@ -1781,6 +1789,9 @@ tr.bought td {
   justify-content: space-around;
   margin-top: 12px;
   gap: 12px;
+  /* Nel DOM sta nella colonna sinistra (per il landscape); su mobile, con i
+     wrapper trasparenti, order lo tiene visivamente sotto la lista */
+  order: 1;
 }
 
 .delete-row-btn {
@@ -2459,5 +2470,212 @@ select.modal-input {
 @media (max-width: 380px) {
   .user-badge-name {
     display: none;
+  }
+}
+
+/* ==========================================================================
+   LAYOUT LANDSCAPE / DESKTOP
+   In portrait (o su telefono, anche ruotato: min-height esclude le viewport
+   basse tipiche dei telefoni in landscape) resta il layout a colonna stretta.
+   Qui sopra una certa larghezza in landscape ogni pagina ridispone i propri
+   blocchi per usare lo spazio orizzontale. Ogni pagina è identificata dalla
+   classe page-* sul <body>.
+   ========================================================================== */
+@media (orientation: landscape) and (min-width: 880px) and (min-height: 500px) {
+  .container {
+    max-width: 760px;
+    padding: 28px 32px;
+  }
+
+  /* I <br> che separano titolo e contenuto nel layout mobile creerebbero
+     righe vuote nelle griglie: lo spazio lo dà il margine del titolo */
+  .container > br {
+    display: none;
+  }
+
+  .container > .title {
+    margin-bottom: 20px;
+  }
+
+  /* ---------- HOME ---------- */
+  /* Hero su una riga: pill + titolo a sinistra, countdown a destra,
+     contenuto allineato alla larghezza del container sottostante */
+  .page-home .home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 32px;
+    align-items: center;
+    padding: 26px max(28px, calc((100% - 900px) / 2));
+  }
+
+  .page-home .hero-eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    width: auto;
+    margin: 0 0 10px !important;
+  }
+
+  .page-home .home-hero h1 {
+    grid-column: 1;
+    grid-row: 2;
+    width: auto;
+    margin: 0;
+    font-size: 34px;
+  }
+
+  .page-home .hero-countdown {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: auto;
+    margin: 0 !important;
+  }
+
+  .page-home .hero-countdown .num {
+    font-size: 54px;
+  }
+
+  .page-home .container {
+    max-width: 900px;
+  }
+
+  .page-home #home-tiles {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .page-home .spotlight {
+    margin-bottom: 14px;
+  }
+
+  /* ---------- WAREHOUSE ---------- */
+  .page-warehouse .container {
+    max-width: 920px;
+  }
+
+  .page-warehouse #warehouse-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+
+  .page-warehouse .warehouse-item {
+    margin-bottom: 0;
+  }
+
+  .page-warehouse #add-item-btn {
+    width: auto;
+    padding: 12px 48px;
+    margin-top: 16px;
+  }
+
+  /* ---------- MENU / LISTA DELLA SPESA ---------- */
+  /* Titolo a tutta larghezza; sotto, la flexbox .menu-columns con due
+     contenitori affiancati: a sinistra prompt AI + bottoni, a destra la
+     lista. Le colonne sono indipendenti (align-items: flex-start): quando
+     la lista si allunga, la colonna sinistra non si muove. */
+  .page-menu .container {
+    max-width: 1040px;
+  }
+
+  .page-menu .menu-columns {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .page-menu .menu-col-left {
+    flex: 0 0 380px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-menu .menu-col-right {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .page-menu .end-notebook {
+    justify-content: end;
+  }
+
+  /* ---------- MAPPA ---------- */
+  /* Mappa grande a sinistra, directory dei luoghi che scorre a destra */
+  .page-map .container {
+    max-width: 1080px;
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(280px, 2fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 20px;
+  }
+
+  .page-map .title {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .page-map .map-card {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 420px;
+    margin-bottom: 0;
+  }
+
+  .page-map #categories {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .page-map #categories .cat-row:first-child {
+    margin-top: 0;
+  }
+
+  /* ---------- AGENT ---------- */
+  /* La chat resta una colonna (leggibilità), ma più larga e con bubble
+     che non attraversano tutto lo schermo */
+  .page-agent .container {
+    max-width: 860px;
+  }
+
+  .page-agent .agent-bubble,
+  .page-agent .user-bubble {
+    max-width: 70%;
+  }
+
+  /* ---------- GALLERIES ---------- */
+  /* Le due gallery affiancate */
+  .page-galleries .container {
+    max-width: 1120px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    align-content: start;
+    align-items: start;
+  }
+
+  /* ---------- CAST ---------- */
+  /* Ogni colonna sfalsata diventa a sua volta una griglia: 4 colonne totali */
+  .page-cast .container {
+    max-width: 940px;
+  }
+
+  .page-cast #cast-container {
+    gap: 12px;
+  }
+
+  .page-cast #cast-container .col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-content: start;
+  }
+
+  /* ---------- LOGIN ---------- */
+  /* Il form resta stretto e centrato anche in landscape */
+  .page-login .container {
+    max-width: 440px;
   }
 }

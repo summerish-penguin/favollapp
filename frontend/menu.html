@@ -53,7 +53,7 @@
     <script src="auth.js" defer></script>
     <script src="menu.js" defer></script>
   </head>
-  <body>
+  <body class="page-menu">
     <!-- Header con logo -->
     <div class="header">
       <a href="index.html" class="header-title">FavollApp</a>
@@ -82,41 +82,49 @@
 
       <br />
 
-      <textarea
-        id="prompt-textarea"
-        class="prompt-textarea"
-        rows="5"
-        placeholder="Dimmi una ricetta"
-      ></textarea>
+      <!-- Due colonne in landscape (prompt AI | lista); su mobile i wrapper
+           sono display: contents e i blocchi restano in colonna singola -->
+      <div class="menu-columns">
+        <div class="menu-col menu-col-left">
+          <textarea
+            id="prompt-textarea"
+            class="prompt-textarea"
+            rows="5"
+            placeholder="Dimmi una ricetta"
+          ></textarea>
 
-      <div id="send-prompt-div">
-        <div class="warning-text">
-          Dove non specificato, le dosi sono calcolate per il numero di persone
-          censite in FavollApp. L'AI può commettere errori.
+          <div id="send-prompt-div">
+            <div class="warning-text">
+              Dove non specificato, le dosi sono calcolate per il numero di persone
+              censite in FavollApp. L'AI può commettere errori.
+            </div>
+            <button id="send-prompt-btn">✨ Genera</button>
+          </div>
+
+          <div class="end-notebook">
+            <button class="clear-note-btn" id="clear-note">
+              ❌ Svuota la lista
+            </button>
+            <!--<button class="add-row-btn" id="add-row">➕ aggiungi riga</button>-->
+          </div>
         </div>
-        <button id="send-prompt-btn">✨ Genera</button>
-      </div>
 
-      <div class="notebook">
-        <h1 class="notebook-title">Lista della spesa</h1>
-        <table id="sketch-table">
-          <thead>
-            <tr>
-              <th class="time-col">Data</th>
-              <th class="ingredient-col">Ingrediente</th>
-              <th class="qty-col">Qta</th>
-              <th class="checkout-col-th"></th>
-            </tr>
-          </thead>
-          <tbody id="sketch-tbody"></tbody>
-        </table>
-      </div>
-
-      <div class="end-notebook">
-        <button class="clear-note-btn" id="clear-note">
-          ❌ Svuota la lista
-        </button>
-        <!--<button class="add-row-btn" id="add-row">➕ aggiungi riga</button>-->
+        <div class="menu-col menu-col-right">
+          <div class="notebook">
+            <h1 class="notebook-title">Lista della spesa</h1>
+            <table id="sketch-table">
+              <thead>
+                <tr>
+                  <th class="time-col">Data</th>
+                  <th class="ingredient-col">Ingrediente</th>
+                  <th class="qty-col">Qta</th>
+                  <th class="checkout-col-th"></th>
+                </tr>
+              </thead>
+              <tbody id="sketch-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </body>
