@@ -34,7 +34,7 @@ REGOLE
 - Nomi in italiano e specifici: indica il taglio di carne, il tipo di pomodoro (passata/pelati/polpa/freschi), il formato di pasta, ecc. ("onion" → "cipolla").
 - unit: "g" per solidi, "ml" per liquidi, "pz" per interi non pesabili (uova, spicchi d'aglio…). Quantità come numeri sensati e arrotondati, mai zero o negativi.
 - Condimenti base (sale, pepe, olio) solo se rilevanti per il piatto.
-- Piatto sconosciuto o ambiguo: fai comunque la stima più plausibile e restituisci un JSON valido, mai una spiegazione.
+- Piatto sconosciuto o ambiguo: restituisci {{"error": "Non sono riuscito a trovare la ricetta."}}, nessun altro campo.
 - Se la richiesta non riguarda un piatto/cibo, restituisci {{"ingredients": []}}."""
 
     try:

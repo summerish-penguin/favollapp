@@ -85,14 +85,19 @@ async function handlePrompt() {
     if (!res.ok) throw new Error(`Errore ${res.status}`);
     const data = await res.json();
 
-    if (!data.ingredients || !Array.isArray(data.ingredients)) {
-      throw new Error('Risposta AI non valida');
-    }
+    // Piatto non riconosciuto: l'AI restituisce {"error": "..."} → toast temporaneo
+    if (data.error) {
+      showToast(data.error);
+    } else {
+      if (!data.ingredients || !Array.isArray(data.ingredients)) {
+        throw new Error('Risposta AI non valida');
+      }
 
-    for (const ing of data.ingredients) {
-      const qty = `${ing.quantity ?? ''} ${ing.unit ?? ''}`.trim();
-      const id = await saveRow(todayLabel(), ing.name ?? '', qty);
-      if (id) insertSavedRowBeforeEmpty(id, todayLabel(), ing.name ?? '', qty);
+      for (const ing of data.ingredients) {
+        const qty = `${ing.quantity ?? ''} ${ing.unit ?? ''}`.trim();
+        const id = await saveRow(todayLabel(), ing.name ?? '', qty);
+        if (id) insertSavedRowBeforeEmpty(id, todayLabel(), ing.name ?? '', qty);
+      }
     }
   } catch (e) {
     console.error('PROMPT ERROR:', e);
