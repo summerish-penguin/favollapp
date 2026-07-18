@@ -8,7 +8,7 @@ from models import User, Item
 
 # Config condivisa per le chiamate al LLM Gemini (usata da routers_ai_recipe.py e routers_ai_agent.py)
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-3.5-flash"
 
 
 # Hashing password per il login "rivendica una persona" (vedi routers_auth.py).
