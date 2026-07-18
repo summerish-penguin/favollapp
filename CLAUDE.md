@@ -22,7 +22,7 @@ uvicorn main:app --reload        # serves on http://127.0.0.1:8000
 ```
 Requires a `.env` (gitignored) in `backend/` with:
 - `DATABASE_URL` — Postgres URL (required; app raises on startup without it). A `postgres://` prefix is auto-rewritten to `postgresql://`.
-- `GROQ_API_KEY` — for the AI endpoints (`/ai/*`); missing key returns HTTP 500 only when those routes are hit.
+- `GEMINI_API_KEY` — for the AI endpoints (`/ai/*`); missing key returns HTTP 500 only when those routes are hit.
 
 Tables are auto-created (`Base.metadata.create_all`) and `seed()` runs on startup to populate default items and users — there are **no migrations** (no Alembic). Schema changes to `models.py` require manual DB handling.
 
@@ -36,13 +36,13 @@ There is **no test suite, linter, or type checker** configured. `.prettierrc` (2
 - `db.py` — engine + `SessionLocal`; `get_db()` is the FastAPI dependency used by every route.
 - `models.py` — SQLAlchemy models: `User`, `Item`, `Contribution` (a user's committed quantity of an item), `ShoppingItem`, `Location` (map POIs), `AccessLog`.
 - `schemas.py` — Pydantic request models.
-- `helpers.py` — shared `get_or_create_*` helpers and the **Groq LLM config** (`GROQ_URL`, `GROQ_MODEL`, `require_groq_key()`). Both AI routers share this; change the model here.
+- `helpers.py` — shared `get_or_create_*` helpers and the **Gemini LLM config** (`GEMIN_URL`, `GEMINI_MODEL`, `require_gemini_key()`). Both AI routers share this; change the model here.
 - `seed.py` — default items/users seeded on every startup.
 
 Routers are split by functional area and each exposes `router`, all mounted in `main.py`:
 - `routers_warehouse.py` — `/warehouse`, `/items` (shared-items "who brings what" tracker).
 - `routers_shopping.py` — `/shopping` CRUD (shopping list).
-- `routers_ai_recipe.py` — `POST /ai/recipe`: Groq call that parses a dish name into a JSON ingredient list scaled to the current user count; robustly extracts JSON from dirty LLM output.
+- `routers_ai_recipe.py` — `POST /ai/recipe`: Gemini call that parses a dish name into a JSON ingredient list scaled to the current user count; robustly extracts JSON from dirty LLM output.
 - `routers_ai_agent.py` — `POST /ai/agent`: conversational chatbot. Builds a system prompt by injecting live DB data (locations, items, users) plus fixed trip context; frontend passes the full `history` each call (no server-side session).
 - `routers_misc.py` — `/users`, `/locations`, `/health`.
 

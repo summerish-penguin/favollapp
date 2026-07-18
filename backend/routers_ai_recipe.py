@@ -1,4 +1,4 @@
-# routers_ai_recipe.py — endpoint /ai/recipe: genera ingredienti via Groq LLM
+# routers_ai_recipe.py — endpoint /ai/recipe: genera ingredienti via gEMINI LLM
 
 import json
 import requests
@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from db import get_db
 from schemas import RecipeRequest
-from helpers import get_user_count, require_groq_key, GROQ_URL, GROQ_MODEL
+from helpers import get_user_count, require_gemini_key, GEMINI_URL, GEMINI_MODEL
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ def generate_recipe(req: RecipeRequest, db: Session = Depends(get_db)):
     Riceve un prompt (nome piatto + contesto opzionale) e restituisce
     un JSON con la lista degli ingredienti calibrata sul numero di persone.
     """
-    GROQ_API_KEY = require_groq_key()
+    GEMINI_API_KEY = require_gemini_key()
     people = get_user_count(db)
 
     system_prompt = f"""Sei un parser di ricette per un'app di gruppo in vacanza. Ricevi il nome di un piatto (più eventuale contesto) e restituisci SOLO gli ingredienti in JSON.
@@ -39,13 +39,13 @@ REGOLE
 
     try:
         response = requests.post(
-            GROQ_URL,
+            GEMINI_URL,
             headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Authorization": f"Bearer {GEMINI_API_KEY}",
                 "Content-Type": "application/json"
             },
             json={
-                "model": GROQ_MODEL,
+                "model": GEMINI_MODEL,
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user",   "content": req.prompt}

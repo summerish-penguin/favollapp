@@ -388,7 +388,7 @@ ul {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 55px;
+  width: 52px;
   height: 28px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.18);

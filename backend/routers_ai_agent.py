@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from db import get_db
 from models import Location, Item, User
 from schemas import AgentRequest
-from helpers import require_groq_key, GROQ_URL, GROQ_MODEL
+from helpers import require_gemini_key, GEMINI_URL, GEMINI_MODEL
 
 router = APIRouter()
 
@@ -92,7 +92,7 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
     Chatbot conversazionale con memoria della sessione.
     Il frontend passa l'intera history ad ogni messaggio.
     """
-    GROQ_API_KEY = require_groq_key()
+    GEMINI_API_KEY = require_gemini_key()
 
     # Carica i luoghi, gli oggetti in comune e gli utenti dal db per il system prompt
     locations = db.query(Location).all()
@@ -107,13 +107,13 @@ def agent_chat(req: AgentRequest, db: Session = Depends(get_db)):
 
     try:
         response = requests.post(
-            GROQ_URL,
+            GEMINI_URL,
             headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Authorization": f"Bearer {GEMINI_API_KEY}",
                 "Content-Type":  "application/json"
             },
             json={
-                "model":       GROQ_MODEL,
+                "model":       GEMINI_MODEL,
                 "messages":    messages,
                 "temperature": 0.6,    # un po' più creativo rispetto al parser ricette
                 "max_tokens":  1024
