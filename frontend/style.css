@@ -1827,7 +1827,7 @@ select {
   box-shadow: var(--shadow-1);
   padding: 10px 10px 0px;
   margin-bottom: 12px;
-  max-height: 125px;
+  max-height: 130px;
 }
 
 .ai-card-title {
