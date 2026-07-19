@@ -22,6 +22,7 @@
   --brand-dark2: #15325a;
   --brand-mid: #14568f;
   --brand-mid2: #4d90d9;
+  --brand-mid3: #9ad0f3;
   --brand-pale: #dbecfd;
   --brand-on-pale: var(--brand-dark);
 
@@ -90,6 +91,7 @@
     --surface-card-hover: #16283f;
 
     --brand-pale: #17324f;
+    --brand-mid3: #57728f;
     --brand-on-pale: #9cc4ec;
 
     --text-primary: #eef4fb;
@@ -172,6 +174,7 @@
   --surface-card-hover: #f5f9fd;
 
   --brand-pale: #dbecfd;
+  --brand-mid3: #9ad0f3;
   --brand-on-pale: var(--brand-dark);
 
   --text-primary: #0e1f36;
@@ -832,8 +835,8 @@ li:active:not(.dragging) {
 }
 
 .cast-chip .face {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   margin: 0 auto 4px;
   border-radius: 50%;
   background: var(--surface-card);
@@ -871,7 +874,7 @@ li:active:not(.dragging) {
    iniettata da tabbar.js su tutte le pagine principali.
 ------------------------------------------------------------------ */
 .dock {
-  max-height: 50px;
+  max-height: 60px;
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
@@ -893,18 +896,18 @@ li:active:not(.dragging) {
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  padding: 6px 9px;
+  padding: 9px 9px;
   border-radius: var(--radius-pill);
   text-decoration: none;
 }
 
 .dock-ico {
-  font-size: 14px;
+  font-size: 20px;
   line-height: 1.2;
 }
 
 .dock-lbl {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -943,8 +946,8 @@ button {
   font-weight: 700;
   border-radius: var(--radius-pill);
   border: none;
-  background: var(--brand-mid);
-  color: var(--on-brand);
+  background: var(--brand-mid3);
+  color: var(--text-primary);
   cursor: pointer;
   letter-spacing: 0.02em;
   box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--brand-mid) 55%, transparent);
@@ -1156,7 +1159,7 @@ select {
 
 #add-item-btn {
   width: 75%;
-  margin-bottom: 70px;
+  margin-bottom: 80px;
 }
 
 .people {
@@ -1836,14 +1839,15 @@ select {
 
 .prompt-textarea {
   width: 100%;
-  height: 30%;
+  height: 38%;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border-medium);
   background: var(--surface-card);
-  padding: 12px 14px;
+  padding: 6px 14px;
   font-size: 14px;
   resize: none;
-  margin-bottom: 6px;
+  overflow-y: none;
+  scrollbar-width: none;
 }
 
 #prompt-textarea:focus {
@@ -2200,7 +2204,7 @@ tr.bought td {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--brand-mid3);
   border: none;
   border-radius: 50%;
   width: 36px;
@@ -2818,10 +2822,12 @@ select.modal-input {
    blocchi per usare lo spazio orizzontale. Ogni pagina è identificata dalla
    classe page-* sul <body>.
    ========================================================================== */
-@media (orientation: landscape) and (min-width: 880px) and (min-height: 500px) {
+@media (orientation: landscape) and (min-width: 700px) and (min-height: 360px) {
   .container {
     max-width: 760px;
-    padding: 28px 32px;
+    min-height: 100vh;
+    height: auto;
+    padding: 24px 24px calc(88px + env(safe-area-inset-bottom));
   }
 
   /* I <br> che separano titolo e contenuto nel layout mobile creerebbero
@@ -2837,7 +2843,7 @@ select.modal-input {
   /* ---------- HOME ---------- */
   /* Hero-card su una riga: pill + titolo a sinistra, countdown a destra */
   .page-home .container {
-    max-width: 900px;
+    max-width: 920px;
   }
 
   .page-home .hero-card {
@@ -2913,19 +2919,39 @@ select.modal-input {
     gap: 24px;
   }
 
-  .page-menu .menu-col-left {
-    flex: 0 0 380px;
+  .page-menu .menu-col {
     display: flex;
     flex-direction: column;
   }
 
+  .page-menu .menu-col-left {
+    flex: 0 0 380px;
+    align-items: stretch;
+    gap: 12px;
+  }
+
   .page-menu .menu-col-right {
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
+  }
+
+  .page-menu .ai-card {
+    max-height: none;
+    padding-bottom: 10px;
+  }
+
+  .page-menu .prompt-textarea {
+    height: 96px;
+    min-height: 96px;
+  }
+
+  .page-menu #send-prompt-div {
+    margin-top: 8px;
   }
 
   .page-menu .end-notebook {
     justify-content: end;
+    margin-top: 0;
   }
 
   /* ---------- MAPPA ---------- */
