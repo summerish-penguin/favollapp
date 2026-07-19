@@ -7,11 +7,33 @@ function todayLabel() {
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
 
+// Contatore vivo nel piede della lista: comprati / da comprare.
+// Lo stato "comprato" è solo client-side (la checkbox non è persistita).
+function refreshSpesaCount() {
+  const el = document.getElementById('spesa-count');
+  if (!el) return;
+
+  const rows = document.querySelectorAll('#sketch-tbody tr[data-id]');
+  const bought = document.querySelectorAll('#sketch-tbody tr[data-id].bought').length;
+  const todo = rows.length - bought;
+
+  if (rows.length === 0) {
+    el.textContent = 'Lista vuota';
+  } else if (todo === 0) {
+    el.textContent = 'Tutto comprato ✓';
+  } else if (bought === 0) {
+    el.textContent = todo === 1 ? '1 da comprare' : `${todo} da comprare`;
+  } else {
+    el.textContent = `${bought} ✓ · ${todo} da comprare`;
+  }
+}
+
 // ---- Init: carica la lista e registra tutti gli event listener ----
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadShoppingItems();
   addEmptyRow();
+  refreshSpesaCount();
 
   document
     .getElementById('send-prompt-btn')
@@ -43,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data.ok) {
         document.querySelector('#sketch-tbody').innerHTML = '';
         addEmptyRow();
+        refreshSpesaCount();
       }
     } catch (e) {
       console.error('CLEAR ERROR:', e);
@@ -104,6 +127,7 @@ async function handlePrompt() {
     showToast('Errore nella generazione. Riprova.');
   } finally {
     hideLoading();
+    refreshSpesaCount();
   }
 
   textarea.value = '';
@@ -154,6 +178,7 @@ function addEmptyRow() {
     if (id) {
       tbody.replaceChild(buildSavedRow(id, day, ingredient, qty), tr);
       addEmptyRow();
+      refreshSpesaCount();
     }
   };
 
@@ -215,7 +240,10 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   checkbox.type = 'checkbox';
   checkbox.checked = bought;
   checkbox.classList.add('bought-checkbox');
-  checkbox.onchange = () => tr.classList.toggle('bought', checkbox.checked);
+  checkbox.onchange = () => {
+    tr.classList.toggle('bought', checkbox.checked);
+    refreshSpesaCount();
+  };
 
   /* Bottone elimina */
   const delBtn = document.createElement('button');
@@ -224,7 +252,10 @@ function buildSavedRow(id, day, ingredient, qty, bought = false) {
   delBtn.title = 'Elimina';
   delBtn.onclick = async () => {
     const ok = await deleteRow(id);
-    if (ok) tr.remove();
+    if (ok) {
+      tr.remove();
+      refreshSpesaCount();
+    }
   };
 
   wrapper.append(checkbox, delBtn);

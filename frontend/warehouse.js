@@ -6,7 +6,8 @@ const isAdmin = !!currentUser?.is_admin;
 const myName = currentUser?.name;
 const container = document.getElementById('warehouse-container');
 
-// Elenco di tutte le personH: serve solo all'admin per il selettore del contributore
+// Elenco di tutte le personH: fornisce le emoji delle chip contributori
+// e, per l'admin, alimenta il selettore del contributore
 let allUsers = [];
 // Contributore a nome del quale l'admin aggiunge (scelto dalla barra sopra la lista)
 let selectedContributor = myName;
@@ -33,8 +34,8 @@ init();
 
 async function init() {
   initEmptyState(DEFAULT_ITEMS);
+  await loadAllUsers();
   if (isAdmin) {
-    await loadAllUsers();
     // Mostra la barra solo se abbiamo l'elenco; senza, l'admin aggiunge comunque
     // a sé stesso (selectedContributor resta myName) invece di vedere un menu vuoto.
     if (allUsers.length) renderAdminBar();
@@ -298,6 +299,12 @@ function getTotal(itemName) {
   return Object.values(users).reduce((sum, qty) => sum + qty, 0);
 }
 
+// Emoji della personH (dal cast); fallback generico se non censita
+function iconFor(name) {
+  const u = allUsers.find((x) => x.name === name);
+  return u?.icon || '😎';
+}
+
 function spawnBuffon(x, y) {
   const img = document.createElement('img');
   img.src = './assets/buffon.png';
@@ -315,6 +322,65 @@ function renderAll() {
   Object.entries(state).forEach(([itemName, { users, target }]) => {
     container.appendChild(createItemElement(itemName, users, target));
   });
+  renderSummary();
+}
+
+// Riepilogo in testa alla lista: unità coperte (col tetto del target per
+// item, così gli extra non gonfiano il totale) su unità richieste.
+function renderSummary() {
+  const el = document.getElementById('warehouse-summary');
+  if (!el) return;
+
+  const entries = Object.entries(state);
+  if (!entries.length) {
+    el.hidden = true;
+    return;
+  }
+
+  let units = 0;
+  let targetSum = 0;
+  let scoperti = 0;
+
+  entries.forEach(([name, { target }]) => {
+    const tot = getTotal(name);
+    units += Math.min(tot, target);
+    targetSum += target;
+    if (tot < target) scoperti++;
+  });
+
+  const pct = targetSum ? Math.round((units / targetSum) * 100) : 0;
+  const fillClass = units === 0 ? 'hot' : units < targetSum ? 'warn' : 'ok';
+
+  el.innerHTML = '';
+
+  const row = document.createElement('div');
+  row.classList.add('wh-summary-row');
+
+  const big = document.createElement('span');
+  big.classList.add('wh-summary-big');
+  big.textContent = units;
+  const small = document.createElement('small');
+  small.textContent = ` / ${targetSum} unità coperte`;
+  big.appendChild(small);
+
+  const note = document.createElement('span');
+  note.classList.add('wh-summary-note', scoperti === 0 ? 'ok' : 'warn');
+  note.textContent =
+    scoperti === 0 ? 'Tutto coperto ✓'
+    : scoperti === 1 ? '1 da coprire'
+    : `${scoperti} da coprire`;
+
+  row.append(big, note);
+
+  const meter = document.createElement('div');
+  meter.classList.add('meter');
+  const fill = document.createElement('span');
+  fill.classList.add('meter-fill', fillClass);
+  fill.style.width = `${Math.max(pct, 3)}%`;
+  meter.appendChild(fill);
+
+  el.append(row, meter);
+  el.hidden = false;
 }
 
 function createItemElement(itemName, people, target) {
@@ -331,9 +397,6 @@ function createItemElement(itemName, people, target) {
   title.classList.add('item-name');
   title.innerText = itemName;
 
-  const space = document.createElement('div');
-  space.classList.add('space-div');
-
   const targetLabel = document.createElement('span');
   const total = getTotal(itemName);
   targetLabel.classList.add('target-label');
@@ -343,10 +406,6 @@ function createItemElement(itemName, people, target) {
   else                     targetLabel.classList.add('target-green');
 
   targetLabel.textContent = `${total} / ${target}`;
-
-  // Pulsante di aggiunta: l'admin aggiunge al contributore scelto nella barra in alto,
-  // gli altri a sé stessi ("Lo porto io").
-  const addControl = createAddButton(itemName, total, target);
 
   /*Div padre dei bottoni modifica ed elimina*/
   const actionsDiv = document.createElement('div');
@@ -376,14 +435,44 @@ function createItemElement(itemName, people, target) {
     await deleteItem(itemName);
   };
 
+  /* Barra semaforo di copertura sotto il titolo */
+  const meter = document.createElement('div');
+  meter.classList.add('meter');
+  const fill = document.createElement('span');
+  fill.classList.add(
+    'meter-fill',
+    total === 0 ? 'hot' : total < target ? 'warn' : 'ok',
+  );
+  const pct = target ? Math.min(100, Math.round((total / target) * 100)) : 0;
+  fill.style.width = `${Math.max(pct, 3)}%`;
+  meter.appendChild(fill);
+
   const peopleDiv = document.createElement('div');
   peopleDiv.classList.add('people');
   renderPeople(peopleDiv, people, itemName, target);
 
+  /* Coda della fila contributori: stato ("nessuno" / "completo") o azione.
+     Il pulsante di aggiunta (admin: al contributore scelto in alto, gli
+     altri: a sé stessi) compare solo finché il target non è raggiunto. */
+  if (Object.keys(people).length === 0) {
+    const nobody = document.createElement('span');
+    nobody.classList.add('nobody-note');
+    nobody.textContent = 'Nessuno lo porta ancora';
+    peopleDiv.appendChild(nobody);
+  }
+  if (total >= target) {
+    const done = document.createElement('span');
+    done.classList.add('done-note');
+    done.textContent = '✓ Completo';
+    peopleDiv.appendChild(done);
+  } else {
+    peopleDiv.appendChild(createAddButton(itemName, total, target));
+  }
+
   titleDiv.append(title);
   actionsDiv.append(editBtn, deleteBtn);
-  topRow.append(titleDiv, space, targetLabel, addControl, actionsDiv);
-  wrapper.append(topRow, peopleDiv);
+  topRow.append(titleDiv, targetLabel, actionsDiv);
+  wrapper.append(topRow, meter, peopleDiv);
   return wrapper;
 }
 
@@ -414,16 +503,22 @@ function renderPeople(container, people, itemName, target) {
   Object.entries(people).forEach(([name, qty]) => {
     const tag = document.createElement('div');
     tag.classList.add('person-tag');
+    if (name === myName) tag.classList.add('me');
+
+    const emoji = document.createElement('span');
+    emoji.classList.add('person-emoji');
+    emoji.setAttribute('aria-hidden', 'true');
+    emoji.textContent = iconFor(name);
 
     const label = document.createElement('span');
     label.classList.add('person-name');
-    label.innerText = `${name} (${qty})`;
+    label.innerText = `${name} ×${qty}`;
 
     // Ogni utente gestisce solo la propria riga; l'admin gestisce quelle di tutti
     const canManage = isAdmin || name === myName;
 
     if (!canManage) {
-      tag.append(label);
+      tag.append(emoji, label);
       container.appendChild(tag);
       return;
     }
@@ -445,7 +540,7 @@ function renderPeople(container, people, itemName, target) {
     remove.classList.add('remove-btn');
     remove.onclick   = async () => await optimisticRemove(name, itemName);
 
-    tag.append(label, plus, minus, remove);
+    tag.append(emoji, label, plus, minus, remove);
     container.appendChild(tag);
   });
 }

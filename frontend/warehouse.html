@@ -54,6 +54,7 @@
     <script src="theme-toggle.js" defer></script>
     <script src="ui-feedback.js" defer></script>
     <script src="auth.js" defer></script>
+    <script src="tabbar.js" defer></script>
     <script src="warehouse.js" defer></script>
   </head>
   <body class="page-warehouse">
@@ -83,6 +84,9 @@
       <br />
 
       <!-- L'utente corrente arriva dal login (auth.js): niente più menu "chi sei" -->
+
+      <!-- Riepilogo copertura: unità coperte / totale, con barra semaforo -->
+      <div id="warehouse-summary" class="wh-summary" hidden></div>
 
       <!-- Lista oggetti: generata dinamicamente dal JS -->
       <div id="warehouse-container"></div>

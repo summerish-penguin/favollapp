@@ -275,7 +275,7 @@ h1 {
 
 h3 {
   font-family: var(--font-title);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   text-align: center;
@@ -292,7 +292,7 @@ h3 {
    LAYOUT GENERALE
 ------------------------------------------------------------------ */
 .container {
-  padding: 20px 16px;
+  padding: 16px 16px;
   width: 100%;
   max-width: 400px;
   margin: auto;
@@ -437,30 +437,33 @@ ul {
 }
 
 /* ------------------------------------------------------------------
-   HOME HERO
-   Fascia sotto l'header nella home: titolo vacanza, luogo/data, countdown.
+   HOME HERO — card countdown protagonista (layout dall'artefatto).
+   Superficie brand scura in entrambi i temi, come l'header: il testo
+   bianco è quindi fisso e non passa dai token di testo.
 ------------------------------------------------------------------ */
-.home-hero {
+.hero-card {
   position: relative;
-  background: var(--surface-card);
-  padding: 22px 20px;
   overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 18px;
+  background:
+    radial-gradient(130% 150% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 40%, transparent), transparent 62%),
+    linear-gradient(155deg, var(--brand-dark2), var(--brand-dark));
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-2);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 0.5s var(--ease) forwards;
+  min-height: 25%;
 }
 
-.home-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 30%, transparent), transparent 65%);
-}
-
-.home-hero h1 {
+.hero-card .hero-title {
   position: relative;
-  color: var(--text-primary);
+  color: #ffffff;
   text-align: left;
-  margin-bottom: 0;
-  margin: 0 auto;
-  width: 400px;
+  font-size: 26px;
+  margin: 2px 0 0;
 }
 
 .hero-eyebrow {
@@ -468,9 +471,7 @@ ul {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 10px !important;
-  margin: 0 auto;
-  width: 400px
+  margin-bottom: 10px;
 }
 
 .hero-pill {
@@ -483,27 +484,35 @@ ul {
   color: var(--brand-on-pale);
 }
 
+/* Sulla card scura le pill diventano vetro chiaro, testo bianco fisso */
+.hero-card .hero-pill {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
 .pill-link{
   text-decoration: none;
+}
+
+.hero-card .pill-link {
+  color: #ffffff;
 }
 
 .hero-countdown {
   position: relative;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
-  margin-top: 18px !important;
-  margin: 0 auto;
-  width: 400px
+  margin-top: 14px;
 }
 
 .hero-countdown .num {
   font-family: var(--font-title);
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .hero-countdown .lbl {
@@ -511,7 +520,30 @@ ul {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Granchio-mascotte in filigrana nell'angolo della card */
+.hero-crab {
+  position: absolute;
+  right: -2px;
+  bottom: -18px;
+  font-size: 88px;
+  line-height: 1;
+  opacity: 0.2;
+  transform: rotate(-15deg);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Etichetta di sezione della home (Da fare adesso, Il cast…) */
+.section-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 2px 4px 8px;
 }
 
 /* ------------------------------------------------------------------
@@ -636,16 +668,17 @@ li:active:not(.dragging) {
 
 /* ------------------------------------------------------------------
    HOME TILES (griglia 2 colonne, con ingresso a cascata)
+   .home-grid è condivisa dalle due griglie della home (primaria e secondaria).
 ------------------------------------------------------------------ */
-#home-tiles {
+.home-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 0;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .home-tile {
-  height: 150px;
+  height: 70px;
   cursor: pointer;
   position: relative; /* necessario per posizionare .tile-badge */
   background: var(--surface-card);
@@ -672,10 +705,10 @@ li:active:not(.dragging) {
 }
 
 .home-tile h3 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   color: var(--text-primary);
-  text-align: left;
+  text-align: center;
   letter-spacing: 0.01em;
 }
 
@@ -687,16 +720,44 @@ li:active:not(.dragging) {
   text-transform: uppercase;
 }
 
+/* Sottotitolo-badge della tile: parte come descrizione statica; quando
+   index.js riceve i dati vivi diventa uno stato semantico colorato
+   (quanto lavoro resta), come nelle card "Da fare adesso" dell'artefatto. */
+.home-tile .tile-status {
+  align-self: flex-start;
+  border-radius: var(--radius-pill);
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.home-tile .tile-status.ok,
+.home-tile .tile-status.warn,
+.home-tile .tile-status.hot,
+.home-tile .tile-status.info {
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-tile .tile-status.ok   { background: var(--success-bg); color: var(--success); }
+.home-tile .tile-status.warn { background: var(--warning-bg); color: var(--warning); }
+.home-tile .tile-status.hot  { background: var(--danger-bg);  color: var(--danger); }
+.home-tile .tile-status.info { background: var(--brand-pale); color: var(--brand-on-pale); }
+
 .home-tile-icon {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 12px;
   background: var(--brand-pale);
-  font-size: 20px;
+  font-size: 16px;
   transition: transform 0.2s var(--ease);
+  position: absolute;
+  top: -8%;
+  right: 88%;
+  z-index: 9999
 }
 
 /* Tile non ancora collegate: opacità ridotta, nessun hover lift */
@@ -728,11 +789,142 @@ li:active:not(.dragging) {
 }
 
 /* ------------------------------------------------------------------
+   CAST STRIP — fila orizzontale di avatar-emoji del cast sulla home,
+   caricata da /users; l'intera strip è un link a cast.html.
+------------------------------------------------------------------ */
+.cast-strip {
+  display: block;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.cast-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  overflow-x: auto;
+  padding: 4px 2px 4px;
+  scrollbar-width: none;
+}
+
+.cast-row::-webkit-scrollbar {
+  display: none;
+}
+
+.cast-chip {
+  flex: none;
+  width: 48px;
+  text-align: center;
+}
+
+.cast-chip .face {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 4px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.cast-chip .cast-name {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Fallback pre-caricamento (o backend addormentato): invito ad aprire il cast */
+.cast-more {
+  flex: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-on-pale);
+  background: var(--brand-pale);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+}
+
+/* ------------------------------------------------------------------
+   DOCK — navigazione flottante in basso (proposta dell'artefatto),
+   iniettata da tabbar.js su tutte le pagine principali.
+------------------------------------------------------------------ */
+.dock {
+  max-height: 50px;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 3000;
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  background: color-mix(in srgb, var(--surface-card) 86%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-2);
+}
+
+.dock-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 9px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+}
+
+.dock-ico {
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.dock-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dock-tab.on {
+  background: var(--brand-pale);
+}
+
+.dock-tab.on .dock-lbl {
+  color: var(--brand-on-pale);
+}
+
+.dock-tab:focus-visible {
+  outline: 2px solid var(--brand-mid);
+  outline-offset: 2px;
+}
+
+/* Spazio in fondo perché il contenuto non finisca sotto il dock */
+body.has-dock {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 380px) {
+  .dock-tab { padding: 6px 9px; }
+}
+
+/* ------------------------------------------------------------------
    BOTTONI
 ------------------------------------------------------------------ */
 button {
   width: 100%;
-  padding: 12px 6px;
+  padding: 6px 6px;
   font-size: 15px;
   font-weight: 700;
   border-radius: var(--radius-pill);
@@ -781,11 +973,74 @@ select {
   box-shadow: var(--shadow-1);
 }
 
+/* Riepilogo in testa alla lista: quante unità sono coperte sul totale
+   richiesto, con la stessa barra semaforo degli item (dall'artefatto). */
+.wh-summary {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.wh-summary-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wh-summary-big {
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.wh-summary-big small {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.wh-summary-note {
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.wh-summary-note.warn { color: var(--warning); }
+.wh-summary-note.ok   { color: var(--success); }
+
+/* Barra semaforo di copertura: rosso = nessuno, ambra = parziale,
+   verde = target raggiunto. Il colore si legge prima del numero. */
+.meter {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--border-medium) 60%, transparent);
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.4s var(--ease), background-color 0.3s var(--ease);
+}
+
+.meter-fill.hot  { background: var(--danger); }
+.meter-fill.warn { background: var(--warning); }
+.meter-fill.ok   { background: var(--success); }
+
 .item-content {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 
 .item-name-div {
@@ -887,6 +1142,7 @@ select {
 
 #add-item-btn {
   width: 75%;
+  margin-bottom: 70px;
 }
 
 .people {
@@ -908,9 +1164,41 @@ select {
   border: 1px solid color-mix(in srgb, var(--brand-mid) 18%, transparent);
 }
 
+/* La chip della personH loggata è evidenziata (dall'artefatto: "la tua riga") */
+.person-tag.me {
+  border-color: color-mix(in srgb, var(--brand-mid) 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-mid) 30%, transparent);
+}
+
+.person-emoji {
+  font-size: 14px;
+  line-height: 1;
+}
+
 .person-name {
   color: var(--brand-on-pale);
   font-weight: 700;
+}
+
+/* Il bottone "Lo porto io" chiude la fila delle chip, sempre a destra */
+.people .take-btn {
+  margin-left: auto;
+}
+
+/* Stati testuali della fila contributori */
+.nobody-note {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--danger);
+  align-self: center;
+}
+
+.done-note {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--success);
+  align-self: center;
+  margin-left: auto;
 }
 
 .qty-btn {
@@ -1508,15 +1796,40 @@ select {
 /* ------------------------------------------------------------------
    MENU — lista della spesa
 ------------------------------------------------------------------ */
+
+/* Card del generatore AI: superficie in evidenza col gradiente brand,
+   come la tile spotlight (dall'artefatto: l'AI dentro il flusso). */
+.ai-card {
+  background:
+    radial-gradient(140% 160% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 18%, transparent), transparent 60%),
+    var(--surface-card);
+  border: 1px solid color-mix(in srgb, var(--brand-mid) 22%, transparent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: 10px 10px 0px;
+  margin-bottom: 12px;
+  max-height: 125px;
+}
+
+.ai-card-title {
+  font-family: var(--font-title);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  padding-bottom: 2px;
+}
+
 .prompt-textarea {
   width: 100%;
+  height: 30%;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border-medium);
   background: var(--surface-card);
   padding: 12px 14px;
   font-size: 14px;
   resize: none;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 #prompt-textarea:focus {
@@ -1536,14 +1849,12 @@ select {
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
   gap: 10px;
 }
 
 #send-prompt-btn {
   width: 45%;
   font-size: 13.5px;
-  margin-bottom: 12px;
 }
 
 /* Contenitore tabella: card pulita in linea con il resto dell'app
@@ -1558,6 +1869,7 @@ select {
   max-width: 560px;
   overflow-x: auto;
   max-width: 100%;
+  min-height: 150px;
 }
 
 .notebook table {
@@ -1567,7 +1879,7 @@ select {
 }
 
 .notebook tr {
-  height: 32px;
+  height: 24px;
 }
 
 .time-col {
@@ -1583,13 +1895,14 @@ select {
 }
 
 .notebook th {
+  height: 16px;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
   border-bottom: 1.5px solid var(--border-medium);
-  padding: 10px 8px;
+  padding: 4px 6px;
   text-align: left;
   background: transparent;
 }
@@ -1657,9 +1970,9 @@ select {
 
 .notebook-title {
   font-family: var(--font-title);
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 400;
-  padding: 8px 8px 2px;
+  padding: 4px 4px 2px;
 }
 
 /* ------------------------------------------------------------------
@@ -1782,16 +2095,26 @@ tr.bought td {
   display: contents;
 }
 
-/* Bottone elimina riga */
+/* Piede della lista: contatore comprati/da comprare + svuota lista */
 .end-notebook {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 12px;
   gap: 12px;
+  padding: 0 4px;
   /* Nel DOM sta nella colonna sinistra (per il landscape); su mobile, con i
      wrapper trasparenti, order lo tiene visivamente sotto la lista */
   order: 1;
+}
+
+/* Contatore vivo della lista (aggiornato da menu.js) */
+.spesa-count {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .delete-row-btn {
@@ -2498,27 +2821,28 @@ select.modal-input {
   }
 
   /* ---------- HOME ---------- */
-  /* Hero su una riga: pill + titolo a sinistra, countdown a destra,
-     contenuto allineato alla larghezza del container sottostante */
-  .page-home .home-hero {
+  /* Hero-card su una riga: pill + titolo a sinistra, countdown a destra */
+  .page-home .container {
+    max-width: 900px;
+  }
+
+  .page-home .hero-card {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     column-gap: 32px;
     align-items: center;
-    padding: 26px max(28px, calc((100% - 900px) / 2));
+    padding: 26px 28px;
   }
 
   .page-home .hero-eyebrow {
     grid-column: 1;
     grid-row: 1;
-    width: auto;
-    margin: 0 0 10px !important;
+    margin: 0 0 10px;
   }
 
-  .page-home .home-hero h1 {
+  .page-home .hero-card .hero-title {
     grid-column: 1;
     grid-row: 2;
-    width: auto;
     margin: 0;
     font-size: 34px;
   }
@@ -2526,25 +2850,16 @@ select.modal-input {
   .page-home .hero-countdown {
     grid-column: 2;
     grid-row: 1 / 3;
-    width: auto;
-    margin: 0 !important;
+    margin: 0;
   }
 
   .page-home .hero-countdown .num {
     font-size: 54px;
   }
 
-  .page-home .container {
-    max-width: 900px;
-  }
-
-  .page-home #home-tiles {
-    grid-template-columns: repeat(3, 1fr);
+  .page-home .home-grid {
+    grid-template-columns: repeat(4, 1fr);
     gap: 14px;
-  }
-
-  .page-home .spotlight {
-    margin-bottom: 14px;
   }
 
   /* ---------- WAREHOUSE ---------- */
@@ -2627,10 +2942,16 @@ select.modal-input {
     grid-row: 2;
     min-height: 0;
     overflow-y: auto;
+    margin-bottom: 70px;
   }
 
   .page-map #categories .cat-row:first-child {
     margin-top: 0;
+  }
+
+  #end-spacer {
+    min-height: 70px;
+    margin-bottom: 70px;
   }
 
   /* ---------- AGENT ---------- */

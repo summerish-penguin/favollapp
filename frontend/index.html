@@ -51,6 +51,7 @@
     <script src="theme-toggle.js" defer></script>
     <script src="ui-feedback.js" defer></script>
     <script src="auth.js" defer></script>
+    <script src="tabbar.js" defer></script>
     <script src="index.js" defer></script>
   </head>
   <body class="page-home">
@@ -70,86 +71,92 @@
       </button>
     </div>
 
-    <!-- Hero: titolo vacanza, luogo/data, countdown -->
-    <section class="home-hero">
-      <div class="hero-eyebrow">
-        <span class="hero-pill"> <a href="https://www.google.com/maps/place/Montbarbat/@41.7410371,2.7795354,14.15z/data=!4m6!3m5!1s0x12bb180c742f5641:0x1bfab4b3e86162cc!8m2!3d41.7435114!4d2.7831546!16s%2Fg%2F11cn935jfz?entry=ttu&g_ep=EgoyMDI2MDcwNy4wIKXMDSoASAFQAw%3D%3D" class="pill-link" target="_blank">📍 Montbarbat, Catalogna</a></span>
-        <span class="hero-pill">🗓️ 12–20 ago</span>
-      </div>
-      <h1 class="hero-title">Favollo 2026</h1>
-      <div class="hero-countdown">
-        <span class="num" id="countdown-days">0</span>
-        <span class="lbl" id="countdown-label">giorni alla<br />partenza</span>
-      </div>
-    </section>
-    
     <div class="container">
-      <!-- Tile in evidenza: FavollAgent -->
-      <a href="agent.html" class="spotlight">
-        <span class="icon">🤖</span>
-        <span class="body">
-          <h3>FavollAgent</h3>
-          <p>Chiedi consigli su spiagge, ricette, programma della giornata.</p>
-        </span>
-        <span class="arrow">›</span>
-      </a>
+      <!-- Hero: card countdown protagonista (luogo, data, giorni alla partenza) -->
+      <section class="hero-card">
+        <div class="hero-eyebrow">
+          <span class="hero-pill"> <a href="https://www.google.com/maps/place/Montbarbat/@41.7410371,2.7795354,14.15z/data=!4m6!3m5!1s0x12bb180c742f5641:0x1bfab4b3e86162cc!8m2!3d41.7435114!4d2.7831546!16s%2Fg%2F11cn935jfz?entry=ttu&g_ep=EgoyMDI2MDcwNy4wIKXMDSoASAFQAw%3D%3D" class="pill-link" target="_blank">📍 Montbarbat, Catalogna</a></span>
+          <span class="hero-pill">🗓️ 12–20 ago</span>
+        </div>
+        <div class="hero-countdown">
+          <span class="num" id="countdown-days">0</span>
+          <span class="lbl" id="countdown-label">giorni alla<br />partenza</span>
+        </div>
+        <span class="hero-crab" aria-hidden="true">🦀</span>
+      </section>
 
-      <!-- Griglia di navigazione -->
-      <ul id="home-tiles">
-        <!-- Tile: Cast -->
+      <!-- Griglia primaria: le aree "vive". I sottotitoli diventano badge
+           di stato colorati quando index.js riceve i dati dal backend. -->
+
+      <ul id="home-tiles" class="home-grid">
+        <!-- Tile: Bagaglio -->
         <li class="item home-tile" style="animation-delay: 0.05s">
-          <a href="cast.html" class="item-content">
-            <h3>Il cast della vacanza</h3>
-            <span class="home-tile-icon">😎</span>
-            <span>Né pochi né buoni</span>
-          </a>
-        </li>
-
-        <!-- Tile: gallery -->
-        <li class="item home-tile" style="animation-delay: 0.1s">
-          <a href="galleries.html" class="item-content">
-            <h3>Gallery</h3>
-            <span class="home-tile-icon">📷</span>
-            <span>Gallerie di foto</span>
+          <a href="warehouse.html" class="item-content">
+            <span class="home-tile-icon">🎒</span>
+            <h3>Lo zaino del favollo</h3>
+            <span class="tile-status" id="status-zaino">Chi porta cosa</span>
           </a>
         </li>
 
         <!-- Tile: Il Menù -->
-        <li class="item home-tile" style="animation-delay: 0.15s">
+        <li class="item home-tile" style="animation-delay: 0.1s">
           <a href="menu.html" class="item-content">
-            <h3>La lista della spesa</h3>
             <span class="home-tile-icon">🍝</span>
-            <span>Con supporto AI ✨</span>
-          </a>
-        </li>
-
-        <!-- Tile: Bagaglio -->
-        <li class="item home-tile" style="animation-delay: 0.2s">
-          <a href="warehouse.html" class="item-content">
-            <h3>Lo zaino del favollo</h3>
-            <span class="home-tile-icon">🎒</span>
-            <span>Chi porta cosa</span>
+            <h3>La lista della spesa</h3>
+            <span class="tile-status" id="status-spesa">Con supporto AI ✨</span>
           </a>
         </li>
 
         <!-- Tile: Mappa -->
-        <li class="item home-tile" style="animation-delay: 0.25s">
+        <li class="item home-tile" style="animation-delay: 0.15s">
           <a href="map.html" class="item-content">
-            <h3>La mappa del favollo</h3>
             <span class="home-tile-icon">🗺️</span>
-            <span>Vicino a noi</span>
+            <h3>La mappa del favollo</h3>
+            <span class="tile-status" id="status-mappa">Vicino a noi</span>
           </a>
         </li>
- 
+
+        <!-- Tile: FavollAgent -->
+        <li class="item home-tile" style="animation-delay: 0.2s">
+          <a href="agent.html" class="item-content">
+            <span class="home-tile-icon">🤖</span>
+            <h3>FavollAgent</h3>
+            <span class="tile-status info">Chiedi al granchio</span>
+          </a>
+        </li>
+
+<li class="item home-tile" style="animation-delay: 0.25s">
+          <a href="galleries.html" class="item-content">
+            <span class="home-tile-icon">📷</span>
+            <h3>Gallery</h3>
+            <span class="tile-status info">Gallerie di foto</span>
+          </a>
+        </li>
+
         <!-- Tile: Carpooling - non ancora collegata -->
         <li class="item home-tile tile-disabled" style="animation-delay: 0.3s">
           <div class="item-content">
-            <h3>Carpooling</h3>
             <span class="home-tile-icon">🚗</span>
-            <span>Gli equipaggi</span>
+            <h3>Carpooling</h3>
+            <span class="tile-status info">Gli equipaggi</span>
           </div>
           <span class="tile-badge">coming soon</span>
         </li>
+
+      </ul>
+
+      <!-- Strip del cast: avatar-emoji da /users, tutta la fila porta a cast.html -->
+      <p class="section-label" id="cast-label">Il cast della vacanza</p>
+      <a href="cast.html" class="cast-strip" aria-label="Vai al cast della vacanza">
+        <div class="cast-row" id="cast-row">
+          <span class="cast-more">😎 Né pochi né buoni ›</span>
+        </div>
+      </a>
+
+      <!-- Griglia secondaria -->
+      <ul class="home-grid">
+        <!-- Tile: gallery -->
+        
       </ul>
     </div>
   </body>

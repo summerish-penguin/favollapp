@@ -51,6 +51,7 @@
     <script src="theme-toggle.js" defer></script>
     <script src="ui-feedback.js" defer></script>
     <script src="auth.js" defer></script>
+    <script src="tabbar.js" defer></script>
     <script src="menu.js" defer></script>
   </head>
   <body class="page-menu">
@@ -75,7 +76,7 @@
       <div class="title">
         <h1>La lista della spesa</h1>
         <h3>
-          Modifica la lista della spesa, o utilizza l'AI per cercare una ricetta
+          Gestisci la lista della spesa, o usa l'AI per cercare ricette
           e generare gli ingredienti da acquistare
         </h3>
       </div>
@@ -86,22 +87,28 @@
            sono display: contents e i blocchi restano in colonna singola -->
       <div class="menu-columns">
         <div class="menu-col menu-col-left">
-          <textarea
-            id="prompt-textarea"
-            class="prompt-textarea"
-            rows="5"
-            placeholder="Dimmi una ricetta"
-          ></textarea>
+          <!-- Card AI in evidenza (dall'artefatto): il generatore sta in testa
+               al flusso, non in un blocco anonimo -->
+          <div class="ai-card">
+            <div class="ai-card-title">🤖 FavollAgent · dimmi un piatto</div>
+            <textarea
+              id="prompt-textarea"
+              class="prompt-textarea"
+              rows="4"
+              placeholder="Es. «Paella per tutti», «Carbonara per 8»…"
+            ></textarea>
 
-          <div id="send-prompt-div">
-            <div class="warning-text">
-              Dove non specificato, le dosi sono calcolate per il numero di persone
-              censite in FavollApp. L'AI può commettere errori.
+            <div id="send-prompt-div">
+              <div class="warning-text">
+                Se non specificato, le dosi sono calcolate per il numero di persone
+                censite. L'AI può commettere errori.
+              </div>
+              <button id="send-prompt-btn">✨ Genera</button>
             </div>
-            <button id="send-prompt-btn">✨ Genera</button>
           </div>
 
           <div class="end-notebook">
+            <span id="spesa-count" class="spesa-count"></span>
             <button class="clear-note-btn" id="clear-note">
               ❌ Svuota la lista
             </button>
@@ -111,7 +118,7 @@
 
         <div class="menu-col menu-col-right">
           <div class="notebook">
-            <h1 class="notebook-title">Lista della spesa</h1>
+            <h1 class="ai-card-title">Lista della spesa</h1>
             <table id="sketch-table">
               <thead>
                 <tr>
