@@ -64,6 +64,13 @@
   --badge-l: 88%;
   --badge-text-l: 32%;
 
+  /* Hero home */
+  --hero-card-bg: linear-gradient(155deg, color-mix(in srgb, var(--brand-mid2) 18%, var(--surface-card)), color-mix(in srgb, var(--brand-dark2) 6%, var(--surface-card)));
+  --hero-card-text: var(--brand-dark);
+  --hero-card-muted: var(--text-secondary);
+  --hero-pill-bg: color-mix(in srgb, var(--brand-pale) 90%, white 10%);
+  --hero-pill-text: var(--brand-on-pale);
+
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Sfondo fotografico dietro il contenuto (vedi body::before) */
@@ -147,6 +154,12 @@
   --badge-l: 24%;
   --badge-text-l: 82%;
 
+  --hero-card-bg: linear-gradient(155deg, color-mix(in srgb, var(--brand-dark2) 72%, var(--surface-card) 28%), color-mix(in srgb, var(--brand-dark) 70%, var(--surface-card) 30%));
+  --hero-card-text: #f7fbff;
+  --hero-card-muted: rgba(247, 251, 255, 0.8);
+  --hero-pill-bg: rgba(255, 255, 255, 0.14);
+  --hero-pill-text: #ffffff;
+
   --bg-photo: url("assets/premium_vector-1747646622850-5f994d0a471e"); /* scuro: tramonto */
 }
 
@@ -183,6 +196,12 @@
   --badge-s: 74%;
   --badge-l: 88%;
   --badge-text-l: 32%;
+
+  --hero-card-bg: linear-gradient(155deg, color-mix(in srgb, var(--brand-mid2) 18%, var(--surface-card)), color-mix(in srgb, var(--brand-dark2) 6%, var(--surface-card)));
+  --hero-card-text: var(--brand-dark);
+  --hero-card-muted: var(--text-secondary);
+  --hero-pill-bg: color-mix(in srgb, var(--brand-pale) 90%, white 10%);
+  --hero-pill-text: var(--brand-on-pale);
 
   --bg-photo: url("assets/premium_vector-1721494020696-3329fda17bd4"); /* chiaro: spiaggia diurna */
 }
@@ -438,8 +457,7 @@ ul {
 
 /* ------------------------------------------------------------------
    HOME HERO — card countdown protagonista (layout dall'artefatto).
-   Superficie brand scura in entrambi i temi, come l'header: il testo
-   bianco è quindi fisso e non passa dai token di testo.
+   La card ora usa i token di tema, così cambia insieme al toggle.
 ------------------------------------------------------------------ */
 .hero-card {
   position: relative;
@@ -448,19 +466,21 @@ ul {
   padding: 20px;
   margin-bottom: 18px;
   background:
-    radial-gradient(130% 150% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 40%, transparent), transparent 62%),
-    linear-gradient(155deg, var(--brand-dark2), var(--brand-dark));
+    radial-gradient(130% 150% at 100% 0%, color-mix(in srgb, var(--brand-mid2) 24%, transparent), transparent 62%),
+    var(--hero-card-bg);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-2);
+  color: var(--hero-card-text);
   opacity: 0;
   transform: translateY(10px);
   animation: rise 0.5s var(--ease) forwards;
   min-height: 25%;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 
 .hero-card .hero-title {
   position: relative;
-  color: #ffffff;
+  color: var(--hero-card-text);
   text-align: left;
   font-size: 26px;
   margin: 2px 0 0;
@@ -480,14 +500,8 @@ ul {
   letter-spacing: 0.02em;
   padding: 4px 11px;
   border-radius: var(--radius-pill);
-  background: var(--brand-pale);
-  color: var(--brand-on-pale);
-}
-
-/* Sulla card scura le pill diventano vetro chiaro, testo bianco fisso */
-.hero-card .hero-pill {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
+  background: var(--hero-pill-bg);
+  color: var(--hero-pill-text);
 }
 
 .pill-link{
@@ -495,7 +509,7 @@ ul {
 }
 
 .hero-card .pill-link {
-  color: #ffffff;
+  color: inherit;
 }
 
 .hero-countdown {
@@ -512,7 +526,7 @@ ul {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  color: #ffffff;
+  color: var(--hero-card-text);
 }
 
 .hero-countdown .lbl {
@@ -520,7 +534,7 @@ ul {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--hero-card-muted);
 }
 
 /* Granchio-mascotte in filigrana nell'angolo della card */
