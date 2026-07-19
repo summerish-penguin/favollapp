@@ -457,7 +457,7 @@ function createItemElement(itemName, people, target) {
   if (Object.keys(people).length === 0) {
     const nobody = document.createElement('span');
     nobody.classList.add('nobody-note');
-    nobody.textContent = 'Nessuno lo porta ancora';
+    nobody.textContent = 'Nessuno ha contribuito';
     peopleDiv.appendChild(nobody);
   }
   if (total >= target) {
