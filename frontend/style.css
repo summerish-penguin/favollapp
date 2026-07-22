@@ -3042,3 +3042,234 @@ select.modal-input {
     max-width: 440px;
   }
 }
+
+/* ==================== PLAYLIST ==================== */
+
+/* Barra di ricerca con dropdown di suggerimenti Spotify */
+.pl-search {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.pl-search-input {
+  width: 100%;
+  padding: 13px 16px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--surface-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-1);
+  outline: none;
+}
+
+.pl-search-input:focus {
+  border-color: var(--brand-mid2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-mid2) 22%, transparent);
+}
+
+.pl-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-3);
+  overflow: hidden;
+}
+
+.pl-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+}
+
+.pl-suggestion:last-child {
+  border-bottom: none;
+}
+
+.pl-suggestion:hover {
+  background: var(--surface-card-hover);
+}
+
+.pl-suggestion-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pl-suggestion-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pl-suggestion-artist {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Copertina album */
+.pl-cover {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--surface-card-hover);
+  flex-shrink: 0;
+}
+
+.pl-cover-sm {
+  width: 40px;
+  height: 40px;
+}
+
+/* Riga brano nella classifica */
+.pl-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+
+.pl-rank {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  min-width: 34px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pl-track-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.pl-track-title {
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pl-track-artist {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pl-track-by {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.pl-track-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pl-votes {
+  display: flex;
+  gap: 6px;
+}
+
+.pl-vote-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  background: var(--surface-card-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.pl-vote-btn:active {
+  transform: scale(0.94);
+}
+
+.pl-vote-btn.up.on {
+  color: var(--success);
+  background: var(--success-bg);
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
+}
+
+.pl-vote-btn.down.on {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+}
+
+.pl-vote-count {
+  font-weight: 600;
+}
+
+.pl-delete-btn {
+  padding: 6px 9px;
+  font-size: 0.95rem;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.pl-delete-btn:hover {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+}
+
+.pl-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px 0;
+}
+
+@media (max-width: 480px) {
+  .pl-cover {
+    width: 46px;
+    height: 46px;
+  }
+  .pl-vote-btn {
+    padding: 6px 9px;
+  }
+  .pl-rank {
+    min-width: 26px;
+    font-size: 0.95rem;
+  }
+}

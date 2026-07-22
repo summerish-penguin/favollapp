@@ -42,6 +42,25 @@ class ShoppingItem(Base):
     ingredient = Column(String, nullable=False)
     qty        = Column(String, nullable=True)
 
+# Brano proposto per la playlist condivisa del gruppo
+class Track(Base):
+    __tablename__ = "tracks"
+    id          = Column(Integer, primary_key=True)
+    spotify_uri = Column(String, unique=True)          # "spotify:track:xxxx" — chiave per il sync su Spotify
+    title       = Column(String, nullable=False)
+    artist      = Column(String, nullable=True)
+    image_url   = Column(String, nullable=True)         # copertina dell'album, per la UI
+    added_by    = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+# Voto (like/dislike) di un utente su un brano; un solo voto per coppia (utente, brano)
+class TrackVote(Base):
+    __tablename__ = "track_votes"
+    id       = Column(Integer, primary_key=True)
+    user_id  = Column(Integer, ForeignKey("users.id"))
+    track_id = Column(Integer, ForeignKey("tracks.id"))
+    value    = Column(Integer)                           # +1 like / -1 dislike
+
 # Punto di interesse mostrato sulla mappa (casa, spiagge, servizi...)
 class Location(Base):
     __tablename__ = "locations"

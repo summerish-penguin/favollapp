@@ -23,6 +23,7 @@ uvicorn main:app --reload        # serves on http://127.0.0.1:8000
 Requires a `.env` (gitignored) in `backend/` with:
 - `DATABASE_URL` — Postgres URL (required; app raises on startup without it). A `postgres://` prefix is auto-rewritten to `postgresql://`.
 - `GEMINI_API_KEY` — for the AI endpoints (`/ai/*`); missing key returns HTTP 500 only when those routes are hit.
+- `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` — for the playlist search autocomplete (`GET /playlist/search`), which proxies Spotify's search via the Client Credentials flow; missing creds return HTTP 500 only when that route is hit. A Spotify app in "development mode" is enough (no user OAuth in this phase).
 
 Tables are auto-created (`Base.metadata.create_all`) and `seed()` runs on startup to populate default items and users — there are **no migrations** (no Alembic). Schema changes to `models.py` require manual DB handling.
 
@@ -34,7 +35,7 @@ There is **no test suite, linter, or type checker** configured. `.prettierrc` (2
 
 - `main.py` — app entry point: CORS, an HTTP middleware that logs every request (except `/health`) to the `access_logs` table, mounts routers, runs seed on startup.
 - `db.py` — engine + `SessionLocal`; `get_db()` is the FastAPI dependency used by every route.
-- `models.py` — SQLAlchemy models: `User`, `Item`, `Contribution` (a user's committed quantity of an item), `ShoppingItem`, `Location` (map POIs), `AccessLog`.
+- `models.py` — SQLAlchemy models: `User`, `Item`, `Contribution` (a user's committed quantity of an item), `ShoppingItem`, `Location` (map POIs), `AccessLog`, `Track`/`TrackVote` (shared playlist + like/dislike votes).
 - `schemas.py` — Pydantic request models.
 - `helpers.py` — shared `get_or_create_*` helpers and the **Gemini LLM config** (`GEMIN_URL`, `GEMINI_MODEL`, `require_gemini_key()`). Both AI routers share this; change the model here.
 - `seed.py` — default items/users seeded on every startup.
@@ -44,6 +45,7 @@ Routers are split by functional area and each exposes `router`, all mounted in `
 - `routers_shopping.py` — `/shopping` CRUD (shopping list).
 - `routers_ai_recipe.py` — `POST /ai/recipe`: Gemini call that parses a dish name into a JSON ingredient list scaled to the current user count; robustly extracts JSON from dirty LLM output.
 - `routers_ai_agent.py` — `POST /ai/agent`: conversational chatbot. Builds a system prompt by injecting live DB data (locations, items, users) plus fixed trip context; frontend passes the full `history` each call (no server-side session).
+- `routers_playlist.py` — `/playlist` (add/list/delete tracks + `/playlist/vote` like/dislike, ranked by score) and `/playlist/search` (autocomplete proxied to Spotify search via `get_spotify_app_token()` in `helpers.py`). Pushing the winning tracks to a real Spotify playlist is a deferred phase 2 (one-time owner OAuth + admin "sync" button).
 - `routers_misc.py` — `/users`, `/locations`, `/health`.
 
 ## Frontend architecture
@@ -55,4 +57,4 @@ One `.html` + matching `.js` per page (e.g. `warehouse.html` / `warehouse.js`); 
 
 `style.css` is a single shared stylesheet (~2000 lines) for all pages. Navigation is plain `<a href="*.html">` links.
 
-Pages: `index` (home), `warehouse`, `menu`/`shopping`, `map` (Leaflet POIs from `/locations`), `agent` (AI chat), `galleries`/`cast` (photos/people), assets under `frontend/assets/`.
+Pages: `index` (home), `warehouse`, `menu`/`shopping`, `map` (Leaflet POIs from `/locations`), `playlist` (shared song ranking with Spotify search), `agent` (AI chat), `galleries`/`cast` (photos/people), assets under `frontend/assets/`.

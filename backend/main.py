@@ -14,6 +14,7 @@ from routers_ai_recipe         import router as ai_router_receipe
 from routers_misc       import router as misc_router
 from routers_ai_agent import router as ai_agent_router
 from routers_auth      import router as auth_router
+from routers_playlist  import router as playlist_router
 
 from seed import seed
 
@@ -75,6 +76,7 @@ app.include_router(ai_router_receipe)
 app.include_router(misc_router)
 app.include_router(ai_agent_router)
 app.include_router(auth_router)
+app.include_router(playlist_router)
 
 
 # Popola item e utenti di default all'avvio dell'app

@@ -59,3 +59,16 @@ class ShoppingItemUpdate(BaseModel):
     day:        str = ""
     ingredient: str = ""
     qty:        str = ""
+
+
+# ---- Playlist ----
+
+class AddTrackRequest(BaseModel):
+    spotify_uri: str
+    title:       str
+    artist:      str = ""
+    image_url:   str = ""
+
+class VoteRequest(BaseModel):
+    track_id: int
+    value:    int          # +1 like / -1 dislike
