@@ -9,7 +9,7 @@
     { href: 'map.html', icon: '🗺️', label: 'Mappa' },
     { href: 'agent.html', icon: '🤖', label: 'Agent' },
     { href: 'galleries.html', icon: '📷', label: 'Foto' },
-    { href: 'playlist.html', icon: '🎸', label: 'Playlist' },
+    { href: 'playlist.html', icon: '🎸', label: 'Spoti' },
   ];
 
   var current = location.pathname.split('/').pop() || 'index.html';
