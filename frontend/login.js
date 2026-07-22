@@ -74,7 +74,7 @@ async function submitLogin(event) {
     // Al primo accesso mostriamo la conferma e lasciamo il tempo di leggerla
     // prima di navigare (altrimenti il toast sparirebbe subito col replace).
     if (data.claimed) {
-      showToast('BenvenutH! Password impostata.', 'success');
+      showToast('Benvenuta/o! Password impostata.', 'success');
       setTimeout(() => window.location.replace('index.html'), 1400);
     } else {
       window.location.replace('index.html');

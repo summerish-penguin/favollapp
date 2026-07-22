@@ -8,6 +8,11 @@ const myName = currentUser?.name;
 const container = document.getElementById('playlist-container');
 const searchInput = document.getElementById('pl-search-input');
 const suggestionsBox = document.getElementById('pl-suggestions');
+const syncBar = document.getElementById('pl-sync-bar');
+const openBar = document.getElementById('pl-open');
+
+// Intervallo di polling: allineato ai 10s dello scheduler di auto-sync lato backend
+const POLL_MS = 10000;
 
 // Ultimo stato noto della classifica (dal backend), per ridisegnare dopo un voto
 let tracks = [];
@@ -19,6 +24,20 @@ init();
 
 function init() {
   loadPlaylist();
+
+  // Stato Spotify: il bottone "Apri su Spotify" è per tutti, i controlli di
+  // collegamento/sincronizzazione solo per gli admin. Ricontrolla al ritorno
+  // sulla scheda (es. dopo aver collegato Spotify o sincronizzato in un'altra tab).
+  loadSyncStatus();
+  window.addEventListener('focus', loadSyncStatus);
+
+  // Polling: mantiene classifica e stato allineati tra utenti diversi in concorrenza.
+  // In pausa quando la scheda non è visibile, per non sprecare richieste.
+  setInterval(() => {
+    if (document.hidden) return;
+    loadPlaylist();
+    loadSyncStatus();
+  }, POLL_MS);
 
   searchInput.addEventListener('input', () => {
     clearTimeout(searchTimer);
@@ -156,6 +175,7 @@ async function vote(trackId, value) {
       return;
     }
     await loadPlaylist();
+    loadSyncStatus();
   } catch (e) {
     console.error('VOTE ERROR:', e);
     showToast('Errore di rete. Riprova.');
@@ -179,10 +199,77 @@ async function deleteTrack(track) {
       return;
     }
     await loadPlaylist();
+    loadSyncStatus();
   } catch (e) {
     console.error('DELETE TRACK ERROR:', e);
     showToast('Errore di rete. Riprova.');
   }
+}
+
+// ---- Sincronizzazione Spotify (solo admin) ----
+
+async function loadSyncStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/playlist/spotify/status`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const status = await res.json();
+    renderAdminControls(status);
+    renderOpenButton(status);
+  } catch (e) {
+    console.error('SYNC STATUS ERROR:', e);
+  }
+}
+
+// Barra larga coi controlli di collegamento/sincronizzazione: SOLO admin.
+// Per i non-admin resta nascosta (niente div largo).
+function renderAdminControls({ connected, synced }) {
+  syncBar.innerHTML = '';
+  if (!isAdmin) {
+    syncBar.hidden = true;
+    return;
+  }
+
+  if (!connected) {
+    const info = document.createElement('span');
+    info.className = 'pl-sync-info';
+    info.textContent = 'Collega Spotify per generare la playlist dai brani votati.';
+
+    const connectBtn = document.createElement('button');
+    connectBtn.className = 'pl-sync-btn';
+    connectBtn.textContent = 'Collega Spotify';
+    connectBtn.onclick = () => window.open(`${API_BASE}/playlist/spotify/login`, '_blank');
+
+    syncBar.append(info, connectBtn);
+  } else {
+    // Da collegato la sincronizzazione è automatica: mostriamo solo lo stato.
+    // Tick verde se allineato, spinner se un push è in corso/pendente.
+    const state = document.createElement('span');
+    state.className = 'pl-sync-state';
+    if (synced) {
+      state.innerHTML = '<span class="pl-tick" aria-hidden="true">✓</span><span>Playlist aggiornata</span>';
+    } else {
+      state.innerHTML = '<span class="pl-spinner" aria-hidden="true"></span><span>Aggiornamento playlist…</span>';
+    }
+    syncBar.append(state);
+  }
+  syncBar.hidden = false;
+}
+
+// Bottone "Apri su Spotify" sotto la classifica: per TUTTI quando la playlist esiste
+function renderOpenButton({ playlist_url }) {
+  openBar.innerHTML = '';
+  if (!playlist_url) {
+    openBar.hidden = true;
+    return;
+  }
+  const open = document.createElement('a');
+  open.className = 'pl-sync-btn open';
+  open.href = playlist_url;
+  open.target = '_blank';
+  open.rel = 'noopener';
+  open.textContent = '🎧 Apri su Spotify';
+  openBar.appendChild(open);
+  openBar.hidden = false;
 }
 
 // ---- Render ----

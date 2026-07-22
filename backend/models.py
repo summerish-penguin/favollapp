@@ -61,6 +61,15 @@ class TrackVote(Base):
     track_id = Column(Integer, ForeignKey("tracks.id"))
     value    = Column(Integer)                           # +1 like / -1 dislike
 
+# Credenziali OAuth Spotify del proprietario (una sola riga): il refresh token
+# permette al backend di creare/aggiornare la playlist sull'account del proprietario.
+class SpotifyAuth(Base):
+    __tablename__ = "spotify_auth"
+    id            = Column(Integer, primary_key=True)
+    refresh_token = Column(String, nullable=True)
+    playlist_id   = Column(String, nullable=True)   # id della playlist Spotify creata
+    playlist_url  = Column(String, nullable=True)   # link pubblico alla playlist
+
 # Punto di interesse mostrato sulla mappa (casa, spiagge, servizi...)
 class Location(Base):
     __tablename__ = "locations"

@@ -33,7 +33,7 @@ There is **no test suite, linter, or type checker** configured. `.prettierrc` (2
 
 ## Backend architecture
 
-- `main.py` — app entry point: CORS, an HTTP middleware that logs every request (except `/health`) to the `access_logs` table, mounts routers, runs seed on startup.
+- `main.py` — app entry point: CORS, an HTTP middleware that logs every request (except `/health`) to the `access_logs` table, mounts routers, runs seed on startup, and starts a background auto-sync thread (`_autosync_loop`, every 10s) that re-pushes the winning tracks to Spotify whenever the set changes (calls `sync_playlist_to_spotify` from `routers_playlist`). Single-worker assumption — one loop per worker process.
 - `db.py` — engine + `SessionLocal`; `get_db()` is the FastAPI dependency used by every route.
 - `models.py` — SQLAlchemy models: `User`, `Item`, `Contribution` (a user's committed quantity of an item), `ShoppingItem`, `Location` (map POIs), `AccessLog`, `Track`/`TrackVote` (shared playlist + like/dislike votes).
 - `schemas.py` — Pydantic request models.
@@ -45,7 +45,7 @@ Routers are split by functional area and each exposes `router`, all mounted in `
 - `routers_shopping.py` — `/shopping` CRUD (shopping list).
 - `routers_ai_recipe.py` — `POST /ai/recipe`: Gemini call that parses a dish name into a JSON ingredient list scaled to the current user count; robustly extracts JSON from dirty LLM output.
 - `routers_ai_agent.py` — `POST /ai/agent`: conversational chatbot. Builds a system prompt by injecting live DB data (locations, items, users) plus fixed trip context; frontend passes the full `history` each call (no server-side session).
-- `routers_playlist.py` — `/playlist` (add/list/delete tracks + `/playlist/vote` like/dislike, ranked by score) and `/playlist/search` (autocomplete proxied to Spotify search via `get_spotify_app_token()` in `helpers.py`). Pushing the winning tracks to a real Spotify playlist is a deferred phase 2 (one-time owner OAuth + admin "sync" button).
+- `routers_playlist.py` — `/playlist` (add/list/delete tracks + `/playlist/vote` like/dislike, ranked by score) and `/playlist/search` (autocomplete proxied to Spotify search via `get_spotify_app_token()` in `helpers.py`). Spotify sync: `/playlist/spotify/login` + `/callback` run the owner's one-time OAuth (Authorization Code Flow) and store the refresh token in the `spotify_auth` singleton row; `POST /playlist/sync` (admin-only) creates/replaces a Spotify playlist on the owner's account with tracks whose score > 0. `/playlist/spotify/status` reports whether Spotify is connected. Needs `SPOTIFY_REDIRECT_URI` env (must exactly match a Redirect URI registered in the Spotify dashboard).
 - `routers_misc.py` — `/users`, `/locations`, `/health`.
 
 ## Frontend architecture

@@ -77,8 +77,8 @@
     <div class="container">
       <!-- Titolo pagina -->
       <div class="title">
-        <h1>La playlist del Favollo</h1>
-        <h3>Proponi, vota, sali in classifica</h3>
+        <h1>Spoti-fai-da-te</h1>
+        <h3>Proponi e vota i tuoi brani preferiti. Quelli con un voto positivo saranno sincronizzati nella playlist Spotify!</h3>
       </div>
 
       <br />
@@ -95,8 +95,27 @@
         <div id="pl-suggestions" class="pl-suggestions" hidden></div>
       </div>
 
+      <!-- Barra di sincronizzazione Spotify: visibile solo agli admin, popolata dal JS -->
+      <div id="pl-sync-bar" class="pl-sync-bar" hidden></div>
+
       <!-- Classifica brani: generata dinamicamente dal JS -->
       <div id="playlist-container"></div>
+
+      <!-- Bottone "Apri su Spotify" (per tutti): sotto la classifica, popolato dal JS -->
+      <div id="pl-open" class="pl-open" hidden></div>
+
+      <!-- Attribuzione Spotify (richiesta dalle Branding Guidelines) -->
+      <a
+        class="pl-powered"
+        href="https://www.spotify.com"
+        target="_blank"
+        rel="noopener"
+      >
+        <img src="assets/spotify-icon-marilyn-scott-0.png" alt="Spotify" />
+        <span>Powered by Spotify</span>
+      </a>
+      <br />
+      <br />
     </div>
   </body>
 </html>
