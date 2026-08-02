@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const oggi = new Date();
   oggi.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((VACANZA - oggi) / (1000 * 60 * 60 * 24));
+  const diff = Math.ceil((VACANZA - oggi) / (1000 * 60 * 60 * 24) - 1);
 
   if (diff === 0) {
     numEl.textContent = '🦀';
